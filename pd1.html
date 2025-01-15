@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Práctica dirigida 1</title>
+
+<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Material para pds</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Inicio</a>
+</li>
+<li>
+  <a href="pd1.html">Práctica dirigida 1</a>
+</li>
+<li>
+  <a href="pd2.html">Práctica dirigida 2</a>
+</li>
+<li>
+  <a href="pd3.html">Práctica dirigida 3</a>
+</li>
+<li>
+  <a href="pd4.html">Práctica dirigida 4</a>
+</li>
+<li>
+  <a href="pd5.html">Práctica dirigida 5</a>
+</li>
+<li>
+  <a href="pd6.html">Práctica dirigida 6</a>
+</li>
+<li>
+  <a href="pd7.html">Práctica dirigida 7</a>
+</li>
+<li>
+  <a href="pd8.html">Práctica dirigida 8</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Práctica dirigida 1</h1>
+
+</div>
+
+
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
+<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
+<p>Semestre 2024 - 2</p>
+<div id="qué-es-r" class="section level1">
+<h1><strong>1. ¿Qué es R?</strong></h1>
+<p>R es un lenguaje de programación y un entorno de software libre y de
+código abierto utilizado para análisis estadístico y visualización de
+datos. Fue desarrollado por Ross Ihaka y Robert Gentleman en la
+Universidad de Auckland, Nueva Zelanda, en 1993. Desde entonces, ha sido
+ampliamente adoptado por la comunidad científica y empresarial como una
+herramienta esencial para el análisis y la visualización de datos.</p>
+<p>R cuenta con una amplia variedad de paquetes y bibliotecas que
+permiten el análisis estadístico, la minería de datos, el aprendizaje
+automático, la visualización de datos y la generación de informes.
+Además, su sintaxis es relativamente sencilla, lo que facilita su
+aprendizaje y uso para personas con distintos niveles de experiencia en
+programación, lo cual ha significado su uso en diversos rubros.</p>
+<div class="vembedr">
+<div>
+<iframe src="https://www.youtube.com/embed/ZCQHm63xc4s" width="533" height="300" frameborder="0" allowfullscreen="" data-external="1"></iframe>
+</div>
+</div>
+<hr />
+<p><a id='part2'></a></p>
+</div>
+<div id="qué-podemos-hacer-con-r" class="section level1">
+<h1><strong>2. ¿Qué podemos hacer con R?</strong></h1>
+<p><img src="QphacerR1.png" /></p>
+<p><img src="QphacerR2.png" /></p>
+<p><img src="QphacerR3.png" /></p>
+<p><img src="QphacerR4.png" /></p>
+<hr />
+<p><a id='part3'></a></p>
+</div>
+<div id="conceptos-básicos-para-programar-en-r" class="section level1">
+<h1><strong>3. Conceptos básicos para programar en R</strong></h1>
+<p>Instalar <a href="http://www.r-project.org">R</a></p>
+<p>Instalar <a href="https://posit.co/downloads/">RStudio</a></p>
+<div id="usando-r" class="section level3">
+<h3>Usando R</h3>
+<p><img src="PrograR.png" /></p>
+<div id="configurar-el-directorio-de-trabajo" class="section level4">
+<h4><strong>3.1. Configurar el directorio de trabajo</strong></h4>
+<p>R funciona como un entorno temporal de trabajo, lo que quiere decir
+que el usuario va agregando datos y objetos. Sin embargo, si los
+análisis no son guardados se deberán repetir las instrucciones para
+obtener otra vez el resultado. Por esta razón, es preciso configurar una
+carpeta predeterminada en nuestro ordenador, donde el programa buscará
+los archivos a ejecutar y guardará los archivos a conservar con
+cambios.</p>
+<p>Para ver nuestro lugar de trabajo actual escribimos el siguiente
+comando (escriba el código en la consola, ya que si lo ejecuta desde
+este Rmd, obtendrá el lugar donde se encuentra este archivo):</p>
+<pre class="r"><code>getwd() #para saber en qué carpeta está el archivo</code></pre>
+<pre><code>## [1] &quot;/Users/Karina/EstadisticaSocio.github.io&quot;</code></pre>
+<p>Si queremos cambiar de directorio de trabajo, nos dirigirnos al menú
+<strong>“Session” &gt; “Set Working Directory” &gt; “Choose
+Directory”</strong>. Esto abrirá una ventana emergente, donde buscaremos
+la carpeta en la cual vamos a trabajar, la ubicamos y seleccionamos
+“Open”. Para verificar el cambio volvemos a digitar la función
+<strong>“getwd()”</strong> en la consola.</p>
+</div>
+<div id="sintaxis-y-objetos-en-r" class="section level4">
+<h4><strong>3.2. Sintaxis y objetos en R</strong></h4>
+<p>El uso de R es bastante intuitivo y sigue un patrón lógico. Está
+compuesto de códigos y la combinación de estos códigos genera una
+sintaxis. Asimismo, R guarda la información de nuestras observaciones y
+variables a través de objetos.</p>
+<p>En un sentido global, la estructura general de una sintaxis puede
+resumirse como sigue: a un objeto dado se le asigna el resultado de una
+función, que a su vez se ejecuta sobre un conjunto de datos
+especificado, con una serie de configuraciones particulares. Veamos el
+siguiente ejemplo ficticio.</p>
+<p><img src="Sintax.png" /></p>
+<p>Si se lee de izquierda a derecha, la línea de comando puede
+explicarse como sigue:</p>
+<ul>
+<li><p>Primero se indica un objeto a crear, con el nombre que ustedes
+definan.</p></li>
+<li><p>Luego se indica el asignador, que expresa que todo lo que esté a
+la derecha de la flecha se guardará en el objeto creado a la izquierda.
+El asignador puede ser “&lt;-” o también “=”, para motivos del curso
+usaremos este último.</p></li>
+<li><p>Luego viene la función que en este caso permite leer archivos
+tipo Microsoft Excel. R trabaja con funciones que están dentro de
+“paquetes” que la comunidad va desarrollando. Podemos hacer nuestras
+operaciones con diversas funciones, y no hay una sola forma de hacerlo.
+Si se trata de funciones que no están predeterminadas en R, debemos
+instalar el paquete que las contiene con el comando
+“install.packages()”, y antes de ejecutarla debemos abrir la libreria
+con el comando “library()”</p></li>
+<li><p>Luego de la función, se abre un paréntesis que contiene los
+argumentos: instrucciones que especifican ciertos detalles de lo que
+queramos que la función realice. Los argumentos pueden escribirse de
+distintas maneras y va a depender de lo que queramos hacer. En nuestro
+ejemplo: El primer argumento indica la información a leer, en este caso
+indica un archivo de tipo Excel (extensión xlsx). El segundo argumento
+indica la hoja del archivo a leer. El tercer argumento indica qué
+columnas se leerán de forma específica (en este caso, las primeras
+diez).</p>
+<p>3.2.1 Las funciones más usadas</p></li>
+</ul>
+<p>Para estos ejemplos usaremos una base de datos precargada en R
+llamada iris. En esta se muestran datos sobre flores.</p>
+<ul>
+<li><p>names: lo usamos cuando queremos conocer los nombres de las
+variables que componen la base de datos. Solo necesita un argumento
+básico: el nombre de la data en este caso: iris</p>
+<pre class="r"><code>names(iris)</code></pre>
+<pre><code>## [1] &quot;Sepal.Length&quot; &quot;Sepal.Width&quot;  &quot;Petal.Length&quot; &quot;Petal.Width&quot;  &quot;Species&quot;</code></pre></li>
+<li><p>str: se usa para conocer la estructura de un objeto, te brinda el
+tipo y un vistazo de los valores. Solo se necesita el nombre del objeto
+como argumento.</p>
+<pre class="r"><code>str(iris)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre></li>
+<li><p>class:se usa cuando se quiere saber solo de qué tipo de objeto se
+trata. Solo se necesita el nombre del objeto como argumento, este puede
+ser una variable, un vector, o una base de datos.</p>
+<pre class="r"><code>class(iris)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre></li>
+</ul>
+<p>Para las siguientes funciones debemos hacer referencia a una variable
+en específico como mínimo. En el lenguaje de base de R, se usa el
+símbolo “$” para indicar que cierta variable es parte de la base de
+datos. Si no usamos el símbolo, R busca a esta variable como un objeto
+independiente, y de no encontrarlo saldrá error. La estructura es
+“data$nombredevariable”</p>
+<ul>
+<li><p>table: Utiliza factores de clasificación para construir una tabla
+de los recuentos en cada combinación de niveles de factores. Es decir,
+te muestra una tabla de frecuencias. Se necesita como argumento por lo
+menos a una variable.</p>
+<pre class="r"><code>table(iris$Species)</code></pre>
+<pre><code>## 
+##     setosa versicolor  virginica 
+##         50         50         50</code></pre></li>
+<li><p>mean: La media aritmética (promedio) de un conjunto de datos. Se
+necesita como argumento a una variable de tipo numérica.</p>
+<pre class="r"><code>mean(iris$Sepal.Length)</code></pre>
+<pre><code>## [1] 5.843333</code></pre></li>
+<li><p>sum: La suma de todos los valores dentro de un conjunto de datos.
+Se necesita como argumento una variable de tipo numérica.</p>
+<pre class="r"><code>sum(iris$Petal.Length)</code></pre>
+<pre><code>## [1] 563.7</code></pre></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="apliquemos-lo-aprendido" class="section level1">
+<h1><strong>4. Apliquemos lo aprendido</strong></h1>
+<p>Antes de aplicar los códigos revisados, debemos importar la base de
+datos a usar en R. Para eso debemos asegurarnos de dos cosas:</p>
+<ol style="list-style-type: decimal">
+<li>Que la base de datos se encuentra en el directorio de trabajo
+(carpeta indicada líneas arriba).</li>
+<li>Haber llamado a la librería que nos permitirá abrir la base de
+datos. En este curso usaremos “rio”, esta librería o paquete admite una
+amplia variedad de formatos (xlsx, sav, dta, etc.) usando el mismo
+comando: import.</li>
+</ol>
+<p>Para esta sesión, trabajaremos con Registro Nacional de
+Municipalidades (RENAMU). El RENAMU es un registro a cargo del Instituto
+Nacional de Estadística e Informática (INEI) con el objetivo de contar
+con datos estadísticos de las Municipalidades Provinciales, Distritales
+y de Centros Poblados. Se espera elaborar indicadores municipales que
+apoyen la gestión regional y local en la planificación y en la toma de
+decisiones informadas.</p>
+<pre class="r"><code>library(rio)
+data = import(&quot;RENAMU_RESIDUOS.xlsx&quot;)</code></pre>
+<p><img src="diccionario_pd1.png" /></p>
+<p>Para abrir la base usamos dos líneas de código. La primera indica el
+llamado del paquete rio. Sin llamar al paquete no se podrá solicitar el
+uso de la función de este. Haciendo la analogía a la imagen anterior, no
+puedes usar una herramienta (comando) sin seleccionar y abrir antes la
+caja que la contiene.</p>
+<p>La segunda línea de código tiene 4 elementos</p>
+<ol style="list-style-type: decimal">
+<li>data: Este es el nombre del <strong>objeto</strong> en R. En este
+caso este objeto es una base. Siempre que importemos debemos asignarle
+un nombre para luego poder referirnos a este en el código.</li>
+<li>= : Es el asignador, sin este símbolo no podré decirle qué contendrá
+el objeto “data”. También es común usar “&lt;-”</li>
+<li>import(): Es la función. Es lo que contiene las directrices que le
+indica a R qué debe hacer. Esta función tiene como único argumento
+fundamental el nombre del archivo a importar.</li>
+<li>“RENAMU_RESIDUOS.xlsx”: Es el nombre del archivo dentro de tu
+computadora. Este nombre va entre comillas siempre entre comillas. Para
+R, cada texto del código tiene una utilidad, si el nombre del archivo no
+tiene comillas, el programa interpretará que es una función y al no
+encontrarla arrojará error.</li>
+</ol>
+<p>Usemos los códigos que acabamos de aprender</p>
+<p>Busquemos los nombres de las variables que componen la base de
+datos</p>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code>##  [1] &quot;idmunici&quot;     &quot;Ubigeo&quot;       &quot;Departamento&quot; &quot;Provincia&quot;    &quot;Distrito&quot;    
+##  [6] &quot;Tipomuni&quot;     &quot;P40_1&quot;        &quot;P41_1&quot;        &quot;P42_1&quot;        &quot;P43_3&quot;       
+## [11] &quot;P43_4&quot;        &quot;P43_5&quot;        &quot;P43_6&quot;        &quot;P44_1&quot;</code></pre>
+<p>Examinemos la estructura de esta base de datos</p>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    1891 obs. of  14 variables:
+##  $ idmunici    : chr  &quot;010101&quot; &quot;010102&quot; &quot;010103&quot; &quot;010104&quot; ...
+##  $ Ubigeo      : chr  &quot;010101&quot; &quot;010102&quot; &quot;010103&quot; &quot;010104&quot; ...
+##  $ Departamento: chr  &quot;AMAZONAS&quot; &quot;AMAZONAS&quot; &quot;AMAZONAS&quot; &quot;AMAZONAS&quot; ...
+##  $ Provincia   : chr  &quot;CHACHAPOYAS&quot; &quot;CHACHAPOYAS&quot; &quot;CHACHAPOYAS&quot; &quot;CHACHAPOYAS&quot; ...
+##  $ Distrito    : chr  &quot;CHACHAPOYAS&quot; &quot;ASUNCION&quot; &quot;BALSAS&quot; &quot;CHETO&quot; ...
+##  $ Tipomuni    : num  1 2 2 2 2 2 2 2 2 2 ...
+##  $ P40_1       : num  1 4 2 4 3 4 3 3 3 2 ...
+##  $ P41_1       : num  25800 40 20 240 100 282 115 200 2800 300 ...
+##  $ P42_1       : num  4 2 3 4 3 4 3 4 4 3 ...
+##  $ P43_3       : num  0 0 0 NA 3 NA NA NA 3 0 ...
+##  $ P43_4       : num  0 0 0 NA 0 NA NA NA 0 0 ...
+##  $ P43_5       : num  5 0 0 NA 0 NA NA NA 0 0 ...
+##  $ P43_6       : num  6 0 0 NA 0 NA NA NA 0 0 ...
+##  $ P44_1       : num  2 2 2 2 2 2 2 2 1 1 ...</code></pre>
+<p>Revisemos qué tipo de variable es la variable frecuencia de recojo de
+residuos sólidos.</p>
+<pre class="r"><code>class(data$P40_1)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<p>Analicemos la distribución del porcentaje de cobertura del servicio
+de recojo de basura en el distrito</p>
+<pre class="r"><code>table(data$P42_1)</code></pre>
+<pre><code>## 
+##   1   2   3   4 
+##  44 166 663 971</code></pre>
+<p>Calculemos el promedio diario de residuos sólidos de basura en
+kilogramos de todos los distritos</p>
+<pre class="r"><code>mean(data$P41_1)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<p>En este caso, el primer resultado es NA. Esto se debe a la presencia
+de valores perdidos en la variable. Para omitirlos en el cálculo podemos
+usar dentro del paréntesis el comando: na.rm = TRUE.</p>
+<pre class="r"><code>mean(data$P41_1, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 13595.51</code></pre>
+<p>Calculemos la suma diaria promedio de residuos de basura en
+kilogramos de todos los distritos</p>
+<pre class="r"><code>sum(data$P41_1, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 25070120</code></pre>
+<div id="tidyverse" class="section level2">
+<h2>4.1 Tidyverse</h2>
+<p>Tidyverse es un conjunto de de paquetes de R para ciencia de datos,
+nos ayuda a trabajar las bases de datos. Ha sido desarrollado por
+RStudio.</p>
+<ul>
+<li><p><strong>Es consistente</strong> : Todos los paquetes tienen una
+misma estructura</p></li>
+<li><p><strong>Concatenable</strong>: Siempre se pueden unir pequeñas
+partes para resolverlos</p></li>
+<li><p><strong>Funcional</strong>: Como casi todo R, promueve la
+programación</p></li>
+</ul>
+<p>Para cada paso de tratamiento de datos existe un paquete, se puede
+pasar desde cargar/importar los datos, limpiarlos, transformarlos,
+visualizar, modelarlos y finalmente comunicarlos.</p>
+<p>Para importar datos tenemos readr, haven y readxl. Para limpiar los
+datos usamos tidyr, para transformar los datos se usa dyplr, que lo
+veremos a continuación, para modelar se usa purr o broom, para
+visualizar se usa ggplot2. Finalmente, para comunicar se usa knitr para
+publicar los resultados por html, pdf, ppt. y rmarkdown es la estructura
+de knitr.</p>
+<p>Algunos les gusta usarlo porque facilita el análisis y manipulación
+de datos y es más rápido, pero, por otro lado, tiene otra lógica en la
+programación. En vez de usar “,” para diferenciar entre comandos, usar
+%&gt;%.</p>
+<p>Instalando el paquete de tidyverse te incluye los 8 paquetes. Pero,
+eso sí, toma más tiempo de lo debido. Por eso, en esta ocasión, se ha
+descargado los que necesitaremos ahora</p>
+<div id="dplyr" class="section level3">
+<h3>4.1.1 Dplyr</h3>
+<p>El paquete dplyr es el más útil en R para la manipulación de datos,
+una de las ventajas es que se pueda usar el pipe para combinar
+diferentes funciones en R. Para no tener que escribirlo, se genera
+mediante Ctlr + shift + M. En pocas palabras, reemplaza la “,” para
+concatenar(unir) varios comandos.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<p>Revisemos alguno de sus comandos:</p>
+<ul>
+<li>rename: Nos ayuda a cambiarle de nombre a una variable. Debemos
+indicar primero el nuevo nombre, el asignador “=” seguido del nombre
+original de la variable a cambiar.</li>
+</ul>
+<p>Cambiemos el nombre de la variable P41_1 a recojo_diario_kg</p>
+<pre class="r"><code>data = data %&gt;% 
+  rename(recojo_diario_kg = P41_1)</code></pre>
+<p>Ahora tú, practica cambiando el nombre de la variable P42_1 a
+porcen_cobertura</p>
+<ul>
+<li>select: esta función permite seleccionar algunas variables de la
+base de datos o en caso contrario, dejar algunas variables por fuera de
+la misma al anteponer un símbolo menos antes (-variable)</li>
+</ul>
+<pre class="r"><code>ejemplo = data %&gt;% 
+  select(recojo_diario_kg,P43_3,P43_4,P43_5)</code></pre>
+<p>Ahora tú, practica seleccionando las variables Tipomuni y P44_1.
+Recuerda que cada una debe ir separada de una coma (,)</p>
+<ul>
+<li><p>summarise: es una función que se utiliza para crear resúmenes
+estadísticos de un conjunto de datos. Summarise necesita de dos
+argumentos básicos: el dato que queremos obtener (promedio, conteo,
+minimo, maximo) y la variable de la que lo queremos obtener</p>
+<pre class="r"><code>data %&gt;% 
+summarise(promedio = mean(recojo_diario_kg, na.rm = TRUE))</code></pre>
+<pre><code>##   promedio
+## 1 13595.51</code></pre></li>
+<li><p>filter: se utiliza para crear un subconjunto de datos de
+determinadas filas que cumplan con una condición dada. Específicamente,
+deseamos quedarnos con los casos que Sí informen un Plan de Valorización
+de Residuos Sólidos Orgánicos</p>
+<pre class="r"><code>data %&gt;% 
+filter(P43_6 == &quot;6&quot;)</code></pre>
+<pre><code>##    idmunici Ubigeo  Departamento        Provincia                   Distrito
+## 1    010101 010101      AMAZONAS      CHACHAPOYAS                CHACHAPOYAS
+## 2    021401 021401        ANCASH            OCROS                      OCROS
+## 3    040409 040409      AREQUIPA         CASTILLA                  ORCOPAMPA
+## 4    070101 070101        CALLAO           CALLAO                     CALLAO
+## 5    070103 070103        CALLAO           CALLAO CARMEN DE LA LEGUA REYNOSO
+## 6    070106 070106        CALLAO           CALLAO                 VENTANILLA
+## 7    070107 070107        CALLAO           CALLAO                    MI PERÚ
+## 8    150101 150101          LIMA             LIMA                       LIMA
+## 9    150103 150103          LIMA             LIMA                        ATE
+## 10   150110 150110          LIMA             LIMA                      COMAS
+## 11   150111 150111          LIMA             LIMA                EL AGUSTINO
+## 12   150112 150112          LIMA             LIMA              INDEPENDENCIA
+## 13   150114 150114          LIMA             LIMA                  LA MOLINA
+## 14   150115 150115          LIMA             LIMA                LA VICTORIA
+## 15   150116 150116          LIMA             LIMA                      LINCE
+## 16   150117 150117          LIMA             LIMA                 LOS OLIVOS
+## 17   150118 150118          LIMA             LIMA                 LURIGANCHO
+## 18   150119 150119          LIMA             LIMA                      LURIN
+## 19   150122 150122          LIMA             LIMA                 MIRAFLORES
+## 20   150123 150123          LIMA             LIMA                 PACHACAMAC
+## 21   150128 150128          LIMA             LIMA                      RIMAC
+## 22   150130 150130          LIMA             LIMA                  SAN BORJA
+## 23   150131 150131          LIMA             LIMA                 SAN ISIDRO
+## 24   150142 150142          LIMA             LIMA          VILLA EL SALVADOR
+## 25   150703 150703          LIMA       HUAROCHIRI                CALLAHUANCA
+## 26   170101 170101 MADRE DE DIOS        TAMBOPATA                  TAMBOPATA
+## 27   211101 211101          PUNO        SAN ROMAN                    JULIACA
+## 28   250101 250101       UCAYALI CORONEL PORTILLO                   CALLERIA
+## 29   250301 250301       UCAYALI       PADRE ABAD                 PADRE ABAD
+## 30   250401 250401       UCAYALI            PURUS                      PURUS
+##    Tipomuni P40_1 recojo_diario_kg P42_1 P43_3 P43_4 P43_5 P43_6 P44_1
+## 1         1     1            25800     4     0     0     5     6     2
+## 2         1     3              800     4     0     0     0     6     1
+## 3         2     1             2114     4     3     0     5     6     1
+## 4         1     1           742834     4     0     0     5     6     1
+## 5         2     1            54126     4     3     0     0     6     1
+## 6         2     1           323825     4     0     0     5     6     1
+## 7         2     1            34162     4     3     0     5     6     1
+## 8         1     1           412876     4     3     0     5     6     1
+## 9         2     1           652468     4     0     0     5     6     1
+## 10        2     1           570230     4     3     4     5     6     1
+## 11        2     1           274410     4     3     0     5     6     1
+## 12        2     1           246640     4     0     0     0     6     1
+## 13        2     1           157889     4     3     0     5     6     1
+## 14        2     1           363171     4     0     0     0     6     1
+## 15        2     1            66260     4     3     0     5     6     1
+## 16        2     1           370000     4     3     0     5     6     1
+## 17        2     1           160000     4     0     0     5     6     1
+## 18        2     1           182940     4     3     0     5     6     1
+## 19        2     1           178907     4     0     0     5     6     1
+## 20        2     2            83490     3     0     0     5     6     1
+## 21        2     1           217261     4     0     0     5     6     1
+## 22        2     1           110592     4     3     0     5     6     1
+## 23        2     1           140000     4     3     0     5     6     1
+## 24        2     1           368255     4     3     0     5     6     1
+## 25        2     2              160     4     3     0     5     6     2
+## 26        1     2            80500     4     3     4     5     6     2
+## 27        1     1           200000     3     0     0     0     6     2
+## 28        1     1           200000     3     0     0     5     6     2
+## 29        1     1            14400     4     0     0     0     6     2
+## 30        1     1              400     3     0     0     5     6     2</code></pre></li>
+</ul>
+<p>4.2 ¿Cuál es la municipalidad distrital con mayor promedio diario de
+recojo de residuos sólidos?</p>
+<p>Para responder esta pregunta necesitamos concatenar dos funciones 1.
+filter y 2. summarise</p>
+<pre class="r"><code>data %&gt;% 
+  filter(Tipomuni == 2) %&gt;% 
+  filter(recojo_diario_kg == max(recojo_diario_kg,na.rm = T))</code></pre>
+<pre><code>##   idmunici Ubigeo Departamento Provincia               Distrito Tipomuni P40_1
+## 1   150132 150132         LIMA      LIMA SAN JUAN DE LURIGANCHO        2     1
+##   recojo_diario_kg P42_1 P43_3 P43_4 P43_5 P43_6 P44_1
+## 1          1026525     4     0     0     5     0     1</code></pre>
+<p>4.3 ¿Cuál es la municipalidad distrital de Loreto que recoge en
+promedio una mayor cantidad de residuos sólidos?</p>
+<pre class="r"><code>data %&gt;% 
+  filter(Departamento == &quot;LORETO&quot;&amp;Tipomuni == 2) %&gt;% 
+    select(Provincia,recojo_diario_kg) %&gt;% 
+    filter(recojo_diario_kg == max(recojo_diario_kg,na.rm = T))</code></pre>
+<pre><code>##   Provincia recojo_diario_kg
+## 1    MAYNAS            80000</code></pre>
+<p>4.4 ¿Cuál es la municipalidad provincial de Lima Región con el menor
+promedio de residuos sólidos recogidos al dia?</p>
+<pre class="r"><code>data %&gt;% 
+  filter(Tipomuni == 1 &amp; Departamento == &quot;LIMA&quot;) %&gt;% 
+  select(Provincia,recojo_diario_kg) %&gt;% 
+  filter(recojo_diario_kg==min(recojo_diario_kg,na.rm = T))</code></pre>
+<pre><code>##   Provincia recojo_diario_kg
+## 1    YAUYOS             1500</code></pre>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
