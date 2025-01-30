@@ -14,9 +14,9 @@ output:
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
 
-Curso: SOC294 - Estadística para el análisis sociológico 1
+Curso: SOC294 - Estadística para el análisis sociológico 2
 
-Semestre 2024 - 2
+Semestre 2025-1
 
 ```{=html}
 <style>
@@ -30,19 +30,35 @@ Semestre 2024 - 2
 </style>
 ```
 ::: custom-text
-Bienvenidos al curso "Estadística para el Análisis Sociológico 1".
+Bienvenidos al curso "Estadística para el Análisis Sociológico 2".
 :::
 
 ## 1. Sumilla
 
-Es un curso teórico y/o práctico que contribuye al logro de las competencias de Investigación. Incluye los siguientes temas: escalas de medición, variables e índices; estadística descriptiva (resúmenes tabulares, gráficos y numéricos); inferencia estadística, la distribución normal y estimación de parámetros; pruebas de hipótesis paramétricas y no paramétricas; análisis de tablas de contingencia; medidas de asociación bivariables; análisis de la varianza; regresión simple.
+Es un curso teórico y/o práctico que contribuye al logro de las competencias de Investigación y Comunicación Eficaz. Busca que los estudiantes se familiaricen y utilicen las principales técnicas de análisis cuantitativo multivariable y de construcción de modelos, identificando su utilidad y pertinencia para diferentes problemas de investigación. Incluye como temas: regresión múltiple de mínimos cuadrados y sus supuestos teóricos; modelos de regresión e inferencia estadística; diagnóstico, especificación e interpretación de modelos de regresión múltiple; modelos de regresión con variables categóricas; regresión logística; análisis de componentes principales y análisis factorial.
 
-## 2. Presentación
+## 2. Contenido del curso
 
-El curso de Estadística para el Análisis Sociológico 1 busca presentar al estudiante con herramientas que le permitan familiarizarse con el análisis cuantitativo de fenómenos sociales. Construiremos sobre la base de conocimientos previos para comprender mejor el análisis descriptivo e inferencial bivariado.
 
-El curso se divide en sesiones teóricas y prácticas. Las sesiones teóricas buscan presentar y discutir los fundamentos del análisis cuantitativo. Las sesiones prácticas se enfocarán en el manejo de R con ejemplos prácticos.
+UNIDAD 1: Análisis descriptivo e inferencial.
+1.1. Fuentes de información secundaria 
+1.2. Análisis descriptivo y ponderación de data
+1.3. Regresión lineal simple: Estimación y supuestos.
+
+UNIDAD 2: Modelos de inferencia causal I
+2.1. Revisión de modelos de inferencia causal
+2.2. Regresión lineal múltiple: Estimaciones y supuestos  
+
+Unidad 3. Modelos de inferencia causal II
+3.1. Regresión discontinua
+3.2. Diferencia en diferencias
+
+Unidad 4. Modelos de inferencia causal III
+4.1. Modelos de efectos fijos 
+4.2. Modelos de efectos aleatorios
+
 
 ## 3. Evaluación
 
 ![](tablaindex.png)
+
