@@ -423,7 +423,7 @@ load(url(&quot;https://www.dropbox.com/s/fyobx9uswy3qgp3/dataWorld_q.rda?dl=1&qu
 data_1 = dataWorld_q %&gt;% 
   filter(quinq==&quot;2015-2019&quot;)
 
-ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)&quot;) + theme_light()</code></pre>
+ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (2015-2019)&quot;) + theme_light()</code></pre>
 <pre><code>## Warning: Removed 10 rows containing missing values or values outside the scale range
 ## (`geom_point()`).</code></pre>
 <p><img src="pd1_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
@@ -620,7 +620,7 @@ class="section level4">
 representa la relación entre ambas vairiables y que representa el cambio
 esperado en nuestra variable dependiente (esperanza de vida) por cada
 cambio de una unidad en nuestra variable independiente (fecundidad)</p>
-<pre class="r"><code>ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)&quot;) + theme_light() + geom_smooth(method=lm,se=F)</code></pre>
+<pre class="r"><code>ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (2015-2019)&quot;) + theme_light() + geom_smooth(method=lm,se=F)</code></pre>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 <pre><code>## Warning: Removed 10 rows containing non-finite outside the scale range
 ## (`stat_smooth()`).</code></pre>
