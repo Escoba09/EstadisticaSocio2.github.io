@@ -55,7 +55,7 @@ load(url("https://www.dropbox.com/s/fyobx9uswy3qgp3/dataWorld_q.rda?dl=1"))
 data_1 = dataWorld_q %>% 
   filter(quinq=="2015-2019")
 
-ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +  ggtitle ("Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)") + theme_light()
+ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +  ggtitle ("Relación entre la tasa de fecundidad y la esperanza de vida femenina (2015-2019)") + theme_light()
 ```
 
 ```{r}
@@ -152,7 +152,7 @@ Ecuación: lifExpFem= 88.617 − trf(5.185)
 Esa ecuación crea una línea recta en el diagrama de dispersión que representa la relación entre ambas vairiables y que representa el cambio esperado en nuestra variable dependiente (esperanza de vida) por cada cambio de una unidad en nuestra variable independiente (fecundidad)
 
 ```{r}
-ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +  ggtitle ("Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)") + theme_light() + geom_smooth(method=lm,se=F)
+ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +  ggtitle ("Relación entre la tasa de fecundidad y la esperanza de vida femenina (2015-2019)") + theme_light() + geom_smooth(method=lm,se=F)
 ```
 
 El error estándar del coeficiente b1 es 0.24. El error estándar del coeficiente es importante porque indica cuánto puede variar un coeficiente estimado si repitieras el análisis con diferentes datos. Un error estándar más pequeño indica una mayor precisión y un modelo más confiable.
