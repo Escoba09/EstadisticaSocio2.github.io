@@ -10,6 +10,9 @@ output:
     theme: flatly
     highlight: textmate
     always_allow_html: yes
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
@@ -35,30 +38,50 @@ Bienvenidos al curso "Estadística para el Análisis Sociológico 2".
 
 ## 1. Sumilla
 
-Es un curso teórico y/o práctico que contribuye al logro de las competencias de Investigación y Comunicación Eficaz. Busca que los estudiantes se familiaricen y utilicen las principales técnicas de análisis cuantitativo multivariable y de construcción de modelos, identificando su utilidad y pertinencia para diferentes problemas de investigación. Incluye como temas: regresión múltiple de mínimos cuadrados y sus supuestos teóricos; modelos de regresión e inferencia estadística; diagnóstico, especificación e interpretación de modelos de regresión múltiple; modelos de regresión con variables categóricas; regresión logística; análisis de componentes principales y análisis factorial.
+Es un curso teórico y/o práctico que contribuye al logro de las
+competencias de Investigación y Comunicación Eficaz. Busca que los
+estudiantes se familiaricen y utilicen las principales técnicas de
+análisis cuantitativo multivariable y de construcción de modelos,
+identificando su utilidad y pertinencia para diferentes problemas de
+investigación. Incluye como temas: regresión múltiple de mínimos
+cuadrados y sus supuestos teóricos; modelos de regresión e inferencia
+estadística; diagnóstico, especificación e interpretación de modelos de
+regresión múltiple; modelos de regresión con variables categóricas;
+regresión logística; análisis de componentes principales y análisis
+factorial.
 
 ## 2. Contenido del curso
 
+Unidad 1: Análisis descriptivo e inferencial.
 
-UNIDAD 1: Análisis descriptivo e inferencial.
-1.1. Fuentes de información secundaria 
-1.2. Análisis descriptivo y ponderación de data
-1.3. Regresión lineal simple: Estimación y supuestos.
+-   1.1. Fuentes de información secundaria
 
-UNIDAD 2: Modelos de inferencia causal I
-2.1. Revisión de modelos de inferencia causal
-2.2. Regresión lineal múltiple: Estimaciones y supuestos  
+-   1.2. Análisis descriptivo y ponderación de data
 
-Unidad 3. Modelos de inferencia causal II
-3.1. Regresión discontinua
-3.2. Diferencia en diferencias
+-   1.3. Regresión lineal simple: Estimación y supuestos.
 
-Unidad 4. Modelos de inferencia causal III
-4.1. Modelos de efectos fijos 
-4.2. Modelos de efectos aleatorios
+Unidad 2: Modelos de inferencia causal
 
+-    2.1. Revisión de modelos de inferencia causal
+
+-   2.2. Regresión lineal múltiple: Estimaciones y supuestos
+
+Unidad 3. Modelos de inferencia causal
+
+-    3.1. Regresión discontinua
+
+-   3.2. Diferencia en diferencias
+
+Unidad 4. Modelos de inferencia causal
+
+-   4.1. Modelos de efectos fijos
+
+-   4.2. Modelos de efectos aleatorios
 
 ## 3. Evaluación
 
 ![](tablaindex.png)
+
+## 4. Ejercicios en sesiones prácticas
+
 
