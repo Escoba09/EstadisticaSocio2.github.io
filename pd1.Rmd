@@ -42,6 +42,12 @@ E = Corresponde a las desviaciones de los valores verdaderos de Y con respecto a
 
 ### **Pasos para la regresión lineal simple**
 
+#### Paso previo: Estadísticas descriptivas
+
+```{r}
+
+```
+
 #### **Paso 1: Analizar la asociación entre las variables de interés**
 
 En el siguiente diagrama de dispersión puede verse la relación entre la fecundidad y la esperanza de vida (2015-2019), donde cada punto representa un país. Como se aprecia, cuantos menos hijos en promedio tienen las mujeres en un país, la esperanza de vida tiende a ser mayor.
@@ -57,6 +63,30 @@ data_1 = dataWorld_q %>%
 
 ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +  ggtitle ("Relación entre la tasa de fecundidad y la esperanza de vida femenina (2015-2019)") + theme_light()
 ```
+
+```{r}
+library(lsr)
+
+tabla1 = data_1 %>%
+  group_by(quinq) %>%
+  summarise(Media = mean(tfr, na.rm = T),
+            Mediana = median(tfr, na.rm = T),
+            Desviacion = sd(tfr, na.rm = T),
+            Inferior = ciMean(tfr, na.rm = T)[1],
+            Superior = ciMean(tfr, na.rm = T)[2])
+
+tabla1
+```
+```{r}
+ggplot(tabla1, aes(x=quinq, y=Media, fill = quinq))+
+  geom_bar(stat="identity")+
+  geom_errorbar(aes(ymin=Inferior, ymax=Superior), width=0.2)+
+  geom_text(aes(label=paste(round(Media, 1))), vjust=-2, size=3)+
+  xlab("Quinquenio") + ylab("Tasa global de fecundidad")+
+  ylim(0, 5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
 
 ```{r}
 #Prueba de correlación
@@ -85,6 +115,7 @@ Pr(\>F) = \< 2.2e-1 → Rechazamos el H0: la tasa de fecundidad influye signific
 F-value = 481.02 → Cuanto mayor sea este valor, más fuerte es la relación.
 
 #### **Paso 3: ¿Qué tanto explica mi modelo?/¿Qué tan bien predice?**
+
 ##### **Paso 3.1 COEFICIENTE DE DETERMINACIÓN – R2**
 
 Para responder a esta pregunta debemos analizar el R2, más conocido como el Coeficiente de Determinación. El R2 mide la “bondad de ajuste” del modelo de regresión a los datos analizados. Nos indica qué tanto se ajusta la recta de regresión a los valores reales de Y. Podemos interpretarlo como el porcentaje de la variabilidad total de la variable dependiente explicado por la variable independiente.
@@ -100,12 +131,12 @@ summary(modelo1)
 ```
 
 ##### **Paso 3.2 Mean Squared Error (MSE) y Rooted Mean Squared Error (RMSE)**
+
 El MSE mide el promedio de los errores al cuadrar la diferencia entre los valores predichos y los reales. Es decir, muestra cuánto se desvían, en promedio, las predicciones de los valores reales, pero las diferencias se elevan al cuadrado, lo que penaliza los grandes errores.
 
 El RMSE es simplemente la raíz cuadrada del MSE. La razón de usar el RMSE en lugar del MSE es que el RMSE devuelve el error en las mismas unidades que las variables originales, lo cual puede ser más interpretativo que un error en unidades al cuadrado.
 
-MSE siempre es positivo.
-Un MSE o RSME bajo indica un modelo con un buen ajuste, mientras que un MSE o RMSE alto sugiere un modelo con un mal ajuste.
+MSE siempre es positivo. Un MSE o RSME bajo indica un modelo con un buen ajuste, mientras que un MSE o RMSE alto sugiere un modelo con un mal ajuste.
 
 ```{r}
 data_2 = data_1[!is.na(data_1$tfr), ]
@@ -120,6 +151,7 @@ MSE
 RMSE <- sqrt(MSE)
 RMSE
 ```
+
 Si la esperanza de vida de las mujeres en tu conjunto de datos varía entre 50 y 90 años (un rango de 40 años), un RMSE de 4.23 años podría considerarse aceptable, ya que es aproximadamente un 10% del rango total de la variable. Si la variabilidad fuera más pequeña, un RMSE tan alto podría indicar que el modelo necesita mejoras.
 
 #### **Paso 4: ¿Cuáles son los parámetros?: TABLA DE COEFICIENTES**
@@ -202,7 +234,7 @@ stargazer(reg_fecund1, reg_fecund2, type = "text",
 
 Los modelos de regresión simple (y en general los modelos de regresión) pueden hacer predicciones, pero no necesariamente demuestran causalidad. La regresión describe la relación entre variables, pero para establecer causalidad se requieren condiciones más estrictas, como diseño experimental, control de variables de confusión y análisis más profundos.
 
-¿Por qué la regresión no implica causalidad?: Un modelo de regresión puede mostrar que hay una relación entre dos variables, pero no necesariamente indica que una cause la otra. 
+¿Por qué la regresión no implica causalidad?: Un modelo de regresión puede mostrar que hay una relación entre dos variables, pero no necesariamente indica que una cause la otra.
 
 Imagina que quieres estudiar la relación entre el nivel educativo y el salario de las personas. Supongamos que tienes datos que muestran que, en promedio, las personas con mayor nivel educativo ganan más dinero. Pero, esto no implica que el nivel educativo cause el aumento del salario, por varias razones:
 
