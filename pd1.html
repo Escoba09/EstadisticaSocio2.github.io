@@ -389,32 +389,376 @@ variables explicativas ordinales o dicotómicas.</p>
 <p>E = Corresponde a las desviaciones de los valores verdaderos de Y con
 respecto a los valores esperados de “Y” (diferencia entre lo observado y
 estimado por el modelo).</p>
+<div
+id="evolución-de-la-fecundidad-en-el-mundo-experanza-de-vida-de-las-mujeres-y-tasa-global-de-fecundidad"
+class="section level2">
+<h2>Evolución de la fecundidad en el mundo: Experanza de vida de las
+mujeres y tasa global de fecundidad</h2>
 <p><img src="Dicpd6.png" /></p>
-<div id="pasos-para-la-regresión-lineal-simple" class="section level2">
-<h2><strong>Pasos para la regresión lineal simple</strong></h2>
-<p>Paso 1: Analizar la asociación entre las variables de interés</p>
+<div id="pasos-para-la-regresión-lineal-simple" class="section level3">
+<h3><strong>Pasos para la regresión lineal simple</strong></h3>
+<div id="paso-1-analizar-la-asociación-entre-las-variables-de-interés"
+class="section level4">
+<h4><strong>Paso 1: Analizar la asociación entre las variables de
+interés</strong></h4>
+<p>En el siguiente diagrama de dispersión puede verse la relación entre
+la fecundidad y la esperanza de vida (2015-2019), donde cada punto
+representa un país. Como se aprecia, cuantos menos hijos en promedio
+tienen las mujeres en un país, la esperanza de vida tiende a ser
+mayor.</p>
+<pre class="r"><code>Sys.setlocale(&quot;LC_ALL&quot;, &quot;es_ES.UTF-8&quot;)</code></pre>
+<pre><code>## [1] &quot;LC_COLLATE=es_ES.UTF-8;LC_CTYPE=es_ES.UTF-8;LC_MONETARY=es_ES.UTF-8;LC_NUMERIC=C;LC_TIME=es_ES.UTF-8&quot;</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(ggplot2)
 load(url(&quot;https://www.dropbox.com/s/fyobx9uswy3qgp3/dataWorld_q.rda?dl=1&quot;))
 
-names(dataWorld_q)</code></pre>
-<pre><code>##  [1] &quot;country&quot;    &quot;quinq&quot;      &quot;tfr&quot;        &quot;yearSchF&quot;   &quot;contracep&quot; 
-##  [6] &quot;age1mar&quot;    &quot;sanitat&quot;    &quot;water&quot;      &quot;birthSkill&quot; &quot;childMort&quot; 
-## [11] &quot;deathRate&quot;  &quot;extPov&quot;     &quot;famWorkFem&quot; &quot;femWork&quot;    &quot;incomePp&quot;  
-## [16] &quot;income10p&quot;  &quot;gini&quot;       &quot;lifExpFem&quot;  &quot;lifExpTot&quot;  &quot;maleWork&quot;  
-## [21] &quot;materMort&quot;  &quot;vaccMeas&quot;   &quot;schGenEq&quot;   &quot;doctor&quot;     &quot;teenFert&quot;</code></pre>
-<pre class="r"><code>ggplot(dataWorld_q, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle(&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)&quot;) + theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 140 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 140 rows containing missing values or values outside the scale range
+data_1 = dataWorld_q %&gt;% 
+  filter(quinq==&quot;2015-2019&quot;)
+
+ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)&quot;) + theme_light()</code></pre>
+<pre><code>## Warning: Removed 10 rows containing missing values or values outside the scale range
 ## (`geom_point()`).</code></pre>
 <p><img src="pd1_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>Paso 2: ¿Mi modelo explica una cantidad significativa de variabilidad
-en la variable dependiente?: TABLA ANOVA</p>
-<p>Paso 3: ¿Qué tanto explica mi modelo?: COEFICIENTE DE DETERMINACIÓN –
-R2</p>
-<p>Paso 4: ¿Cuáles son los parámetros?: TABLA DE COEFICIENTES</p>
-<p>Paso 5: Construir la ecuación y predecir</p>
+<pre class="r"><code>#Prueba de correlación
+cor.test(data_1$tfr, data_1$lifExpFem)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  data_1$tfr and data_1$lifExpFem
+## t = -21.932, df = 182, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.8871151 -0.8064711
+## sample estimates:
+##        cor 
+## -0.8517614</code></pre>
+<p><img src="G1.png" /></p>
+</div>
+<div
+id="paso-2-mi-modelo-explica-una-cantidad-significativa-de-variabilidad-en-la-variable-dependiente-tabla-anova"
+class="section level4">
+<h4><strong>Paso 2: ¿Mi modelo explica una cantidad significativa de
+variabilidad en la variable dependiente?: TABLA ANOVA</strong></h4>
+<p>Para responder a esta pregunta debemos analizar la TABLA DE ANOVA. En
+esta tabla se analiza el modelo en su conjunto y se realiza una prueba
+de hipótesis. El estadístico F permite contrastar si existe o no
+relación significativa entre las variables (¿hay relación lineal?)</p>
+<p>Las hipótesis para la prueba F son las siguientes:</p>
+<p>H0: El modelo de regresión no es válido</p>
+<p>H1: El modelo de regresión es válido (variable X aporta al
+modelo)</p>
+<pre class="r"><code>modelo1 &lt;- lm(lifExpFem ~ tfr, data=data_1)
+anova(modelo1)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: lifExpFem
+##            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## tfr         1 8692.9  8692.9  481.02 &lt; 2.2e-16 ***
+## Residuals 182 3289.1    18.1                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Pr(&gt;F) = &lt; 2.2e-1 → Rechazamos el H0: la tasa de fecundidad
+influye significativamente en la esperanza de vida de las mujeres.</p>
+<p>F-value = 481.02 → Cuanto mayor sea este valor, más fuerte es la
+relación.</p>
+</div>
+<div id="paso-3-qué-tanto-explica-mi-modeloqué-tan-bien-predice"
+class="section level4">
+<h4>**Paso 3: ¿Qué tanto explica mi modelo?/¿Qué tan bien predice?</h4>
+<div id="paso-3.1-coeficiente-de-determinación-r2"
+class="section level5">
+<h5><strong>Paso 3.1 COEFICIENTE DE DETERMINACIÓN – R2</strong></h5>
+<p>Para responder a esta pregunta debemos analizar el R2, más conocido
+como el Coeficiente de Determinación. El R2 mide la “bondad de ajuste”
+del modelo de regresión a los datos analizados. Nos indica qué tanto se
+ajusta la recta de regresión a los valores reales de Y. Podemos
+interpretarlo como el porcentaje de la variabilidad total de la variable
+dependiente explicado por la variable independiente.</p>
+<p>Los valores van de 0 a 1. Mientras más cercano esté el R2 a 1, mayor
+será la variabilidad explicada. El R2 es un indicador de ajuste del
+modelo.</p>
+<p>Ejemplo: un R2 de 0.10 explicará un 10% de la variabilidad de Y,
+podríamos decir que es muy poco. En cambio, un R2 de 0.90 explicará un
+90%, por lo que podemos concluir que es un buen modelo.</p>
+<p>Problema: R2 siempre aumenta cuando se agregan más variables al
+modelo, incluso si no son relevantes.</p>
+<pre class="r"><code>summary(modelo1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = lifExpFem ~ tfr, data = data_1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -16.1850  -2.2070   0.2299   2.8533  10.9325 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  88.6175     0.7295  121.47   &lt;2e-16 ***
+## tfr          -5.1858     0.2364  -21.93   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.251 on 182 degrees of freedom
+##   (10 observations deleted due to missingness)
+## Multiple R-squared:  0.7255, Adjusted R-squared:  0.724 
+## F-statistic:   481 on 1 and 182 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div
+id="paso-3.2-mean-squared-error-mse-y-rooted-mean-squared-error-rmse"
+class="section level5">
+<h5><strong>Paso 3.2 Mean Squared Error (MSE) y Rooted Mean Squared
+Error (RMSE)</strong></h5>
+<p>El MSE mide el promedio de los errores al cuadrar la diferencia entre
+los valores predichos y los reales. Es decir, muestra cuánto se desvían,
+en promedio, las predicciones de los valores reales, pero las
+diferencias se elevan al cuadrado, lo que penaliza los grandes
+errores.</p>
+<p>El RMSE es simplemente la raíz cuadrada del MSE. La razón de usar el
+RMSE en lugar del MSE es que el RMSE devuelve el error en las mismas
+unidades que las variables originales, lo cual puede ser más
+interpretativo que un error en unidades al cuadrado.</p>
+<p>MSE siempre es positivo. Un MSE o RSME bajo indica un modelo con un
+buen ajuste, mientras que un MSE o RMSE alto sugiere un modelo con un
+mal ajuste.</p>
+<pre class="r"><code>data_2 = data_1[!is.na(data_1$tfr), ]
+modelo2 &lt;- lm(lifExpFem ~ tfr, data=data_2)
+predicciones &lt;- predict(modelo2, newdata = data_2)
+
+# Calcular MSE
+MSE &lt;- mean((data_2$lifExpFem - predicciones)^2)
+MSE</code></pre>
+<pre><code>## [1] 17.87549</code></pre>
+<pre class="r"><code># Calcular RMSE
+RMSE &lt;- sqrt(MSE)
+RMSE</code></pre>
+<pre><code>## [1] 4.227941</code></pre>
+<p>Si la esperanza de vida de las mujeres en tu conjunto de datos varía
+entre 50 y 90 años (un rango de 40 años), un RMSE de 4.23 años podría
+considerarse aceptable, ya que es aproximadamente un 10% del rango total
+de la variable. Si la variabilidad fuera más pequeña, un RMSE tan alto
+podría indicar que el modelo necesita mejoras.</p>
+</div>
+</div>
+<div id="paso-4-cuáles-son-los-parámetros-tabla-de-coeficientes"
+class="section level4">
+<h4><strong>Paso 4: ¿Cuáles son los parámetros?: TABLA DE
+COEFICIENTES</strong></h4>
+<p>Para responder a esta pregunta debemos analizar la Tabla de
+Coeficientes. En esta tabla se calculan los coeficientes que irán en la
+ecuación por cada una de las variables explicativas añadidas en el
+modelo.</p>
+<p>Luego de ello, se realiza una prueba de hipótesis (T) para validar
+nuestros coeficientes (al igual que validamos anteriormente el modelo en
+su conjunto). Esta prueba nos permitirá saber si estos coeficientes
+entran o no en la ecuación final.</p>
+<p>Las hipótesis para la prueba T es la siguiente:</p>
+<p>H0: La variable X1 no aporta al modelo propuesto (b igual a 0) H1: La
+variable X1 aporta al modelo propuesto (b diferente de 0)</p>
+<p>El valor Pr(&gt;|t|) en un modelo de regresión lineal se refiere al
+p-valor asociado a la prueba t de cada uno de los coeficientes del
+modelo.</p>
+<p>El Pr(&gt;|t|) te ayuda a decidir si una variable debe ser incluida
+en el modelo o si su contribución no es lo suficientemente
+importante</p>
+<pre class="r"><code>summary(modelo1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = lifExpFem ~ tfr, data = data_1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -16.1850  -2.2070   0.2299   2.8533  10.9325 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  88.6175     0.7295  121.47   &lt;2e-16 ***
+## tfr          -5.1858     0.2364  -21.93   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.251 on 182 degrees of freedom
+##   (10 observations deleted due to missingness)
+## Multiple R-squared:  0.7255, Adjusted R-squared:  0.724 
+## F-statistic:   481 on 1 and 182 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="paso-5-construir-la-ecuación-y-predecir"
+class="section level4">
+<h4><strong>Paso 5: Construir la ecuación y predecir</strong></h4>
+<pre class="r"><code>modelo1$coefficients</code></pre>
+<pre><code>## (Intercept)         tfr 
+##    88.61747    -5.18580</code></pre>
+<pre class="r"><code>summary(modelo1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = lifExpFem ~ tfr, data = data_1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -16.1850  -2.2070   0.2299   2.8533  10.9325 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  88.6175     0.7295  121.47   &lt;2e-16 ***
+## tfr          -5.1858     0.2364  -21.93   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.251 on 182 degrees of freedom
+##   (10 observations deleted due to missingness)
+## Multiple R-squared:  0.7255, Adjusted R-squared:  0.724 
+## F-statistic:   481 on 1 and 182 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Ecuación: lifExpFem= 88.617 − trf(5.185)</p>
+<p>Esa ecuación crea una línea recta en el diagrama de dispersión que
+representa la relación entre ambas vairiables y que representa el cambio
+esperado en nuestra variable dependiente (esperanza de vida) por cada
+cambio de una unidad en nuestra variable independiente (fecundidad)</p>
+<pre class="r"><code>ggplot(data_1, aes(x=tfr, y=lifExpFem)) + geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +  ggtitle (&quot;Relación entre la tasa de fecundidad y la esperanza de vida femenina (1950-2019)&quot;) + theme_light() + geom_smooth(method=lm,se=F)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 10 rows containing non-finite outside the scale range
+## (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 10 rows containing missing values or values outside the scale range
+## (`geom_point()`).</code></pre>
+<p><img src="pd1_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>El error estándar del coeficiente b1 es 0.24. El error estándar del
+coeficiente es importante porque indica cuánto puede variar un
+coeficiente estimado si repitieras el análisis con diferentes datos. Un
+error estándar más pequeño indica una mayor precisión y un modelo más
+confiable.</p>
+<p>La probabilidad (Pr(&gt;|t|)&lt;2e16) del estadístico de t de Student
+(-21.93) para la prueba de significancia estadística de este modelo es
+bastante menor que 0.001. Si consideramos como nivel de significancia
+para la prueba un nivel máximo de 0.05, podemos rechazar la hipótesis
+cero. Recordemos que en este caso la hipótesis cero nos dice que el
+efecto esperado de la nuestra variable dependiente (X) sobre la variable
+independiente (Y) es igual a cero (0) o nulo. En conclusión, podemos
+afirmar que la reducción de la fecundidad tiene un efecto
+estadísticamente significativo en el incremento de la esperanza de vida
+de las mujeres.</p>
+</div>
+</div>
+</div>
+<div
+id="evolución-de-la-fecundidad-en-el-mundo-tasa-global-de-fecundidad-y-educación-de-las-mujeres"
+class="section level2">
+<h2>Evolución de la fecundidad en el mundo: tasa global de fecundidad y
+educación de las mujeres</h2>
+<p>La educación de las mujeres es uno de los factores asociados con la
+reducción de las tasas de fecundidad. Para analizar ese efecto vamos a
+calcular un modelo de regresión simple donde la variable dependiente es
+la tasa global de fecundidad y la variable independiente es el promedio
+de años de escolaridad de las mujeres.</p>
+<p>Primero lo haremos para el periodo 1990-1994:</p>
+<pre class="r"><code>ggplot(dataWorld_q[dataWorld_q$quinq==&quot;1990-1994&quot;,], aes(x=yearSchF, y=tfr)) +
+  geom_point() +  xlab(&quot;Años de escolaridad&quot;) +  ylab(&quot;Número de hijos por mujer&quot;) +
+  ggtitle(&quot;Mundo 1990-94: Tasa de fecundidad según \naños de escolaridad de las mujeres&quot;) +
+  theme_light()</code></pre>
+<pre><code>## Warning: Removed 21 rows containing missing values or values outside the scale range
+## (`geom_point()`).</code></pre>
+<p><img src="pd1_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Modelo de regresión:</p>
+<pre class="r"><code>reg_fecund1 &lt;- lm(tfr ~ yearSchF, 
+                  data = dataWorld_q[dataWorld_q$quinq==&quot;1990-1994&quot;,])
+
+summary(reg_fecund1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ yearSchF, data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1990-1994&quot;, ])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.31691 -0.51638 -0.00167  0.57611  3.14481 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   7.0309     0.1607   43.75   &lt;2e-16 ***
+## yearSchF     -0.4546     0.0209  -21.75   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.9769 on 171 degrees of freedom
+##   (21 observations deleted due to missingness)
+## Multiple R-squared:  0.7345, Adjusted R-squared:  0.733 
+## F-statistic: 473.1 on 1 and 171 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="comparando-modelos-para-dos-periodos" class="section level2">
+<h2><strong>Comparando modelos para dos periodos</strong></h2>
+<p>A continuación calcularemos un modelo de regresión con las mismas
+variables que el anterior, pero para la década siguiente (periodo
+2000-2004). Utilizaremos el paquete stargazer para producir una tabla de
+resultados que nos permita una mejor presentación de los mismos</p>
+<p>La siguiente sintaxis calcula el segundo modelo y produce la tabla
+con stargazer que nos permite comparar los modelos (los errores estándar
+de los coeficientes aparecen entre paréntesis)</p>
+<pre class="r"><code>library(stargazer)</code></pre>
+<pre><code>## 
+## Please cite as:</code></pre>
+<pre><code>##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
+<pre><code>##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer</code></pre>
+<pre class="r"><code>reg_fecund2 &lt;- lm(tfr ~ yearSchF, 
+                  data = dataWorld_q[dataWorld_q$quinq==&quot;2000-2004&quot;,])
+
+stargazer(reg_fecund1, reg_fecund2, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          column.labels = c(&quot;1990-94&quot;, &quot;2000-04&quot;),
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ===========================================
+##                   Dependent variable:      
+##              ------------------------------
+##                           tfr              
+##                  1990-94        2000-04    
+##                    (1)            (2)      
+## -------------------------------------------
+## yearSchF        -0.455***      -0.406***   
+##                  (0.021)        (0.020)    
+##                                            
+## Constant        7.031***        6.553***   
+##                  (0.161)        (0.180)    
+##                                            
+## -------------------------------------------
+## Observations       173            173      
+## R2                0.735          0.698     
+## Adjusted R2       0.733          0.696     
+## ===========================================
+## Note:         *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+</div>
+<div id="predicción-vs.-causalidad" class="section level2">
+<h2><strong>Predicción vs. Causalidad</strong></h2>
+<p>Los modelos de regresión simple (y en general los modelos de
+regresión) pueden hacer predicciones, pero no necesariamente demuestran
+causalidad. La regresión describe la relación entre variables, pero para
+establecer causalidad se requieren condiciones más estrictas, como
+diseño experimental, control de variables de confusión y análisis más
+profundos.</p>
+<p>¿Por qué la regresión no implica causalidad?: Un modelo de regresión
+puede mostrar que hay una relación entre dos variables, pero no
+necesariamente indica que una cause la otra.</p>
+<p>Imagina que quieres estudiar la relación entre el nivel educativo y
+el salario de las personas. Supongamos que tienes datos que muestran
+que, en promedio, las personas con mayor nivel educativo ganan más
+dinero. Pero, esto no implica que el nivel educativo cause el aumento
+del salario, por varias razones:</p>
+<ol style="list-style-type: decimal">
+<li><p>Variables de confusión: Factores como la experiencia laboral, el
+género o la industria en la que trabaja una persona también pueden
+afectar tanto al salario como al nivel educativo. Si estas variables no
+se incluyen en el modelo, el resultado podría ser sesgado.</p></li>
+<li><p>Causalidad inversa: Es posible que las personas con salarios más
+altos puedan permitirse continuar sus estudios, lo que hace que el nivel
+educativo sea un efecto de los altos salarios y no una causa.</p></li>
+<li><p>Causalidad espuria: Tal vez existe una tercera variable (como el
+acceso a recursos educativos de calidad) que afecta tanto el nivel
+educativo como el salario.</p></li>
+</ol>
 </div>
 </div>
 
