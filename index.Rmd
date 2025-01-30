@@ -82,6 +82,10 @@ Unidad 4. Modelos de inferencia causal III
 
 ![](tablaindex.png)
 
+## 4. Cronograma
+
+![](cronograma.png)
+
 ## 5. Ejercicios en sesiones prácticas
 
 Son un total de 3 y constan de ejercicios prácticos breves que se realizarán al final de la
