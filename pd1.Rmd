@@ -84,7 +84,7 @@ Pr(\>F) = \< 2.2e-1 → Rechazamos el H0: la tasa de fecundidad influye signific
 
 F-value = 481.02 → Cuanto mayor sea este valor, más fuerte es la relación.
 
-#### **Paso 3: ¿Qué tanto explica mi modelo?/¿Qué tan bien predice? 
+#### **Paso 3: ¿Qué tanto explica mi modelo?/¿Qué tan bien predice?**
 ##### **Paso 3.1 COEFICIENTE DE DETERMINACIÓN – R2**
 
 Para responder a esta pregunta debemos analizar el R2, más conocido como el Coeficiente de Determinación. El R2 mide la “bondad de ajuste” del modelo de regresión a los datos analizados. Nos indica qué tanto se ajusta la recta de regresión a los valores reales de Y. Podemos interpretarlo como el porcentaje de la variabilidad total de la variable dependiente explicado por la variable independiente.
