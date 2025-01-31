@@ -648,7 +648,8 @@ Politómicas: Tienen tres o más categorías (región Costa, Sierra, Selva,
 por ejemplo) Cuando se incluye una variable categórica en un modelo de
 regresión, se la representa a través de una o más “dummy variables”,
 dependiendo del número de categorías que tenga.</p>
-<p>Ejercicio práctico</p>
+<div id="ejercicio-práctico-1" class="section level2">
+<h2>Ejercicio práctico</h2>
 <p>Ingreso mensual de trabajadores dependientes</p>
 <p>Para explorar este tema, vamos a utilizar la información del Módulo 5
 de la ENAHO 2017 sobre empleo e ingresos de los miembros del hogar.
@@ -658,8 +659,47 @@ principal de los trabajadores dependientes.</p>
 mensual bruto del trabajador dependiente en su ocupación principal.
 Nuestra primera variable independiente será el nivel educativo del
 trabajador.</p>
-<p>Ingreso = b0 + b1*NiveEdu</p>
-<pre class="r"><code>#data &lt;- Enaho01a_2023_500 %&gt;% select(1:9, 39, 1021, 1024, 101, 102, 1393)
+<p><strong>Diccionario</strong></p>
+<p><strong>NiveEdu “¿Cuál es el último año o grado de estudios y nivel
+que aprobó? - Nivel</strong></p>
+<p>0. Sin Nivel</p>
+<p>1. Inicial</p>
+<p>2. Primaria Incompleta</p>
+<p>3. Primaria Completa</p>
+<p>4. Secundaria Incompleta</p>
+<p>5. Secundaria Completa</p>
+<p>6. Superior No Universitaria Incompleta</p>
+<p>7. Superior No Universitaria Completa</p>
+<p>8. Superior Universitaria Incompleta</p>
+<p>9. Superior Universitaria Completa</p>
+<p>10. Maestria/Doctorado”</p>
+<p><strong>Ocup “Ud. se desempeño en su ocupación principal o negocio
+como:</strong></p>
+<p>1. Empleador o patrono</p>
+<p>2. Trabajador Independiente</p>
+<p>3. Empleado</p>
+<p>4. Obrero</p>
+<p>5. Trabajador Familiar No Remunerado</p>
+<p>6. Trabajador del Hogar</p>
+<p>7. Otro”</p>
+<p><strong>Dominio</strong></p>
+<ul>
+<li><p>Costa</p></li>
+<li><p>Sierra</p></li>
+<li><p>Selva</p></li>
+<li><p>Lima M</p></li>
+</ul>
+<p><strong>Ingreso</strong></p>
+<ul>
+<li>Ingreso mensual en términos brutos</li>
+</ul>
+<p><strong>Sexo</strong></p>
+<ul>
+<li><p>Hombre</p></li>
+<li><p>Mujer</p></li>
+</ul>
+<pre class="r"><code>#library(dplyr)
+#data &lt;- Enaho01a_2023_500 %&gt;% select(1:9, 39, 1021, 1024, 101, 102, 1393)
 
 #colnames(data)[c(10, 11, 12, 13, 14, 15)] &lt;- c(&quot;Ocup&quot;, &quot;Sexo&quot;, &quot;NiveEdu&quot;, &quot;FreqPag&quot;, &quot;Ingreso&quot;, &quot;HorasTrabj&quot;)
 
@@ -686,6 +726,7 @@ trabajador.</p>
 #data &lt;- na.omit(data)
 
 #write.csv(data, &quot;Empleo.csv&quot;, row.names = FALSE)
+
 library(rio)
 data=import(&quot;Empleo.csv&quot;)</code></pre>
 <pre class="r"><code>library(ggplot2)</code></pre>
@@ -713,7 +754,9 @@ p</code></pre>
 <pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
 ## (`geom_bar()`).</code></pre>
 <p><img src="pd2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>Modelo 1.0</p>
+<div id="modelo-1.0" class="section level3">
+<h3>Modelo 1.0</h3>
+<p><em>Ingreso = b0 + b1*NiveEdu</em></p>
 <pre class="r"><code>mod1.0 &lt;- lm(Ingreso ~ NiveEdu, data = data)
 stargazer(mod1.0, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -738,7 +781,35 @@ stargazer(mod1.0, type = &quot;text&quot;,
 ## Adjusted R2              0.246            
 ## ==========================================
 ## Note:        *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Modelo 1.1</p>
+</div>
+<div id="modelo-1.1" class="section level3">
+<h3>Modelo 1.1</h3>
+<div id="incluyendo-una-variable-dicotómica-en-el-modelo-de-regresión-1"
+class="section level4">
+<h4><strong>Incluyendo una variable dicotómica en el modelo de regresión
+(1)</strong></h4>
+<p>En el diagrama anterior se observa que los puntos rojos, que
+represetan a los hombres, son más frecuentes encima de la recta de
+regresión que por debajo de ella, lo que indicaría que los hombres
+tienden a tener ingresos mayores a los de las mujeres.</p>
+<p>Vamos a introducir en el modelo al sexo como una variable categórica
+- dicotómica con efecto independiente aditivo:</p>
+<p><em>Ingreso = b0 + b1NiveEdu + b2Sexo</em></p>
+<p>En este caso, la variable sexo será procesada de la siguiente manera:
+sexo=0: Hombres; sexo=1: Mujeres.</p>
+</div>
+<div id="incluyendo-una-variable-dicotómica-en-el-modelo-de-regresión-2"
+class="section level4">
+<h4><strong>Incluyendo una variable dicotómica en el modelo de regresión
+(2)</strong></h4>
+<p>En tal sentido si el trabajador es un hombre (sexo=0), el modelo de
+regresión sería:</p>
+<p><em>Ingreso = b0 + b1NiveEdu + b2*1</em></p>
+<p>Por otro lado si el trabajador es una mujer (sexo=1sexo=1), entonces
+el modelo de regresión sería:</p>
+<p><em>Ingreso = b0 + b1NiveEdu + b2*1</em></p>
+<p>Como se aprecia, en este caso, la variable sexo afecta la
+intersección del modelo.</p>
 <pre class="r"><code>mod1.1 &lt;- lm(Ingreso ~ NiveEdu + Sexo, data = data)
 stargazer(mod1.0, mod1.1, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -766,7 +837,10 @@ stargazer(mod1.0, mod1.1, type = &quot;text&quot;,
 ## Adjusted R2       0.246          0.265     
 ## ===========================================
 ## Note:         *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Modelo 1.2</p>
+</div>
+</div>
+<div id="modelo-1.2" class="section level3">
+<h3>Modelo 1.2</h3>
 <pre class="r"><code>mod1.2 &lt;- lm(Ingreso ~ NiveEdu + HorasTrabj, data = data)
 stargazer(mod1.0, mod1.1, mod1.2, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -797,7 +871,11 @@ stargazer(mod1.0, mod1.1, mod1.2, type = &quot;text&quot;,
 ## Adjusted R2     0.246       0.265       0.255   
 ## ================================================
 ## Note:              *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Modelo 1.3</p>
+</div>
+<div id="modelo-1.3" class="section level3">
+<h3>Modelo 1.3</h3>
+<div id="modelo-con-variables-politómicas-1" class="section level4">
+<h4><strong>Modelo con variables politómicas (1)</strong></h4>
 <pre class="r"><code>mod1.3 &lt;- lm(Ingreso ~ NiveEdu + DOMINIO, data = data)
 stargazer(mod1.0, mod1.1, mod1.2, mod1.3, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -837,7 +915,10 @@ stargazer(mod1.0, mod1.1, mod1.2, mod1.3, type = &quot;text&quot;,
 ## Adjusted R2      0.246       0.265       0.255       0.253   
 ## =============================================================
 ## Note:                           *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Modelo 1.4</p>
+</div>
+</div>
+<div id="modelo-1.4" class="section level3">
+<h3>Modelo 1.4</h3>
 <pre class="r"><code>mod1.4 &lt;- lm(Ingreso ~ NiveEdu + DOMINIO + Sexo, data = data)
 stargazer(mod1.0, mod1.1, mod1.2, mod1.3, mod1.4, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -877,6 +958,8 @@ stargazer(mod1.0, mod1.1, mod1.2, mod1.3, mod1.4, type = &quot;text&quot;,
 ## Adjusted R2      0.246       0.265       0.255       0.253       0.271   
 ## =========================================================================
 ## Note:                                       *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+</div>
+</div>
 <div id="modelo-para-una-variable-categórica-con-efecto-interactivo"
 class="section level2">
 <h2>Modelo para una variable categórica con efecto interactivo</h2>
@@ -901,7 +984,8 @@ un efecto independiente, la ecuación que ya hemos visto es:</p>
 <li><p><em>Hombres (sexo=0): Ingreso=b0+b1NiveEdu</em></p></li>
 <li><p><em>Mujeres (sexo=1): Ingreso=b0+(b1+b2)NiveEdu</em></p></li>
 </ul>
-<p>Modelo 1.5</p>
+<div id="modelo-1.5" class="section level3">
+<h3>Modelo 1.5</h3>
 <pre class="r"><code>mod1.5 &lt;- lm(Ingreso ~ NiveEdu : Sexo, data = data)
 stargazer(mod1.0, mod1.1, mod1.5, type = &quot;text&quot;,
           omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
@@ -942,16 +1026,20 @@ ggplot(dataf5, aes(x = NiveEdu, y = Ingreso, color = Sexo)) +
   geom_line(aes(y = fit1.5)) + 
   coord_cartesian(ylim = c(-400, 5000))</code></pre>
 <p><img src="pd2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
-<p>Modelo 1.6</p>
+</div>
+<div id="modelo-1.6" class="section level3">
+<h3>Modelo 1.6</h3>
 <p>Podemos estimar otro modelo de regresión que contenga ambos
 supuestos.</p>
-<p>Supuesto de efecto independiente: independientemente del nivel
+<ul>
+<li><p>Supuesto de efecto independiente: independientemente del nivel
 educativo, los hombres y las mujeres parten de distintas bases de
 ingreso, menores en el caso de las mujeres. Aquí tendremos dos
-intersecciones.</p>
-<p>Supuesto de efecto interactivo: el efecto de la educación en los
+intersecciones.</p></li>
+<li><p>Supuesto de efecto interactivo: el efecto de la educación en los
 ingresos no es el mismo en el caso de los hombres y las mujeres. Las
-pendientes de hombres y mujeres serán distintas.</p>
+pendientes de hombres y mujeres serán distintas.</p></li>
+</ul>
 <p>Ingreso=b0+b1NiveEdy+b2Sexo+b3Sexo∗Nivedu</p>
 <pre class="r"><code>mod1.6 &lt;- lm(Ingreso ~ NiveEdu * Sexo, data = data)
 stargazer(mod1.0, mod1.1, mod1.5, mod1.6, type = &quot;text&quot;,
@@ -993,6 +1081,7 @@ ggplot(dataf6, aes(x = NiveEdu, y = Ingreso, color = Sexo)) +
   geom_line(aes(y = fit1.6)) + 
   coord_cartesian(ylim = c(-400, 5000))</code></pre>
 <p><img src="pd2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>
 </div>
 </div>
 

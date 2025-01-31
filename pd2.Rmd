@@ -169,7 +169,7 @@ Las variables categóricas pueden ser:
 
 Dicotómicas: Solo tienen dos categorías (Sexo del entrevistado; ocurre o no un evento; una condición es verdadera o falsa; etc.) Politómicas: Tienen tres o más categorías (región Costa, Sierra, Selva, por ejemplo) Cuando se incluye una variable categórica en un modelo de regresión, se la representa a través de una o más “dummy variables”, dependiendo del número de categorías que tenga.
 
-Ejercicio práctico
+## Ejercicio práctico
 
 Ingreso mensual de trabajadores dependientes
 
@@ -177,9 +177,70 @@ Para explorar este tema, vamos a utilizar la información del Módulo 5 de la EN
 
 En este ejemplo, tomaremos como variable depediente (Y) el ingreso mensual bruto del trabajador dependiente en su ocupación principal. Nuestra primera variable independiente será el nivel educativo del trabajador.
 
-Ingreso = b0 + b1\*NiveEdu
+**Diccionario**
+
+**NiveEdu "¿Cuál es el último año o grado de estudios y nivel que aprobó? - Nivel**
+
+0\. Sin Nivel
+
+1\. Inicial
+
+2\. Primaria Incompleta
+
+3\. Primaria Completa
+
+4\. Secundaria Incompleta
+
+5\. Secundaria Completa
+
+6\. Superior No Universitaria Incompleta
+
+7\. Superior No Universitaria Completa
+
+8\. Superior Universitaria Incompleta
+
+9\. Superior Universitaria Completa
+
+10\. Maestria/Doctorado"
+
+**Ocup "Ud. se desempeño en su ocupación principal o negocio como:**
+
+1\. Empleador o patrono
+
+2\. Trabajador Independiente
+
+3\. Empleado
+
+4\. Obrero
+
+5\. Trabajador Familiar No Remunerado
+
+6\. Trabajador del Hogar
+
+7\. Otro"
+
+**Dominio**
+
+-   Costa
+
+-   Sierra
+
+-   Selva
+
+-   Lima M
+
+**Ingreso**
+
+-   Ingreso mensual en términos brutos
+
+**Sexo**
+
+-   Hombre
+
+-   Mujer
 
 ```{r}
+#library(dplyr)
 #data <- Enaho01a_2023_500 %>% select(1:9, 39, 1021, 1024, 101, 102, 1393)
 
 #colnames(data)[c(10, 11, 12, 13, 14, 15)] <- c("Ocup", "Sexo", "NiveEdu", "FreqPag", "Ingreso", "HorasTrabj")
@@ -207,6 +268,7 @@ Ingreso = b0 + b1\*NiveEdu
 #data <- na.omit(data)
 
 #write.csv(data, "Empleo.csv", row.names = FALSE)
+
 library(rio)
 data=import("Empleo.csv")
 ```
@@ -221,7 +283,9 @@ p <- ggplot(data, aes(x = Ingreso)) +
 p
 ```
 
-Modelo 1.0
+### Modelo 1.0
+
+*Ingreso = b0 + b1\*NiveEdu*
 
 ```{r}
 mod1.0 <- lm(Ingreso ~ NiveEdu, data = data)
@@ -231,7 +295,29 @@ stargazer(mod1.0, type = "text",
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 
-Modelo 1.1
+### Modelo 1.1
+
+#### **Incluyendo una variable dicotómica en el modelo de regresión (1)**
+
+En el diagrama anterior se observa que los puntos rojos, que represetan a los hombres, son más frecuentes encima de la recta de regresión que por debajo de ella, lo que indicaría que los hombres tienden a tener ingresos mayores a los de las mujeres.
+
+Vamos a introducir en el modelo al sexo como una variable categórica - dicotómica con efecto independiente aditivo:
+
+*Ingreso = b0 + b1NiveEdu + b2Sexo*
+
+En este caso, la variable sexo será procesada de la siguiente manera: sexo=0: Hombres; sexo=1: Mujeres.
+
+#### **Incluyendo una variable dicotómica en el modelo de regresión (2)**
+
+En tal sentido si el trabajador es un hombre (sexo=0), el modelo de regresión sería:
+
+*Ingreso = b0 + b1NiveEdu + b2\*1*
+
+Por otro lado si el trabajador es una mujer (sexo=1sexo=1), entonces el modelo de regresión sería:
+
+*Ingreso = b0 + b1NiveEdu + b2\*1*
+
+Como se aprecia, en este caso, la variable sexo afecta la intersección del modelo.
 
 ```{r}
 mod1.1 <- lm(Ingreso ~ NiveEdu + Sexo, data = data)
@@ -241,7 +327,7 @@ stargazer(mod1.0, mod1.1, type = "text",
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 
-Modelo 1.2
+### Modelo 1.2
 
 ```{r}
 mod1.2 <- lm(Ingreso ~ NiveEdu + HorasTrabj, data = data)
@@ -251,7 +337,9 @@ stargazer(mod1.0, mod1.1, mod1.2, type = "text",
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 
-Modelo 1.3
+### Modelo 1.3
+
+#### **Modelo con variables politómicas (1)**
 
 ```{r}
 mod1.3 <- lm(Ingreso ~ NiveEdu + DOMINIO, data = data)
@@ -261,7 +349,7 @@ stargazer(mod1.0, mod1.1, mod1.2, mod1.3, type = "text",
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 
-Modelo 1.4
+### Modelo 1.4
 
 ```{r}
 mod1.4 <- lm(Ingreso ~ NiveEdu + DOMINIO + Sexo, data = data)
@@ -293,7 +381,7 @@ En el caso de un efecto interactivo, la ecuación sería:
 
 -   *Mujeres (sexo=1): Ingreso=b0+(b1+b2)NiveEdu*
 
-Modelo 1.5
+### Modelo 1.5
 
 ```{r}
 mod1.5 <- lm(Ingreso ~ NiveEdu : Sexo, data = data)
@@ -302,6 +390,7 @@ stargazer(mod1.0, mod1.1, mod1.5, type = "text",
           model.numbers = FALSE, object.names = TRUE,
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
+
 ```{r}
 fit1.5 <- predict(mod1.5)
 dataf5 <- cbind(data, fit1.5)
@@ -311,14 +400,13 @@ ggplot(dataf5, aes(x = NiveEdu, y = Ingreso, color = Sexo)) +
   coord_cartesian(ylim = c(-400, 5000))
 ```
 
-
-Modelo 1.6
+### Modelo 1.6
 
 Podemos estimar otro modelo de regresión que contenga ambos supuestos.
 
-Supuesto de efecto independiente: independientemente del nivel educativo, los hombres y las mujeres parten de distintas bases de ingreso, menores en el caso de las mujeres. Aquí tendremos dos intersecciones.
+-   Supuesto de efecto independiente: independientemente del nivel educativo, los hombres y las mujeres parten de distintas bases de ingreso, menores en el caso de las mujeres. Aquí tendremos dos intersecciones.
 
-Supuesto de efecto interactivo: el efecto de la educación en los ingresos no es el mismo en el caso de los hombres y las mujeres. Las pendientes de hombres y mujeres serán distintas.
+-   Supuesto de efecto interactivo: el efecto de la educación en los ingresos no es el mismo en el caso de los hombres y las mujeres. Las pendientes de hombres y mujeres serán distintas.
 
 Ingreso=b0+b1NiveEdy+b2Sexo+b3Sexo∗Nivedu
 
@@ -329,6 +417,7 @@ stargazer(mod1.0, mod1.1, mod1.5, mod1.6, type = "text",
           model.numbers = FALSE, object.names = TRUE,
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
+
 ```{r}
 fit1.6 <- predict(mod1.6)
 dataf6 <- cbind(data, fit1.6)
