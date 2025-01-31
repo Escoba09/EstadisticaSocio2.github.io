@@ -1,4 +1,4 @@
-name: "Estadistica para análisis sociológico 2"
+name: "Estadistica para análisis sociológico 1"
 output_dir: "."
 navbar:
   title: "Material para pds"
@@ -9,3 +9,15 @@ navbar:
       href: pd1.html
     - text: "Práctica dirigida 2"
       href: pd2.html
+    - text: "Práctica dirigida 3"
+      href: pd3.html
+    - text: "Práctica dirigida 4"
+      href: pd4.html
+    - text: "Práctica dirigida 5"
+      href: pd5.html
+    - text: "Práctica dirigida 6"
+      href: pd6.html
+    - text: "Práctica dirigida 7"
+      href: pd7.html
+    - text: "Práctica dirigida 8"
+      href: pd8.html
