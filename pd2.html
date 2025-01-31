@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Práctica dirigida 2</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Material para pds</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Inicio</a>
+</li>
+<li>
+  <a href="pd1.html">Práctica dirigida 1</a>
+</li>
+<li>
+  <a href="pd2.html">Práctica dirigida 2</a>
+</li>
+<li>
+  <a href="pd3.html">Práctica dirigida 3</a>
+</li>
+<li>
+  <a href="pd4.html">Práctica dirigida 4</a>
+</li>
+<li>
+  <a href="pd5.html">Práctica dirigida 5</a>
+</li>
+<li>
+  <a href="pd6.html">Práctica dirigida 6</a>
+</li>
+<li>
+  <a href="pd7.html">Práctica dirigida 7</a>
+</li>
+<li>
+  <a href="pd8.html">Práctica dirigida 8</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Práctica dirigida 2</h1>
+
+</div>
+
+
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
+<p>Curso: SOC294 - Estadística para el análisis sociológico 2</p>
+<p>Semestre 2025 - 1</p>
+<div id="regresión-múltiple" class="section level1">
+<h1><strong>1.Regresión múltiple</strong></h1>
+<p><strong>¿Para qué sirve hacer una regresión?</strong></p>
+<ul>
+<li><p>Para identificar la relación entre variables de interés a través
+de un modelo (ecuación de la recta).</p></li>
+<li><p>La ecuación nos sirve para la predicción.</p></li>
+<li><p>El comportamiento de una variable está influencia normalmente por
+más de un factor, podemos obtener una mejor predicción añadiendo más
+variables.</p></li>
+</ul>
+<p><strong>¿La relación entre las variables suele ser
+exacta?</strong></p>
+<p>NO. La distancia de cada punto (valor observado) a la recta es la
+parte que el modelo no puede predecir. Lo que buscamos es encontrar un
+modelo (ecuación de la recta) en el cual los errores sean los mínimos
+posibles (Estimación de Mínimos Cuadrados - EMC)</p>
+<p>Objetivo: Conocer el valor de una variable a partir de más de una
+variable explicativa.</p>
+<p>Y′=β0+β1∗x1+β2∗x2+βi∗xi</p>
+<p>En esta expresión, cada uno de los coeficientes representa la
+influencia individual que cada una de las X tiene sobre Y.</p>
+<p>Es importante entender la lógica del control estadístico. En una
+regresión lineal múltiple, el control estadístico nos permite “eliminar”
+explicaciones alternativas, en tanto se aisla el efecto de otras
+variables. La idea es:</p>
+<ul>
+<li><p>Evaluar si la relación entre X – Y permanece si se remueve el
+efecto de otra variable, es decir, si se controla por una tercera
+variable.</p></li>
+<li><p>Se analiza la relación entre X – Y para valores similares o
+iguales de una variable Z. De esta manera se elimina la influencia de Z
+en la relación entre X – Y. Es un paso en el establecimiento de X -&gt;
+Y.</p></li>
+<li><p>Si la relación entre X - Y desaparece cuando se controla por Z,
+se dice que la relación era espúrea.</p></li>
+</ul>
+<div id="ejercicio-práctico" class="section level2">
+<h2>Ejercicio práctico</h2>
+<p>Para este ejercicio utilizaremos la base de datos de indicadores
+sociodemográficos del mundo por quinquenios. La fuente original de los
+datos es el proyecto Gapminder.</p>
+<p>Consideraremos las siguientes variables</p>
+<p>Variable dependiente: Tasa global de fecundidad (tfr) Variables
+independientes: Años de escolaridad de la mujer (yearSchF) Tasa de uso
+de anticonceptivos (contracep)</p>
+<p>Primero calcularemos dos modelos de regresión simple, que luego
+compararemos con un modelo de regresión múltiple. Trabajaremos primero
+con datos del quinquenio 1995-1999.</p>
+<pre class="r"><code>load(url(&quot;https://www.dropbox.com/s/fyobx9uswy3qgp3/dataWorld_q.rda?dl=1&quot;))</code></pre>
+<div id="modelo-1-simple" class="section level3">
+<h3>Modelo 1 simple</h3>
+<pre class="r"><code>mod.reg1 &lt;- lm(tfr ~ yearSchF, 
+               data = dataWorld_q[dataWorld_q$quinq == &quot;1995-1999&quot;, ])
+
+summary(mod.reg1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ yearSchF, data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1995-1999&quot;, ])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.49027 -0.56797 -0.03326  0.56028  2.96957 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  6.80769    0.16843   40.42   &lt;2e-16 ***
+## yearSchF    -0.43497    0.02037  -21.35   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.9627 on 171 degrees of freedom
+##   (21 observations deleted due to missingness)
+## Multiple R-squared:  0.7272, Adjusted R-squared:  0.7256 
+## F-statistic: 455.8 on 1 and 171 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="modelo-2-simple" class="section level3">
+<h3>Modelo 2 simple</h3>
+<pre class="r"><code>mod.reg2 &lt;- lm(tfr ~ contracep, 
+               data = dataWorld_q[dataWorld_q$quinq == &quot;1995-1999&quot;, ])
+
+summary(mod.reg2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ contracep, data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1995-1999&quot;, ])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.05066 -0.49731  0.02912  0.61047  2.15326 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  6.795721   0.162956   41.70   &lt;2e-16 ***
+## contracep   -0.067323   0.003072  -21.91   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.8302 on 128 degrees of freedom
+##   (64 observations deleted due to missingness)
+## Multiple R-squared:  0.7895, Adjusted R-squared:  0.7879 
+## F-statistic: 480.2 on 1 and 128 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="modelo-3-múltiple" class="section level3">
+<h3>Modelo 3 múltiple</h3>
+<pre class="r"><code>mod.reg3 &lt;- lm(tfr ~ yearSchF +  contracep, 
+               data = dataWorld_q[dataWorld_q$quinq == &quot;1995-1999&quot;, ])
+
+summary(mod.reg3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ yearSchF + contracep, data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1995-1999&quot;, ])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.71926 -0.58924 -0.00554  0.52794  2.47162 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.102160   0.153349  46.314  &lt; 2e-16 ***
+## yearSchF    -0.176278   0.029194  -6.038 1.76e-08 ***
+## contracep   -0.046436   0.004366 -10.637  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.7355 on 121 degrees of freedom
+##   (70 observations deleted due to missingness)
+## Multiple R-squared:  0.8405, Adjusted R-squared:  0.8379 
+## F-statistic: 318.9 on 2 and 121 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="utilización-del-stargazer" class="section level3">
+<h3>Utilización del stargazer</h3>
+<pre class="r"><code>library(stargazer)</code></pre>
+<pre><code>## 
+## Please cite as:</code></pre>
+<pre><code>##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
+<pre><code>##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer</code></pre>
+<pre class="r"><code>stargazer(mod.reg1, mod.reg2, mod.reg3, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          title = &quot;OLS para Tasa Global de Fecundidad 1995-1999&quot;,
+          covariate.labels = c(&quot;Años de escolaridad mujeres&quot;, 
+                               &quot;% Uso de anticonceptivos&quot;),
+          dep.var.caption = &quot;Variable dependiente:&quot;,
+          dep.var.labels   = &quot;Fecundidad&quot;,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## OLS para Tasa Global de Fecundidad 1995-1999
+## ===========================================================
+##                                  Variable dependiente:     
+##                             -------------------------------
+##                                       Fecundidad           
+##                                (1)        (2)        (3)   
+## -----------------------------------------------------------
+## Años de escolaridad mujeres -0.435***             -0.176***
+##                              (0.020)               (0.029) 
+##                                                            
+## % Uso de anticonceptivos               -0.067***  -0.046***
+##                                         (0.003)    (0.004) 
+##                                                            
+## Constant                     6.808***   6.796***  7.102*** 
+##                              (0.168)    (0.163)    (0.153) 
+##                                                            
+## -----------------------------------------------------------
+## Observations                   173        130        124   
+## R2                            0.727      0.790      0.841  
+## Adjusted R2                   0.726      0.788      0.838  
+## ===========================================================
+## Note:                         *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+</div>
+</div>
+<div id="r2-ajustado" class="section level2">
+<h2>R2 ajustado</h2>
+<p>Corrige el R2 penalizando por el número de predictores.</p>
+<p>Se usa cuando tienes más de una variable independiente para evitar un
+sobreajuste.</p>
+<p>Si agregas variables irrelevantes, R2 ajustado puede disminuir. Si
+las variables nuevas realmente ayudan, R2 ajustado aumenta.</p>
+</div>
+<div id="estimando-valores-de-la-variable-dependiente-y"
+class="section level2">
+<h2>Estimando valores de la variable dependiente (Y)</h2>
+<div
+id="qué-pasa-si-los-años-de-escolaridad-son-11-y-el-uso-de-anticonceptivos-50"
+class="section level3">
+<h3>¿Qué pasa si los años de escolaridad son 11 y el uso de
+anticonceptivos 50?</h3>
+<pre class="r"><code>new.data1 &lt;- data.frame(yearSchF = c(11), contracep = 50)
+predict(mod.reg3, newdata = new.data1)</code></pre>
+<pre><code>##        1 
+## 2.841304</code></pre>
+</div>
+<div id="si-los-años-de-escolaridad-aumentan-en-1-en-10"
+class="section level3">
+<h3>¿Si los años de escolaridad aumentan en +1?, ¿en +10?</h3>
+<pre class="r"><code>new.data2 &lt;- data.frame(yearSchF = c(11,12,21), contracep = 50)
+predict(mod.reg3, newdata = new.data2)</code></pre>
+<pre><code>##        1        2        3 
+## 2.841304 2.665027 1.078528</code></pre>
+</div>
+<div id="si-el-uso-de-anticonceptivos-se-incrementa-en-10"
+class="section level3">
+<h3>¿Si el uso de anticonceptivos se incrementa en 10%?</h3>
+<pre class="r"><code>new.data3 &lt;- data.frame(yearSchF = c(11), contracep = c(50, 60, 70))
+predict(mod.reg3, newdata = new.data3)</code></pre>
+<pre><code>##        1        2        3 
+## 2.841304 2.376944 1.912584</code></pre>
+</div>
+</div>
+<div id="modelo-con-3-variables-independientes" class="section level2">
+<h2>Modelo con 3 variables independientes</h2>
+<p>Se incluye el ingreso per cápita, transformado en escala logarítmica
+de base 10:</p>
+<pre class="r"><code>mod.reg4 &lt;- lm(tfr ~ yearSchF +  contracep + log10(incomePp), 
+               data = dataWorld_q[dataWorld_q$quinq == &quot;1995-1999&quot;, ])
+
+summary(mod.reg4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ yearSchF + contracep + log10(incomePp), data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1995-1999&quot;, ])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.96829 -0.55149  0.00337  0.54480  2.20363 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      8.577224   0.530364  16.172  &lt; 2e-16 ***
+## yearSchF        -0.139705   0.031024  -4.503 1.56e-05 ***
+## contracep       -0.042635   0.004436  -9.610  &lt; 2e-16 ***
+## log10(incomePp) -0.509500   0.175828  -2.898  0.00447 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.714 on 120 degrees of freedom
+##   (70 observations deleted due to missingness)
+## Multiple R-squared:  0.851,  Adjusted R-squared:  0.8472 
+## F-statistic: 228.4 on 3 and 120 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="coeficiente-estandarizado-o-coeficientes-beta"
+class="section level2">
+<h2>Coeficiente estandarizado o coeficientes beta</h2>
+<p>Los coeficientes estandarizados (también llamados coeficientes beta o
+beta estandarizados) son una versión de los coeficientes de regresión en
+la que todas las variables han sido transformadas a la misma escala,
+generalmente con media 0 y desviación estándar 1. Se pueden comparar
+directamente entre sí, ya que están en la misma escala.</p>
+<pre class="r"><code>library(psych)
+data95 &lt;- subset(dataWorld_q, dataWorld_q$quinq == &quot;1995-1999&quot;)
+
+describe(data95[, c(3,4,5)], fast=T)</code></pre>
+<pre><code>##           vars   n  mean    sd median  min   max range  skew kurtosis   se
+## tfr          1 184  3.54  1.82   3.04 1.20  7.71  6.51  0.53    -0.92 0.13
+## yearSchF     2 174  7.45  3.59   7.95 0.44 13.80 13.36 -0.27    -1.17 0.27
+## contracep    3 131 47.47 23.70  52.60 3.30 87.08 83.78 -0.28    -1.17 2.07</code></pre>
+<pre class="r"><code>library(lm.beta)</code></pre>
+<pre><code>## Warning: package &#39;lm.beta&#39; was built under R version 4.4.2</code></pre>
+<pre class="r"><code>lm.beta(mod.reg3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tfr ~ yearSchF + contracep, data = dataWorld_q[dataWorld_q$quinq == 
+##     &quot;1995-1999&quot;, ])
+## 
+## Standardized Coefficients::
+## (Intercept)    yearSchF   contracep 
+##          NA  -0.3502702  -0.6170146</code></pre>
+</div>
+</div>
+<div id="regresión-con-variables-categóricas" class="section level1">
+<h1><strong>2.Regresión con variables categóricas</strong></h1>
+<p>En un modelo de regresión múltiple de mínimos cuadrados ordinarios
+(OLS), la variable dependiente es una variable numérica o cuantitativa.
+Sin embargo, las variables independientes pueden ser tanto numéricas
+como categóricas.</p>
+<p>Las variables categóricas pueden ser:</p>
+<p>Dicotómicas: Solo tienen dos categorías (Sexo del entrevistado;
+ocurre o no un evento; una condición es verdadera o falsa; etc.)
+Politómicas: Tienen tres o más categorías (región Costa, Sierra, Selva,
+por ejemplo) Cuando se incluye una variable categórica en un modelo de
+regresión, se la representa a través de una o más “dummy variables”,
+dependiendo del número de categorías que tenga.</p>
+<p>Ejercicio práctico</p>
+<p>Ingreso mensual de trabajadores dependientes</p>
+<p>Para explorar este tema, vamos a utilizar la información del Módulo 5
+de la ENAHO 2017 sobre empleo e ingresos de los miembros del hogar.
+Específicamente utilizaremos los datos correspondientes a la ocupación
+principal de los trabajadores dependientes.</p>
+<p>En este ejemplo, tomaremos como variable depediente (Y) el ingreso
+mensual bruto del trabajador dependiente en su ocupación principal.
+Nuestra primera variable independiente será el nivel educativo del
+trabajador.</p>
+<p>Ingreso = b0 + b1*NiveEdu</p>
+<pre class="r"><code>#data &lt;- Enaho01a_2023_500 %&gt;% select(1:9, 39, 1021, 1024, 101, 102, 1393)
+
+#colnames(data)[c(10, 11, 12, 13, 14, 15)] &lt;- c(&quot;Ocup&quot;, &quot;Sexo&quot;, &quot;NiveEdu&quot;, &quot;FreqPag&quot;, &quot;Ingreso&quot;, &quot;HorasTrabj&quot;)
+
+#data &lt;- filter(data, Ocup %in% c(3, 4, 6))
+#data &lt;- filter(data, NiveEdu %in% c(1:11))
+#data &lt;- filter(data, data$FreqPag == 4)
+
+#data &lt;- data %&gt;%
+#  mutate(DOMINIO = case_when(
+# DOMINIO %in% c(1, 2, 3) ~ &quot;Costa&quot;,
+# DOMINIO %in% c(4, 5, 6) ~ &quot;Sierra&quot;,
+# DOMINIO == 7 ~ &quot;Selva&quot;,
+# DOMINIO == 8 ~ &quot;Lima M&quot;
+#))
+
+#data &lt;- data %&gt;%
+#mutate(Sexo = case_when(
+#  Sexo == 1 ~ &quot;Hombre&quot;,
+#  Sexo == 2 ~ &quot;Mujer&quot;
+#))
+
+#data$NiveEdu &lt;- ifelse(data$NiveEdu &gt;= 1 &amp; data$NiveEdu &lt;= 11, data$NiveEdu - 1, data$NiveEdu)
+
+#data &lt;- na.omit(data)
+
+#write.csv(data, &quot;Empleo.csv&quot;, row.names = FALSE)
+library(rio)
+data=import(&quot;Empleo.csv&quot;)</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;ggplot2&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:psych&#39;:
+## 
+##     %+%, alpha</code></pre>
+<pre class="r"><code>p &lt;- ggplot(data, aes(x = Ingreso)) + 
+  geom_histogram(aes(y = ..density..), colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+  geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+  scale_x_continuous(limits = c(0, 10000))
+
+p</code></pre>
+<pre><code>## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
+## ℹ Please use `after_stat(density)` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 49 rows containing non-finite outside the scale range
+## (`stat_bin()`).</code></pre>
+<pre><code>## Warning: Removed 49 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
+## (`geom_bar()`).</code></pre>
+<p><img src="pd2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Modelo 1.0</p>
+<pre class="r"><code>mod1.0 &lt;- lm(Ingreso ~ NiveEdu, data = data)
+stargazer(mod1.0, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ==========================================
+##                   Dependent variable:     
+##              -----------------------------
+##                         Ingreso           
+##                         mod1.0            
+## ------------------------------------------
+## NiveEdu               359.539***          
+##                         (4.971)           
+##                                           
+## Constant              -442.619***         
+##                        (34.064)           
+##                                           
+## ------------------------------------------
+## Observations            16,034            
+## R2                       0.246            
+## Adjusted R2              0.246            
+## ==========================================
+## Note:        *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<p>Modelo 1.1</p>
+<pre class="r"><code>mod1.1 &lt;- lm(Ingreso ~ NiveEdu + Sexo, data = data)
+stargazer(mod1.0, mod1.1, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ===========================================
+##                   Dependent variable:      
+##              ------------------------------
+##                         Ingreso            
+##                  mod1.0          mod1.1    
+## -------------------------------------------
+## NiveEdu        359.539***      368.380***  
+##                  (4.971)        (4.929)    
+##                                            
+## SexoMujer                     -441.393***  
+##                                 (21.936)   
+##                                            
+## Constant       -442.619***    -299.324***  
+##                 (34.064)        (34.388)   
+##                                            
+## -------------------------------------------
+## Observations     16,034          16,034    
+## R2                0.246          0.265     
+## Adjusted R2       0.246          0.265     
+## ===========================================
+## Note:         *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<p>Modelo 1.2</p>
+<pre class="r"><code>mod1.2 &lt;- lm(Ingreso ~ NiveEdu + HorasTrabj, data = data)
+stargazer(mod1.0, mod1.1, mod1.2, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ================================================
+##                      Dependent variable:        
+##              -----------------------------------
+##                            Ingreso              
+##                mod1.0      mod1.1      mod1.2   
+## ------------------------------------------------
+## NiveEdu      359.539***  368.380***  364.947*** 
+##                (4.971)     (4.929)     (4.954)  
+##                                                 
+## SexoMujer                -441.393***            
+##                           (21.936)              
+##                                                 
+## HorasTrabj                            8.790***  
+##                                        (0.616)  
+##                                                 
+## Constant     -442.619*** -299.324*** -841.252***
+##               (34.064)    (34.388)    (43.876)  
+##                                                 
+## ------------------------------------------------
+## Observations   16,034      16,034      16,034   
+## R2              0.246       0.265       0.256   
+## Adjusted R2     0.246       0.265       0.255   
+## ================================================
+## Note:              *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<p>Modelo 1.3</p>
+<pre class="r"><code>mod1.3 &lt;- lm(Ingreso ~ NiveEdu + DOMINIO, data = data)
+stargazer(mod1.0, mod1.1, mod1.2, mod1.3, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## =============================================================
+##                             Dependent variable:              
+##               -----------------------------------------------
+##                                   Ingreso                    
+##                 mod1.0      mod1.1      mod1.2      mod1.3   
+## -------------------------------------------------------------
+## NiveEdu       359.539***  368.380***  364.947***  353.712*** 
+##                 (4.971)     (4.929)     (4.954)     (4.983)  
+##                                                              
+## SexoMujer                 -441.393***                        
+##                            (21.936)                          
+##                                                              
+## HorasTrabj                             8.790***              
+##                                         (0.616)              
+##                                                              
+## DOMINIOLima M                                     314.108*** 
+##                                                    (31.640)  
+##                                                              
+## DOMINIOSelva                                        17.444   
+##                                                    (31.948)  
+##                                                              
+## DOMINIOSierra                                      -65.296*  
+##                                                    (27.742)  
+##                                                              
+## Constant      -442.619*** -299.324*** -841.252*** -447.963***
+##                (34.064)    (34.388)    (43.876)    (37.798)  
+##                                                              
+## -------------------------------------------------------------
+## Observations    16,034      16,034      16,034      16,034   
+## R2               0.246       0.265       0.256       0.253   
+## Adjusted R2      0.246       0.265       0.255       0.253   
+## =============================================================
+## Note:                           *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<p>Modelo 1.4</p>
+<pre class="r"><code>mod1.4 &lt;- lm(Ingreso ~ NiveEdu + DOMINIO + Sexo, data = data)
+stargazer(mod1.0, mod1.1, mod1.2, mod1.3, mod1.4, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## =========================================================================
+##                                   Dependent variable:                    
+##               -----------------------------------------------------------
+##                                         Ingreso                          
+##                 mod1.0      mod1.1      mod1.2      mod1.3      mod1.4   
+## -------------------------------------------------------------------------
+## NiveEdu       359.539***  368.380***  364.947***  353.712***  362.540*** 
+##                 (4.971)     (4.929)     (4.954)     (4.983)     (4.940)  
+##                                                                          
+## SexoMujer                 -441.393***                         -442.979***
+##                            (21.936)                            (21.834)  
+##                                                                          
+## HorasTrabj                             8.790***                          
+##                                         (0.616)                          
+##                                                                          
+## DOMINIOLima M                                     314.108***  314.331*** 
+##                                                    (31.640)    (31.242)  
+##                                                                          
+## DOMINIOSelva                                        17.444      18.196   
+##                                                    (31.948)    (31.546)  
+##                                                                          
+## DOMINIOSierra                                      -65.296*    -70.330*  
+##                                                    (27.742)    (27.395)  
+##                                                                          
+## Constant      -442.619*** -299.324*** -841.252*** -447.963*** -302.554***
+##                (34.064)    (34.388)    (43.876)    (37.798)    (38.005)  
+##                                                                          
+## -------------------------------------------------------------------------
+## Observations    16,034      16,034      16,034      16,034      16,034   
+## R2               0.246       0.265       0.256       0.253       0.272   
+## Adjusted R2      0.246       0.265       0.255       0.253       0.271   
+## =========================================================================
+## Note:                                       *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<div id="modelo-para-una-variable-categórica-con-efecto-interactivo"
+class="section level2">
+<h2>Modelo para una variable categórica con efecto interactivo</h2>
+<p>Supongamos que en vez de proponer que la variable sexo tiene un
+efecto aditivo en el ingreso, independiente respecto del nivel
+educativo, trabajemos con la hipótesis de que existe una interacción
+entre la variable sexo y el nivel educativo.</p>
+<p>En este segundo caso, la hipótesis plantea que el efecto de la
+educación en el ingreso será diferente según el sexo del trabajador, por
+lo tanto el coeficiente de la variable categórica afectaría la pendiente
+en vez de la constante de la ecuación.</p>
+<p>Ecuaciones para efectos independientes e interactivos En el caso de
+un efecto independiente, la ecuación que ya hemos visto es:</p>
+<p><em>Ingreso=b0+b1NiveEdu+b2Sexo</em></p>
+<ul>
+<li><p><em>Hombres (sexo=0): Ingreso=b0+b1NiveEdu</em></p></li>
+<li><p><em>Mujeres (sexo=1): Ingreso=(b0+b2)+b1NiveEdu</em></p></li>
+</ul>
+<p>En el caso de un efecto interactivo, la ecuación sería:</p>
+<p><em>Ingreso=b0+b1nivedu+b2sexo∗NiveEdu</em></p>
+<ul>
+<li><p><em>Hombres (sexo=0): Ingreso=b0+b1NiveEdu</em></p></li>
+<li><p><em>Mujeres (sexo=1): Ingreso=b0+(b1+b2)NiveEdu</em></p></li>
+</ul>
+<p>Modelo 1.5</p>
+<pre class="r"><code>mod1.5 &lt;- lm(Ingreso ~ NiveEdu : Sexo, data = data)
+stargazer(mod1.0, mod1.1, mod1.5, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ======================================================
+##                            Dependent variable:        
+##                    -----------------------------------
+##                                  Ingreso              
+##                      mod1.0      mod1.1      mod1.5   
+## ------------------------------------------------------
+## NiveEdu            359.539***  368.380***             
+##                      (4.971)     (4.929)              
+##                                                       
+## SexoMujer                      -441.393***            
+##                                 (21.936)              
+##                                                       
+## NiveEdu:SexoHombre                         397.975*** 
+##                                              (5.272)  
+##                                                       
+## NiveEdu:SexoMujer                          334.188*** 
+##                                              (5.071)  
+##                                                       
+## Constant           -442.619*** -299.324*** -497.577***
+##                     (34.064)    (34.388)    (33.759)  
+##                                                       
+## ------------------------------------------------------
+## Observations         16,034      16,034      16,034   
+## R2                    0.246       0.265       0.264   
+## Adjusted R2           0.246       0.265       0.264   
+## ======================================================
+## Note:                    *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<pre class="r"><code>fit1.5 &lt;- predict(mod1.5)
+dataf5 &lt;- cbind(data, fit1.5)
+ggplot(dataf5, aes(x = NiveEdu, y = Ingreso, color = Sexo)) +
+  geom_point() + 
+  geom_line(aes(y = fit1.5)) + 
+  coord_cartesian(ylim = c(-400, 5000))</code></pre>
+<p><img src="pd2_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>Modelo 1.6</p>
+<p>Podemos estimar otro modelo de regresión que contenga ambos
+supuestos.</p>
+<p>Supuesto de efecto independiente: independientemente del nivel
+educativo, los hombres y las mujeres parten de distintas bases de
+ingreso, menores en el caso de las mujeres. Aquí tendremos dos
+intersecciones.</p>
+<p>Supuesto de efecto interactivo: el efecto de la educación en los
+ingresos no es el mismo en el caso de los hombres y las mujeres. Las
+pendientes de hombres y mujeres serán distintas.</p>
+<p>Ingreso=b0+b1NiveEdy+b2Sexo+b3Sexo∗Nivedu</p>
+<pre class="r"><code>mod1.6 &lt;- lm(Ingreso ~ NiveEdu * Sexo, data = data)
+stargazer(mod1.0, mod1.1, mod1.5, mod1.6, type = &quot;text&quot;,
+          omit.stat=c(&quot;ser&quot;,&quot;f&quot;), 
+          model.numbers = FALSE, object.names = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001))</code></pre>
+<pre><code>## 
+## ==================================================================
+##                                  Dependent variable:              
+##                    -----------------------------------------------
+##                                        Ingreso                    
+##                      mod1.0      mod1.1      mod1.5      mod1.6   
+## ------------------------------------------------------------------
+## NiveEdu            359.539***  368.380***              382.354*** 
+##                      (4.971)     (4.929)                 (6.782)  
+##                                                                   
+## SexoMujer                      -441.393***             -248.597***
+##                                 (21.936)                (67.933)  
+##                                                                   
+## NiveEdu:SexoHombre                         397.975***             
+##                                              (5.272)              
+##                                                                   
+## NiveEdu:SexoMujer                          334.188***   -29.599** 
+##                                              (5.071)     (9.871)  
+##                                                                   
+## Constant           -442.619*** -299.324*** -497.577*** -387.416***
+##                     (34.064)    (34.388)    (33.759)    (45.221)  
+##                                                                   
+## ------------------------------------------------------------------
+## Observations         16,034      16,034      16,034      16,034   
+## R2                    0.246       0.265       0.264       0.265   
+## Adjusted R2           0.246       0.265       0.264       0.265   
+## ==================================================================
+## Note:                                *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
+<pre class="r"><code>fit1.6 &lt;- predict(mod1.6)
+dataf6 &lt;- cbind(data, fit1.6)
+ggplot(dataf6, aes(x = NiveEdu, y = Ingreso, color = Sexo)) +
+  geom_point() + 
+  geom_line(aes(y = fit1.6)) + 
+  coord_cartesian(ylim = c(-400, 5000))</code></pre>
+<p><img src="pd2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
