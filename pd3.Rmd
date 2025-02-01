@@ -21,252 +21,248 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
 
-Curso: SOC294 - Estadística para el análisis sociológico 1
+Curso: SOC294 - Estadística para el análisis sociológico 2
 
-Semestre 2024 - 2
+Semestre 2025 - 1
 
-# **1.Intervalos de confianza**
+# **1.Supuestos del Modelo de Regresión Lineal y Diagnóstico**
 
-Con este tema, comenzaremos a enfocarnos en la estadística inferencial.
-El objetivo de esta es determinar una aproximación del parámetro
-poblacional a partir de la data de una muestra representativa.
+## **El Error o los Residuos de un Modelo de Regresión**
 
-Revisemos algunos conceptos:
+Los residuales o residuos de un modelo de regresión son la diferencia
+entre el valor observado de la variable dependiente y el valor esperado
+de la misma que se calcula mediante la ecuación de regresión.
 
--   **Estimador puntual:** un número que es nuestra predicción del
-    parámetro
+*e=y−y\^*
 
--   **Intervalo de confianza:** un intervalo de números basado en la
-    distribución de la data observada de la muestra dentro de la cual se
-    cree que estaría el parámetro poblacional.
+## **Supuestos del Modelo de Regresión Lineal**
 
-    *IC = estimador puntual +-/margen de error*
+La regresión lineal asume que los datos deben cumplir los siguientes
+supuestos, que se verifican analizando el patron de distribución de los
+residuos:
 
--   **Nivel de confianza:** es la probabilidad de que el parámetro se
-    encuentre en ese intervalo.
+-   **Linealidad:** La relación entre la variable dependiente (Y) y la
+    variable independiente (X) debe ser lineal
 
--   **Margen de error:** mide qué tan precisa es la estimación del
-    parámetro.
+-   **Normalidad de los residuos**: Los residuos deben tener una
+    distribución normal.
 
--   **Error de muestreo:** diferencia entre el valor calculado de un
-    estadístico y valor real de un parámetro de la población.
+-   **Homogeneidad de la varianza de los residuos**: Los residuos deben
+    tener una varianza constante (homocedasticidad).
 
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("IC.png") 
+-   **Independencia de los residuos**: Los residuos deben ser
+    independientes los unos de los otros, no deben estar correlacionados
+    entre sí.
+
+## **Problemas de violación de los supuestos**
+
+Es necesario verificar estos supuestos, los problemas potenciales que
+pueden aparecer son:
+
+-   No linearidad de la relación entre las variables
+
+-   Heterocedasticidad: Errores no constantes de los residuos
+
+-   Presencia de valores influyentes en los datos, que pueden ser:
+
+    -   Outliers o valores atípicos en la variable dependiente (Y)
+
+    -   Puntos con alto efecto de palanca: valores extremos en la
+        variable independiente (X)
+
+-   Autocorrelación: Los valores de Y de un caso están relacionados con
+    los valores de Y en otro caso, esto puede ser: Autocorrelación
+    temporal: problemas con series de tiempo Autocorrelación espacial:
+    problemas con casos cercanos o vecinos espacialmente
+
+### Diagnóstico de los supuestos de regresión
+
+Para evaluar si un modelo de regresión cumple con los supuestos
+indicados se utilizan un conjunto de gráficos de residuales:
+
+-   Para linealidad: Residuos vs Valores Esperados de Y
+
+-   Para normalidad: Residuos vs distribución normal (Normal Q-Q)
+
+-   Para homocedasticidad: Scale-location plot
+
+-   Para valores influyentes: Residuales vs leverage plot
+
+## Ejercicio práctico.
+
+```{r}
+library(rio)
+data=import("PeruData.csv")
 ```
-
-### Conceptualización e Importancia
-
--   Los intervalos de confianza ofrecen una manera de estimar, con alta
-    probabilidad, un rango de valores en el que se encuentra el valor
-    poblacional (o parámetro) de una determinada variable.
--   El intervalo de confianza describe la variabilidad entre la medida
-    obtenida en un estudio y la medida real de la población (el valor
-    real).
--   Un intervalo de confianza de 90%/95%/99% nos indica que dentro del
-    rango dado se encuentra el valor real de un parámetro con
-    90%/95%/99% de certeza.
--   Existe una relación inversa entre la amplitud del IC y el tamaño
-    muestral: mientras más pequeño es el n, más amplio es el IC. A mayor
-    n, el IC es más estrecho.
--   Gracias al IC podemos determinar si la estimación es representativa
-    de la población.
-
-### Sobre el nivel de confianza...
-
-Si tenemos un nivel de confianza de 95%, quiere decir que si realizamos
-100 veces el mismo procedimiento de muestreo y calculamos los
-estadísticos de interés, 95 veces obtendremos los resultados en el
-intervalo calculado. Los mismo ocurriría si realizamos el cálculo con un
-99% de confianza. Al momento de decidir el nivel de confianza debemos
-tener presente una regla: a mayor nivel de confianza, menor será la
-precisión ya que el intervalo es más amplio.
-
-**Aplicación**
-
-"Es una investigación estadística que permite suministrar información
-estadística que refleje la situación migratoria de la población
-venezolana refugiada y migrante en el Perú, con énfasis en el contexto
-de la pandemia por la COVID-19, para así apoyar a tomar las decisiones
-de política pública basadas en datos sólidos y confiables".
 
 Explicación de la data:
 
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("pd3-diccionario.png") 
+En los últimos años, se ha documentado un declive de la mortalidad
+infantil tanto a nivel de Perú como en América Latina.
+
+Se ha argumentado que el proceso de descenso de la mortalidad infantil
+puede ser explicado por un conjunto de invertenciones en salud pública y
+por las mejoras de las condiciones de vida de la población.
+
+Unidad de análisis: Provincias
+
+### Variable dependiente (Y): mortalidad infantil
+
+```{r}
+library(tidyverse)
+data %>%
+ summarize(Min = min(mortalidadinf),
+           Media = mean(mortalidadinf),
+           Mediana = median(mortalidadinf),
+           Max = max(mortalidadinf))
 ```
 
 ```{r}
-library(rio) #Convocamos el paquete   
-data=import("Pd3_enpove2022.dta")
+ggplot(data, aes(x = mortalidadinf)) + 
+  geom_histogram(binwidth = 5, fill="orange", col="grey") +
+  scale_x_continuous(breaks = seq(0,55,10), lim = c(0,55))+
+  theme_minimal()
 ```
 
-En esta sesión responderemos a la pregunta:
-
-# ¿De qué manera experimentan los migrantes venezolanos la discriminación en el Perú?
-
-## **1.Intervalos de confianza para una proporción**
-
-Tengamos en consideración que para poder hallar el intervalo de
-confianza para una proporción debemos determinar nuestro caso de éxito.
-Asimismo, para hallar el intervalo de confianza para una proporción
-nuestra variable debe ser categórica y debe representar una variable
-dicotómica; es decir, una variable con solo dos categorías posibles:
-votó/no votó; sí/no, etc.
-
-Recordemos la fórmula para hallar el intervalo de confianza para una
-proporción
-
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("ICprop.png") 
-```
-
-## *¿Qué proporción de venezolanos en Perú se siente discriminada?*
-
-Para ello trabajaremos con la variable P701, que tiene dos valores
-posibles: Si y No.
-
-Para poder encontrar el intervalo de confianza para la *proporción de
-venezolanos en Perú se siente discriminada*, necesitamos tener muy claro
-la frecuencia de nuestro caso de éxito y del total de casos.
+### Variable Independiente 1: Índice de Densidad Estatal
 
 ```{r}
-table(data$P701)
+data %>%
+ summarize(Min = min(IDE),
+           Media = mean(IDE),
+           Mediana = median(IDE),
+           Max = max(IDE))
 ```
+
+### Variable Independiente 2: ingresos per cápita
 
 ```{r}
-x = 3104 #almacenamos en "x" la frecuencia de nuestro caso de éxito (Sí se sintieron discriminados)
-n = 3104 + 7123 #almacenamos en "n" el total de casos
+data %>%
+ summarize(Min = min(percapitaf),
+           Media = mean(percapitaf),
+           Mediana = median(percapitaf),
+           Max = max(percapitaf))
 ```
 
-Hallamos el invervalo de confianza para una proporción con el comando
-**prop.test**
-
-```{r}
-ic_prop = prop.test(x,n)
-ic_prop #llamamos a ic_prop para visualizar los resultados
-```
-
-Esto quiere decir que tenemos un 95% de certeza de que el porcentaje de
-venezolanos que residen en el Perú y se han sentido discriminados oscila
-entre el 29% y 31%.
-
-# **2.Intervalos de confianza para una media**
-
-Recordemos la fórmula para hallar el intervalo de confianza para una
-media es
-
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("ICmedia.png") 
-```
-
-Es importante mencionar que nuestra variable debe ser numérica, sino no
-podremos calcular su promedio.
-
-### ¿Qué nivel de discriminación sufren los venezolanos en el Perú?
-
-*Hallemos el intervalo de confianza para la media de la variable
-"nivel_discriminación". Esta variable será un indice aditivo del 0 al
-100 creado a partir de las variables P702_1 a la P702_7*
-
-Guardo mis variables de interes en un vector para luego realizar la
-misma modificación en todas. Para poder indicar que se omitan los
-perdidos para la suma, primero crearemos un vector que almacene los
-nombres de las variables que conformaran el indicador.
-
-```{r}
-library(dplyr)
-library(scales)
-
-indicador = c("P702_1","P702_2","P702_3","P702_4","P702_5","P702_6", "P702_7")
-
-data = data %>% 
-  mutate(suma =  rowSums(across(all_of(indicador)), na.rm = TRUE),
-         nivel_discriminación = rescale(suma, to = c(0,10)),
-         nivel_discriminación = ifelse(P701 == "2",NA, nivel_discriminación), 
-)
-
-```
-
-Ahora que hemos creado el indicador de nivel de discriminación,
-realicemos un análisis descriptivo.
-
-```{r}
-data %>% 
-  summarise(media = mean(nivel_discriminación, na.rm = T),
-            mediana = median(nivel_discriminación,na.rm = T),
-            sd = sd(nivel_discriminación, na.rm = T),
-            min = min(nivel_discriminación, na.rm = T),
-            max = max(nivel_discriminación, na.rm = T))
-```
-
-**ciMean**, del paquete **lsr**, es la función que calcula el intervalo
-de confianza de una media.
-
-```{r}
-library(lsr)
-ic_media = ciMean(data$nivel_discriminación, na.rm = TRUE) #con el último argumento indicamos no tomar en consideracion los valores perdidos (NA)
-
-ic_media
-```
-
-# **3.Intervalo de confianza de una media según grupo**
-
-### ¿De qué manera la zona de Lima en la que vive la persona se relaciona con su gasto en transporte?
-
-Hallemos el intervalo de confianza para el nivel de discriminación
-(nivel_discriminación) según estrato (ESTRATO).
-
-Agreguemos etiquetas a la categórica
-
-```{r}
-table(data$ESTRATO)
-```
-
-```{r}
-library(dplyr)
-data = data %>% 
-  mutate(ESTRATO=factor(ESTRATO, levels = (1:5), labels = c("Bajo","Medio bajo","Medio", "Medio alto", "Alto")))
-```
-
-1\. Crearemos una tabla con la media, máximo y mínimo de la variable
-nivel_discriminación, en base al grupo de ESTRATO.
-
-```{r}
-ic_grupo = data %>% 
-  group_by(ESTRATO) %>% 
-  summarise(Media = mean(nivel_discriminación, na.rm=T),
-            min = ciMean(nivel_discriminación, na.rm=T)[1],
-            max = ciMean(nivel_discriminación, na.rm=T)[2])
-ic_grupo
-```
-
-Según nuestra tabla, podemos afirmar que hay un 95% de probabilidad de
-que la media del grupo de Estrato Alto percibe, ligeramente, un mayor
-nivel de discriminación a comparación del resto. Igualmente, podemos
-observar que, dentro de todos los grupos, el nivel promedio de
-discriminación es bastante similar.
-
-Grafiquemos nuestros resultados.
+## **Modelos de regresión**
 
 ```{r}
 library(ggplot2)
-ggplot(ic_grupo, aes(x= ESTRATO, y =Media)) +
-  geom_errorbar(aes(ymin=min, ymax=max), width = 0.2)+
-   geom_text(aes(label=paste(round(Media, 2))), size=4)+
-  xlab("Estrato") + ylab("Promedio del nivel de discriminación")+
-  ylim(1, 3) #indicamos los límites del eje y
+library(stargazer)
+library(ggfortify)
+
+modelo1=lm(mortalidadinf~IDE, data=data)
+modelo2=lm(mortalidadinf~percapitaf, data=data)
+stargazer::stargazer(modelo1,modelo2, type='text')
 ```
 
-Con lo que muestra el gráfico, ¿cómo podemos complementar nuestra
-interpretación anterior?
+### **Gráfico para Diagnóstico de Linealidad**
 
-# **Ejercicio**
+```{r}
+par(mfrow=c(1,2))
+plot(modelo1, 1, caption = "Modelo 1")
+plot(modelo2, 1, caption = "Modelo 2")
+```
 
-1.  Calcula el intervalo de confianza de la media del nivel
-    discriminación según Departamento. Grafíquelo e interprete
+Lo que debemos esperar de este gráfico es que no aparezca un patrón
+lineal entre los residuales y los valores pronosticados de Y (y\^). En
+tal sentido el modelo 1 cumple mejor este supuesto que el modelo 2.
 
-2.  La pregunta P708_1 refiere a si la población venezolana encuestada
-    se identifica con la sociedad y cultura peruana (Sí o no). Calcula
-    el intervalo de confianza para la proporción de la variable "P708_1"
-    e interpreta.
+### **Gráficos para Diagnóstico de Normalidad**
+
+```{r}
+par(mfrow=c(2,2))
+plot(modelo1, 2, caption = "Modelo 1")
+plot(modelo2, 2, caption = "Modelo 2")
+plot(density(modelo1$residuals))
+plot(density(modelo2$residuals))
+```
+
+Para el primer par de gráficos, en el eje vertical se muestran los
+residuos estandarizados. En este caso la expectativa es que los puntos
+se acercen lo más posible a la línea oblicua del gráfico que representa
+una distribución normal. Ambos modelos tienen una distribución de
+residuos asimétrica, pero la asimetría es ligeramente más acentuada en
+el modelo 2.
+
+### **Diagnóstico de homocedasticidad**
+
+```{r}
+par(mfrow=c(1,2))
+plot(modelo1, 3, caption = "Modelo 1")
+plot(modelo2, 3, caption = "Modelo 2")
+```
+
+En este caso, se espera que la dispersión de la raiz cuadrada de los
+residuos estandarizados no presente muchas variaciones según los valores
+esperados de Y.
+
+### **Diagnóstico de Observaciones Influyentes: “Leverage” (palanca) y Valores Atípicos**
+
+```{r}
+par(mfrow=c(1,2))
+plot(modelo1, 5, caption = "Modelo 1")
+plot(modelo2, 5, caption = "Modelo 2")
+```
+
+### **Análisis de casos extremos e influyentes**
+
+En los gráficos de diagnóstico de modelos lineales en R, los números que
+aparecen en la esquina superior (como 0.5 y 1.0) suelen corresponder a
+los valores de apalancamiento (leverage). Estos valores indican la
+influencia potencial de cada observación en el ajuste del modelo.
+
+¿Qué es el apalancamiento (leverage)? El apalancamiento mide cuánto
+influye una observación en la estimación de los coeficientes del modelo.
+
+Se calcula a partir de la matriz de diseño del modelo y depende de la
+distancia de cada observación respecto al centro de los datos.
+
+Los valores de apalancamiento están en el rango [0, 1]:
+
+-   0: La observación no tiene influencia en el modelo.
+
+-   1: La observación tiene la máxima influencia (es un punto extremo).
+
+¿Qué significan 0.5 y 1.0 en el gráfico?
+
+0.5 y 1.0 son valores de referencia para el apalancamiento:
+
+-   0.5: Es un umbral común para identificar observaciones con
+    apalancamiento moderado o alto.
+
+-   1.0: Es el valor máximo de apalancamiento, que indica que la
+    observación es un punto extremo con gran influencia en el modelo.
+
+### ¿Qué hacer si detectamos problemas?
+
+Por lo general cuando nuestros modelos de regresión presentan alguno de
+los problemas mencionados, ello puede significar que:
+
+Algunas variables presentan distribuciones muy asimétricas (problemas de
+linealidad y normalidad): En estos casos podemos tratar de cambiar la
+escala de las mismas ascendiendo o descendiendo en la escalera de
+potencia (utilizando una transformación logarítmica, por ejemplo).
+Nuestros modelos están sub especificados (problemas de linealidad o de
+heterocedasticidad): Estamos omitiendo alguna(s) variable(s)
+importante(s) que puede(n) explicar patrones no lineales o varianzas no
+homogéneas de los residuales. Casos extremos con valores muy atípicos:
+un caso particular que no se ajusta al patrón general y que dificulta la
+estimación de los coeficientes de regresión, en estas situaciones
+podemos excluir esos casos del análisis, previa justificación.
+
+### Posible solución:
+
+Transformar variables e incluir otras variables predictoras:
+
+```{r}
+modelo3=lm(log(mortalidadinf)~log10(percapitaf), data=data)
+
+stargazer(modelo1, modelo2, modelo3, type = "text",
+          omit.stat=c("ser","f"), 
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+```{r}
+autoplot(modelo3)
+```
