@@ -21,254 +21,409 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
 
-Curso: SOC294 - Estadística para el análisis sociológico 1
+Curso: SOC294 - Estadística para el análisis sociológico 2
 
-Semestre 2024 - 2
+Semestre 2025 - 1
 
-## **Recordando lo avanzado**
+# **Diferencias en Diferencias (Dif-in-Dif)**
 
-En la sesión anterior de teoría, nos adentramos al análisis inferencial
-bivariado, teniendo como base del tema el cálculo del Intervalo de
-Confianza (IC) para una media (variables numéricas) y para una
-proporción (variables categóricas). Recordemos que gracias al IC podemos
-determinar si la estimación es representativa de la población. La idea
-era calcular los intervalos de confianza para cada grupo y ver si los
-intervalos se interceptan o no. La regla era que si los intervalos de
-ambos grupos no se interceptaban, podíamos extrapolar que la diferencia
-muestral existe en la población al 95% de confianza. Para profundizar
-sobre estadística inferencial, evaluaremos las hipótesis mediante la
-introducción a la prueba t de diferencia de medias y desarrollaremos los
-cincos pasos de la inferencia estadística. Recordemos que el objetivo es
-corroborar que es posible extrapolar un resultado de la muestra a la
-población.
+Este método es una herramienta poderosa y muy utilizada en ciencias
+sociales para evaluar el impacto de políticas, programas o
+intervenciones sociales. Si alguna vez te has preguntado cómo medir el
+efecto real de una nueva ley, un programa social o cualquier
+intervención, este método te será de gran ayuda.
 
-# **Prueba T**
+### **¿Qué es Dif-in-Dif?**
 
-## **¿Qué es la prueba T de diferencia de medias?**
+Diferencias en Diferencias es una técnica que compara cambios a lo largo
+del tiempo entre un grupo que recibe una intervención (grupo de
+tratamiento) y otro que no la recibe (grupo de control). La idea es
+simple pero poderosa: si queremos saber el efecto de una política, no
+solo comparamos grupos antes y después, sino que también tomamos en
+cuenta las diferencias que ya existían entre ellos.
 
-Generalmente, cuando queremos comparar dos grupos centramos nuestra
-atención en el promedio de cada uno. Sin embargo, el hecho de que los
-promedios sean distintos no supone, necesariamente, que existe una
-diferencia estadísticamente significativa.
+### ¿Por qué es útil en sociología?
 
-Para saber si la diferencia observada entre las medias de dos grupos es
-o no significativa se emplean métodos paramétricos como el de Z-scores o
-la distribución T-student. Estas técnicas calculan los intervalos de
-confianza de cada grupo y concluyen si existe una diferencia real entre
-las medias.
+En sociología, muchas veces nos enfrentamos a preguntas como:
 
-La prueba T compara la media de una variable numérica para dos grupos o
-categorías de una variable nominal u ordinal. Los grupos que forman la
-variable nominal/ordinal tienen que ser independientes. Es decir, cada
-observación debe pertenecer a un grupo o al otro, pero no a ambos.
+-   ¿Funcionó realmente esa política pública para reducir la pobreza?
 
-## **Pruebas T para muestras independientes**
+-   ¿El programa de educación mejoró el rendimiento escolar?
 
-*Condiciones*
+-   ¿La intervención comunitaria redujo los niveles de violencia?
 
-1.  Independencia: Las muestras deben ser independientes. El muestreo
-    debe ser aleatorio.
+Dif-in-Dif nos permite responder estas preguntas de manera más precisa,
+controlando factores que podrían confundir nuestros resultados.
 
-2.  Igualdad de varianza: La varianza de ambas poblaciones comparadas
-    debe ser igual.
+### ¿Cómo funciona?
 
-3.  La variable numérica se distribuye de manera normal.
+Antes y después: Observamos qué pasó antes y después de la intervención
+en ambos grupos.
 
-***IMPORTANTE***
+Comparación entre grupos: Comparamos el grupo que recibió la
+intervención con el que no la recibió.
 
-La condición de normalidad también es considerada si es que la muestra
-fuera pequeña (Agresti y Finlay proponen que se aplica con un n pequeño
-menor a 30 observaciones). A medida que el n se hace más grande, el
-supuesto de normalidad es menos importante pues con grandes n confiamos
-en el teorema del límite central que nos indica que la distribución
-muestral será siempre normal.
+Aislamos el efecto: Restamos las diferencias naturales entre los grupos
+(que existían antes de la intervención) para quedarnos solo con el
+efecto de la intervención.
 
-## **Pasos para realizar la Prueba T**
+### Ecuación
 
-1.  Establecer hipótesis
+***EFECTO DIF-IN-DIF = (Y_post,T - Y_pre,T) - (Y_post,C - Y_pre,C)***
 
-2.  Calcular el estadístico (parámetro estimado) que se va a emplear
+**Y_post,T**: Resultado promedio del grupo de tratamiento después de la
+intervención.
 
-3.  Determinar el nivel de significancia α (alpha)
+**Y_pre,T**: Resultado promedio del grupo de tratamiento antes de la
+intervención.
 
-4.  Calcular el p-value y realizar la prueba prop.test
+**Y_post,C**: Resultado promedio del grupo de control después de la
+intervención.
 
-5.  Interpretar
+**Y_pre,C**: Resultado promedio del grupo de control antes de la
+intervención.
 
-**Recuerda**
+-   Primera diferencia (grupo de tratamiento): Calculas la diferencia en
+    el resultado del grupo de tratamiento antes y después de la
+    intervención: Diferencia Tratamiento = Y_post,T - Y_pre,T
 
-El H0 de la prueba T es la siguiente:
+-   Segunda diferencia (grupo de control): Calculas la diferencia en el
+    resultado del grupo de control antes y después de la intervención:
+    Diferencia Control = Y_post,C - Y_pre,C
 
-**H0:** No existe diferencia estadísticamente significativa entre las
-medias de los dos grupos comparados.
+-   Diferencias en Diferencias: Restas la diferencia del grupo de
+    control a la diferencia del grupo de tratamiento para aislar el
+    efecto de la intervención: EFECTO DIF-IN-DIF = Diferencia
+    Tratamiento - Diferencia Control
 
-**H1:** Sí existe diferencia estadísticamente significativa entre las
-medias de los dos grupos comparados.
+### Lo necesario para un Dif - in - Dif
 
-*La H0 es generalmente la hipótesis de no efecto, de no diferencias.*
+**Asignación aleatoria (o casi aleatoria) de los grupos de tratamiento y
+control.**
 
-# **Apliquemos**
+¿Qué significa? El grupo que recibe la intervención (tratamiento) y el
+grupo que no la recibe (control) deben ser comparables. Idealmente, la
+asignación a estos grupos debería ser aleatoria, como en un experimento.
+Sin embargo, en muchos casos de sociología o economía, esto no es
+posible, por lo que se busca que la asignación sea "casi aleatoria" (es
+decir, que no haya diferencias sistemáticas entre los grupos antes de la
+intervención).
 
-### **¿Cómo se percibe la desigualdad en el Perú? 🤔**
+**Un período previo y un período posterior para ambos grupos.**
 
-Para dar respuesta a la pregunta de investigación que guiara la práctica
-dirigida analizaremos algunas de las variables que forman parte de la
-Encuesta Nacional de Percepción de Desigualdades - ENADES 2024, que fue
-elaborada por Instituto de Estudios Peruanos (IEP) y Oxfam. La encuesta
-busca ahondar en la percepción de las diferentes formas de desigualdad
-en el Perú e incorpora indicadores que permiten medir la magnitud de
-brechas sociales y políticas como género, clase, entre otros.
+¿Qué significa? Necesitas datos de ambos grupos (tratamiento y control)
+antes y después de la intervención. Esto te permite comparar cómo
+cambian los resultados en ambos grupos a lo largo del tiempo.
 
-Se eligieron algunas variables de la base de datos original y se dejaron
-por fuera valores perdidos además de realizar otras modificaciones. Para
-realizar alguna investigación se debe usar la base de datos original que
-se encuentra en el siguiente [link](https://peru.oxfam.org/ENADES-2024).
+**Sin sesgo de selección de la muestra.**
 
-```{r}
-library(rio)
-data = import("pd4_enades2024.sav")
-```
+¿Qué significa? Los grupos de tratamiento y control deben ser
+seleccionados de manera que no haya un sesgo sistemático en su
+composición. Por ejemplo, si el grupo de tratamiento tiene
+características inherentemente diferentes al grupo de control (como un
+mayor nivel socioeconómico), esto podría distorsionar los resultados.
 
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("PruebaT-Diccionario.jpeg") 
-```
+**Debe haber tendencias paralelas.**
 
-## 1. ¿Existe una diferencia estadísticamente significativa entre la estimación del monto mínimo mensual del hogar según nivel educativo alcanzado?
+¿Qué significa? Antes de la intervención, los grupos de tratamiento y
+control deben seguir tendencias paralelas en la variable de resultado.
+Es decir, si el grupo de tratamiento estaba aumentando (o disminuyendo)
+su resultado a una tasa similar a la del grupo de control, se asume que,
+en ausencia de la intervención, esta tendencia habría continuado.
 
-Crearemos una tabla con la media, máximo y mínimo de la variable
-nivel_discriminación, en base al grupo de edu2
+### Ejemplo sencillo:
 
-Agreguemos etiquetas:
+Imagina que un gobierno implementa un programa de becas para mejorar el
+rendimiento académico en ciertas escuelas (grupo de tratamiento). Otras
+escuelas no reciben el programa (grupo de control). Con Dif-in-Dif,
+comparamos el cambio en el rendimiento antes y después del programa en
+ambas escuelas. Si el grupo de tratamiento mejora más que el de control,
+podemos atribuir esa diferencia al programa de becas.
+
+# **Minimum Wages and Employment: A Case Study of the Fast-Food Industry in New Jersey and Pennsylvania**
 
 ```{r}
 library(dplyr)
-data = data  %>%  
-  mutate(edu2 = factor(edu2, levels = 1:2, labels = c("E. Básica","E. Superior")))
-
-```
-
-```{r}
-library(lsr)
-NivelEdu = data %>% 
-  group_by(edu2)  %>% 
-  summarize(Media = mean(P15, na.rm = T),
-  min = ciMean(P15, na.rm=T)[1],
-  max = ciMean(P15, na.rm=T)[2])
-NivelEdu
-```
-
-```{r}
-NivelEdu[2,2] - NivelEdu[1,2] 
-```
-
-La diferencia es de aprox 1124 soles. ¿Puedo afirmar que existe esta
-diferencia en la población?
-
-Para poder evaluar si existen o no diferencias poblacionales usaremos
-t.test.
-
-Recuerda que primero se indica la variable numérica y luego la
-categoríca dicotómica.
-
-```{r}
-t.test(P15 ~ edu2, data = data)
-```
-
-El valor p- value es \< 2.2e-16, que es menor que el nivel típico de
-significancia (generalmente α = 0.05). Un valor p alto sugiere que no
-hay suficiente evidencia para rechazar la hipótesis nula. En otras
-palabras, podemos concluir que existe una diferencia significativa entre
-las medias de los dos grupos (Educación Básica y Educación Superior) con
-respecto a la variable P15
-
-Graficamos los resultados
-
-```{r}
+library(readr)
 library(ggplot2)
-ggplot(NivelEdu, aes(x = edu2, y = Media)) +
-  geom_errorbar(aes(ymin = min, ymax = max), width = 0.2) +
-  ggtitle("Estimación del monto mínimo mensual del hogar \nsegún máximo nivel educativo") +
-  # Etiquetas de la media
-  geom_text(aes(label = paste(round(Media, 2))), vjust = 0.5, size = 3) +
-  # Etiquetas de los valores mínimos
-  geom_text(aes(y = min, label = paste("min:", round(min, 2))), 
-            vjust = 1.5, hjust = -0.6, size = 2, color = "#00688B") +
-  # Etiquetas de los valores máximos
-  geom_text(aes(y = max, label = paste("max:", round(max, 2))), 
-            vjust = -0.5, hjust = -0.6, size = 2, color = "#00688B") +
-    theme_light()+
-  xlab("Máximo nivel educativo alcanzado") + 
-  ylab("Promedio del gasto mínimo mensual") 
-
-```
-
-## 2. ¿Existe una diferencia en el nivel de acuerdo con la frase "los que más tienen deberían pagar más impuestos" según si la persona pertenece a una clase social alta o media alta o no?
-
-Para responder a la pregunta identifiquemos la variable numérica y la
-categórica primero.
-
-La variable númerica es la P30, que es una likert y va del 1 al 10.
-
-La categórica se basa en **clase**, todo lo que sea 1 o 2 (Clase
-Alta/Media Alta) será "Alta/Media alta" y lo que no, será "No alta/media
-alta".
-
-```{r}
-table(data$clase)
-data = data %>% 
-  mutate(Clase2= ifelse(clase <3, "Alta/Media alta", "No alta/Media alta" ))
-
-```
-
-¿Hay diferencia entre ambos grupos en la muestra?
-
-```{r}
-clase = data %>% 
-  filter(!is.na(Clase2)) %>% 
-  group_by(Clase2)  %>% 
-  summarize(Media = mean(P30, na.rm = T),
-  min = ciMean(P30, na.rm=T)[1],
-  max = ciMean(P30, na.rm=T)[2])
-clase
-```
-
-El análisis descriptivo muestra que las medias de ambos grupos se
-encuentran a 0.6 puntos de distancia.
-
-Para poder evaluar si existen o no diferencias poblacionales usaremos
-t.test.
-
-```{r}
-t.test(P30 ~ Clase2, data = data)
+library(tidyr)
+library(sjlabelled)
+library(ggrepel)
+library(scales)
+library(ggpubr)
+library(plm)
+library(lmtest)
 ```
 
 ```{r}
-ggplot(clase, aes(x = Clase2, y = Media)) +
-  geom_errorbar(aes(ymin = min, ymax = max), width = 0.2) +
-  ggtitle("Estimación del nivel de acuerdo con 'Los que más \ntienen deberían pagar más impuestos' según clase") +
-  # Etiquetas de la media
-  geom_text(aes(label = paste(round(Media, 2))), vjust = 0.5, size = 3) +
-  # Etiquetas de los valores mínimos
-  geom_text(aes(y = min, label = paste("min:", round(min, 2))), 
-            vjust = 1.5, hjust = -0.6, size = 2, color = "#00688B") +
-  # Etiquetas de los valores máximos
-  geom_text(aes(y = max, label = paste("max:", round(max, 2))), 
-            vjust = -0.5, hjust = -0.6, size = 2, color = "#00688B") +
-  theme_light()+
-  xlab("¿Es de clase alta o media alta?") + 
-  ylab("Promedio del nivel de acuerdo con \nLos que más tienen deberían pagar más impuestos") 
+library(rio)
+data=import("DD1.RData")
 ```
 
-Ejercicios:
+```{r}
+#Según el documento, los equivalentes a tiempo completo o full time employment (FTE) se componen de empleados a tiempo completo, directivos y empleados a tiempo parcial (emptot). Estos últimos se multiplican por el factor 0,5 antes de entrar en el cálculo. Además, se genera la proporción de empleados a tiempo completo de todos los ETC (pct_ftw).
 
-1.  Analiza si existen diferencias en la población entre el promedio de
-    monto estimado para vivir (P15) entre hombres y mujeres (sexo) con
-    la prueba, el gráfico y la interpretación correspondiente.
-2.  Analiza si existen diferencias en la población entre el nivel de
-    acuerdo con la frase que indica que solo se gobierna para Lima(P29)
-    entre si el encuestad\@ vive en Lima o no (variable basada en
-    macrozona) con la prueba, el gráfico y la interpretación
-    correspondiente. Para ello debe de crear previamente una variable
-    llamada Lima que se base en macrozona, si macrozona es Lima,
-    entonces la nueva variable también será "Lima", todo lo demás será
-    "No Lima".
+#emptot = empft + nmgrs + 0.5 * emppt
+
+#pct_fte = empft / emptot * 100
+```
+
+## Estadísticos descriptivos
+
+```{r}
+data %>%
+  select(chain, state) %>%
+  table() %>%
+  prop.table(margin = 2)  %>%
+  apply(MARGIN = 2,
+        FUN = scales::percent_format(accuracy = 0.1)) %>%
+  noquote
+```
+
+### Pre-tratamiento
+
+```{r}
+data %>%
+  filter(observation == "February 1992") %>%
+  group_by(state) %>%
+  summarise(emptot = mean(emptot, na.rm = TRUE),
+            pct_fte  = mean(pct_fte, na.rm = TRUE),
+            wage_st = mean(wage_st, na.rm = TRUE),
+            hrsopen = mean(hrsopen, na.rm = TRUE)) %>%
+  pivot_longer(cols=-state, names_to = "variable") %>%
+  pivot_wider(names_from = state, values_from = value)
+```
+
+### Pos-tratamiento
+
+```{r}
+data %>%
+  filter(observation == "November 1992") %>%
+  group_by(state) %>%
+  summarise(emptot = mean(emptot, na.rm = TRUE),
+            pct_fte  = mean(pct_fte, na.rm = TRUE),
+            wage_st = mean(wage_st, na.rm = TRUE),
+            hrsopen = mean(hrsopen, na.rm = TRUE)) %>%
+  pivot_longer(cols=-state, names_to = "variable") %>%
+  pivot_wider(names_from = state, values_from = value)
+```
+
+## Rango salarial antes y después de la política
+
+```{r}
+# Histograma para febrero de 1992
+hist.feb <- data %>%
+  filter(observation == "February 1992") %>%
+  ggplot(aes(wage_st, fill = state)) +
+  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
+                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
+                 alpha = 0.5, position = "dodge", bins = 23) +
+  labs(title = "Febrero 1992", x = "Rango Salarial", y = "Porcentaje de tiendas", fill = "") +
+  scale_fill_grey() +
+  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+
+# Histograma para noviembre de 1992
+hist.nov <- data %>%
+  filter(observation == "November 1992") %>%
+  ggplot(aes(wage_st, fill = state)) +
+  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
+                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
+                 alpha = 0.5, position = "dodge", bins = 23) +
+  labs(title = "Noviembre 1992", x = "Rango Salarial", y = "Porcentaje de tiendas", fill = "") +
+  scale_fill_grey() +
+  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+
+# Combinar los gráficos
+ggarrange(hist.feb, hist.nov, ncol = 2, 
+          common.legend = TRUE, legend = "bottom")
+
+```
+
+## Cálculo del efecto del tratamiento
+
+### Primeras diferencias
+
+```{r}
+differences <- data %>%
+  group_by(observation, state) %>%
+  summarise(emptot = mean(emptot, na.rm = TRUE))
+
+# Treatment group (NJ) before treatment
+njfeb <- differences[1,3]
+
+# Control group (PA) before treatment
+pafeb <- differences[2,3]
+
+# Treatment group (NJ) after treatment
+njnov <- differences[3,3]
+
+# Control group (PA) after treatment
+panov <- differences[4,3]
+```
+
+### ATE
+
+El efecto medio del tratamiento o Average Treatment Effect (ATE) se
+refiere al efecto promedio que tiene una intervención, tratamiento o
+política sobre el grupo que la recibió (el grupo de tratamiento). En
+otras palabras, el ATT mide cuánto cambió el resultado de interés (por
+ejemplo, ingresos, rendimiento académico, salud) para aquellos que
+recibieron el tratamiento, en comparación con lo que habría ocurrido si
+no lo hubieran recibido.
+
+En este contexto puede determinarse de dos maneras:
+
+-   calcular la diferencia entre la diferencia de noviembre y febrero
+    dentro de NJ y PA
+
+```{r}
+(njnov-njfeb)-(panov-pafeb) 
+```
+
+-   calcular la diferencia entre la diferencia de NJ y PA entre
+    noviembre y febrero
+
+```{r}
+(njnov-panov)-(njfeb-pafeb)
+```
+
+## Outcome contrafactual
+
+Representar gráficamente la relación entre el grupo de tratamiento y el
+de control puede ser muy útil para comprender el enfoque DiD. En primer
+lugar, se utiliza las diferencias de la variable emptot calculadas en el
+paso anterior para NJ y PJ en febrero y noviembre. Además, necesitamos
+el resultado de NJ si el tratamiento (aumento del salario mínimo) no se
+hubiera producido. Esto se denomina resultado contrafactual
+(nj_counterfactual). El supuesto DiD establece que las tendencias del
+grupo de tratamiento y del grupo de control son idénticas hasta que
+tiene lugar el tratamiento. Por lo tanto, sin el tratamiento, el empleo
+(emptot) de NJ disminuiría de febrero a noviembre en la misma proporción
+que el de PA. Se añade tres puntos de datos adicionales para representar
+una línea de intervención en el gráfico que indica el evento de
+tratamiento.
+
+```{r}
+# Calculate counterfactual outcome
+nj_counterfactual <- tibble(
+  observation = c("February 1992","November 1992"), 
+  state = c("New Jersey (Counterfactual)","New Jersey (Counterfactual)"),
+  emptot = as.numeric(c(njfeb, njfeb-(pafeb-panov)))
+  ) 
+
+# Data points for treatment event
+intervention <- tibble(
+    observation = c("Intervention", "Intervention", "Intervention"),
+    state = c("New Jersey", "Pennsylvania", "New Jersey (Counterfactual)"),
+    emptot = c(19.35, 22.3, 19.35)
+  ) 
+
+# Combine data
+did_plotdata <- bind_rows(differences, 
+                          nj_counterfactual, 
+                          intervention)
+```
+
+```{r}
+did_plotdata %>%
+  mutate(label = if_else(observation == "November 1992", as.character(state), NA_character_)) %>%
+  ggplot(aes(x=observation,y=emptot, group=state)) +
+  geom_line(aes(color=state), size=1.2) +
+  geom_vline(xintercept = "Intervention", linetype="dotted", 
+             color = "black", size=1.1) + 
+  scale_color_brewer(palette = "Accent") +
+  scale_y_continuous(limits = c(17,24)) +
+  ggrepel::geom_label_repel(aes(label = label),
+                   nudge_x = 0.5, nudge_y = -0.5,
+                   na.rm = TRUE) +
+  guides(color=FALSE) +
+  labs(x="", y="FTE (promedio)") +
+  annotate(
+    "text",
+    x = "Noviembre 1992",
+    y = 19.6,
+    label = "{Difference-in-Differences}",
+    angle = 90,
+    size = 3
+  )
+```
+
+## Cálculo del estimador DiD
+
+### Creación de la variable dummy
+
+Con la regresión lineal, este resultado puede obtenerse muy fácilmente.
+En primer lugar, tenemos que crear dos variables ficticias. Una indica
+el inicio del tratamiento (tiempo) y es igual a cero antes del
+tratamiento e igual a uno después del tratamiento. La otra variable
+separa las observaciones en un grupo de tratamiento y otro de control
+(tratados). Esta variable ficticia es igual a uno para los restaurantes
+de comida rápida situados en Nueva Jersey e igual a cero para los
+situados en Pensilvania.
+
+```{r}
+data <- mutate(data, time = ifelse(observation == "November 1992", 1, 0),
+                     treated = ifelse(state == "New Jersey", 1, 0)
+                      )
+```
+
+### Regresión
+
+*Y = b0 + b1 \* Tratamiento + b2 \* Post + b3 \* (Tratamiento \* Post) +
+Error*
+
+**Y**: Es la variable de resultado que estás midiendo (por ejemplo,
+salario, rendimiento académico, etc.).
+
+**b0:** Es el valor esperado de Y cuando todas las demás variables son
+cero. Representa el valor base del grupo de control antes de la
+intervención.
+
+**b1 \* Tratamiento**:
+
+**Tratamiento:** Es una variable binaria que toma el valor 1 si el
+individuo pertenece al grupo de tratamiento y 0 si pertenece al grupo de
+control.
+
+**b1**: Mide la diferencia en Y entre el grupo de tratamiento y el grupo
+de control antes de la intervención.
+
+**b2 \* Post:**
+
+**Post:** Es una variable binaria que toma el valor 1 si es el período
+posterior a la intervención y 0 si es el período anterior.
+
+**b2:** Mide el cambio en Y para el grupo de control entre el período
+anterior y posterior a la intervención.
+
+**b3 \* (Tratamiento \* Post):**
+
+**Tratamiento \* Post**: Es la interacción entre las variables
+"Tratamiento" y "Post". Toma el valor 1 solo para el grupo de
+tratamiento en el período posterior a la intervención.
+
+**b3**: Es el coeficiente de interés. Mide el efecto DiD, es decir, el
+impacto de la intervención en el grupo de tratamiento después de la
+intervención, neto de los cambios en el grupo de control.
+
+**Error**: Representa los factores no observados que afectan a Y.
+
+```{r}
+did_model <- lm(emptot ~ time + treated + time:treated, data = data)
+summary(did_model)
+```
+
+## Efectos fijos
+
+```{r}
+# Declare as panel data
+panel <- pdata.frame(data, "sheet")
+
+# Within model
+did.reg <- plm(emptot ~ time + treated + time:treated, 
+               data = panel, model = "within")
+
+# obtain clustered standard errors
+coeftest(did.reg, vcov = function(x) 
+  vcovHC(x, cluster = "group", type = "HC1"))
+```
