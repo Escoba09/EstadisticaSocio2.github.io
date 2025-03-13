@@ -17,22 +17,39 @@ editor_options:
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
 
-Curso: SOC294 - Estadística para el análisis sociológico 1
+Curso: SOC285 - Estadística para el análisis sociológico 2
 
-Semestre 2024 - 2
+Semestre 2025 - 1
 
-# Chi cuadrado y repaso
+# Dif-in-Dif
 
-## **Tablas de contingencia**
+¿Quién paga la cobertura obligatoria del parto?
 
--   Son tablas de doble entrada, en las cuales se cruzan las categorías
-    de dos variables de interés.
+Cuando el gobierno obliga a las empresas a proporcionar prestaciones, ¿quién paga realmente la factura?
 
--   En las casillas de la tabla se ubica la frecuencia o el número de
-    casos de cada cruce.
+¿Es el empresario?
 
--   Conceptos importantes: Frecuencias observadas y frecuencias
-    esperadas.
+¿O es el empleado quien la paga indirectamente en forma de recorte salarial?
+
+Se reproducirá el paper llamado "The Incidence of Mandated Maternity Benefits". Este análisis fue realizado por primera vez en 1994 por Jonathan Gruber, profesor del MIT y director del Programa de Asistencia Sanitaria de la Oficina Nacional de Investigación Económica (NBER). 
+
+## **Línea de tiempo**
+
+Comprender la cronología es importante para identificar el efecto causal:
+
+Antes de 1978: la cobertura sanitaria del parto era limitada.
+
+1975-1979: un subgrupo de estados aprueba leyes que obligan a la cobertura sanitaria del parto.
+
+A partir de 1978: la legislación federal impone la cobertura sanitaria del parto en todos los estados.
+
+![](dif1.png)
+
+```{r}
+require(foreign)
+data<-read.dta("https://github.com/CausalReinforcer/Stata/raw/master/eitc.dta")
+```
+
 
 ```{r, echo=FALSE, out.width="50%",fig.align="center"}
 knitr::include_graphics("Tabla_contingencia1.png") 
