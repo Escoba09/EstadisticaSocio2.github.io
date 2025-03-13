@@ -80,11 +80,23 @@ permite añadir covariables
 
 # Workers' Compensation and Injury Duration: Evidence from a Natural Experiment
 
-Este artículo (Meyer, Viscusi y Durbin: 1995) examina el impacto de las prestaciones de compensación de los trabajadores en la duración de las lesiones laborales aprovechando un experimento natural creado por los aumentos significativos de las cuantías máximas de las prestaciones semanales en Kentucky y Michigan. 
+Este artículo (Meyer, Viscusi y Durbin: 1995) examina el impacto de las
+prestaciones de compensación de los trabajadores en la duración de las
+lesiones laborales aprovechando un experimento natural creado por los
+aumentos significativos de las cuantías máximas de las prestaciones
+semanales en Kentucky y Michigan.
 
-Los autores comparan la duración de las lesiones de las personas con mayores ingresos, que experimentaron un aumento del 50% en las prestaciones, con la de las personas con menores ingresos, cuyas prestaciones se mantuvieron sin cambios. 
+Los autores comparan la duración de las lesiones de las personas con
+mayores ingresos, que experimentaron un aumento del 50% en las
+prestaciones, con la de las personas con menores ingresos, cuyas
+prestaciones se mantuvieron sin cambios.
 
-El estudio concluye que unas prestaciones más elevadas conllevan una mayor duración de las lesiones, con elasticidades de duración estimadas en torno a 0,3-0,4. Los resultados sugieren que las prestaciones por accidentes de trabajo influyen significativamente en las decisiones de oferta de mano de obra, ya que unas prestaciones más elevadas incentivan a los trabajadores a prolongar su baja laboral.
+El estudio concluye que unas prestaciones más elevadas conllevan una
+mayor duración de las lesiones, con elasticidades de duración estimadas
+en torno a 0,3-0,4. Los resultados sugieren que las prestaciones por
+accidentes de trabajo influyen significativamente en las decisiones de
+oferta de mano de obra, ya que unas prestaciones más elevadas incentivan
+a los trabajadores a prolongar su baja laboral.
 
 ```{r}
 library(rio)

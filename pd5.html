@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 5</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -363,320 +363,341 @@ div.tocify {
 
 
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
-<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="chi-cuadrado-y-repaso" class="section level1">
-<h1>Chi cuadrado y repaso</h1>
-<div id="tablas-de-contingencia" class="section level2">
-<h2><strong>Tablas de contingencia</strong></h2>
-<ul>
-<li><p>Son tablas de doble entrada, en las cuales se cruzan las
-categorías de dos variables de interés.</p></li>
-<li><p>En las casillas de la tabla se ubica la frecuencia o el número de
-casos de cada cruce.</p></li>
-<li><p>Conceptos importantes: Frecuencias observadas y frecuencias
-esperadas.</p></li>
-</ul>
-<p><img src="Tabla_contingencia1.png" width="50%" style="display: block; margin: auto;" /></p>
+<p>Curso: SOC285 - Estadística para el análisis sociológico 2</p>
+<p>Semestre 2025 - 1</p>
+<div id="diff-in-diff-2" class="section level1">
+<h1>Diff-in-Diff (2)</h1>
+<div id="recordando-brevemente" class="section level2">
+<h2>Recordando brevemente</h2>
+<div id="sobre-la-relación-causal" class="section level3">
+<h3>Sobre la relación causal:</h3>
+<p><img src="dif1.png" /></p>
+<p>Ilustración de la vía causal: Z es la causa tanto de X (variable
+independiente) como de Y (variable dependiente) y, por tanto, oscurece
+la relación entre X e Y.</p>
+<p>Dif-in-Dif es una combinación de la diferencia de series temporales
+(compara los resultados entre los periodos anterior y posterior al
+tratamiento) y la diferencia transversal (compara los resultados entre
+los grupos de tratamiento y control):</p>
+<p><img src="dif3.png" /></p>
+<p>Visualmente, Diff-in-Diff es la diferencia entre 1) cambios en el
+resultado entre pre-tratamiento y post-tratamiento, 2) cambios en el
+resultado entre grupo de control y grupo de tratamiento:</p>
+<p><img src="dif2.png" /></p>
 </div>
-<div id="frecuencias-observadas-y-esperadas" class="section level2">
-<h2><strong>Frecuencias observadas y esperadas</strong></h2>
-<ul>
-<li><p>Frecuencia esperada: Estas son las frecuencia que deberían darse
-si las variables fueran independientes.</p></li>
-<li><p>Frecuencia observada: Estas son las frecuencias reales que se
-observa en nuestra data.</p></li>
-</ul>
-<p>Ejemplo:</p>
-<p><img src="Tabla_contingencia2.png" width="50%" style="display: block; margin: auto;" /></p>
+<div id="regresión-diff-in-diff" class="section level3">
+<h3>Regresión Diff-in-Diff:</h3>
+<p><img src="dif4.png" /></p>
+<p>Aunque es posible obtener el estimador DiD calculando las medias a
+mano, utilizar un marco de regresión puede resultar más ventajoso, ya
+que</p>
+<p>produce errores estándar para la comprobación de hipótesis</p>
+<p>puede ampliarse fácilmente para incluir múltiples periodos y
+grupos</p>
+<p>permite añadir covariables</p>
 </div>
-<div id="prueba-chi2" class="section level2">
-<h2><strong>Prueba Chi2</strong></h2>
-<p>Chi2 es una prueba para estimar el grado de asociación entre
-variables categóricas:</p>
+<div id="efecto-de-tratamiento" class="section level3">
+<h3>Efecto de tratamiento:</h3>
+<p><img src="dif5.png" /></p>
 <ul>
-<li><p>“Nominal - Nominal”,</p></li>
-<li><p>“Nominal - Ordinal”</p></li>
-<li><p>“Ordinal - Ordinal”</p></li>
+<li><p>β0 : Valor medio de <strong><em>Y</em></strong> en el grupo de
+control durante el preperiodo.</p></li>
+<li><p>β1: Variación media de <strong><em>Y</em></strong> entre el
+primer y el segundo periodo de tiempo que es común a ambos
+grupos.</p></li>
+<li><p>β2 : Diferencia media en <strong><em>Y</em></strong> entre los
+dos grupos que es común en ambos periodos de tiempo.</p></li>
+<li><p>β3 : Cambio diferencial medio en <strong><em>Y</em></strong> del
+primer al segundo periodo de tiempo del grupo de tratamiento en relación
+con el grupo de control</p></li>
 </ul>
-<p>Esto significa que una parte de la variabilidad de una variable puede
-ser explicada por otra variable.</p>
-<p>Supuestos:</p>
-<p>Para analizar asociación se requiere que el número de observaciones
-esperadas en cada celda de la tabla de contingencia debe ser
-suficientemente grande.</p>
-<p>Para fines de este curso, al menos cada celda de la tabla de
-contingencia de frecuencias esperadas debe ser de 5.</p>
-<p>Ten en cuenta que si estas condiciones no se cumplen, entonces la
-prueba podría no funcionar adecuadamente y los resultados de la prueba
-podrían no ser válidos.</p>
-<p>Hipótesis:</p>
-<ul>
-<li><p>Hipótesis nula (H0): Las variables son estadísticamente
-independientes (No hay asociación) 🚫</p></li>
-<li><p>Hipótesis alternativa (H1): Las variables son estadísticamente
-dependientes (Sí hay asociación)✅</p></li>
-</ul>
-<p>Que dos variables estén asociadas significa que parte de la
-variabilidad en una variable puede ser explicada por la otra
-variable.</p>
-<p>El Chi2 específica grado de asociación, <strong>NO LA FORMA DE
-ASOCIACIÓN</strong>.</p>
+<p><img src="dif6.png" /></p>
 </div>
-<div id="ejercicio" class="section level2">
-<h2><strong>Ejercicio</strong></h2>
-<p>Para la clase de hoy, se usará la base de datos de la ENPOVE 2022, el
-módulo de empleo. Esta “es una investigación estadística que permite
-suministrar información estadística que refleje la situación migratoria
-de la población venezolana refugiada y migrante en el Perú, con énfasis
-en el contexto de la pandemia por la COVID-19, para así apoyar a tomar
-las decisiones de política pública basadas en datos sólidos y
-confiables”</p>
-<p><img src="DicPD5.png" width="50%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>library(rio) #Convocamos el paquete   
-data=import(&quot;PD5_enpove2022.sav&quot;)</code></pre>
+</div>
+</div>
 <div
-id="existe-una-relación-significativa-entre-el-estrato-con-el-envío-deremesas"
-class="section level3">
-<h3><strong>¿Existe una relación significativa entre el estrato con el
-envío deremesas?</strong></h3>
-<p><strong>PASO 1: Tabla de contingencia</strong></p>
-<pre class="r"><code>library(dplyr)
-data = data %&gt;% 
-  mutate(estrato = factor(estrato,labels=c(&quot;Bajo&quot;,&quot;Medio bajo&quot;,&quot;Medio&quot;,&quot;Medio alto&quot;,&quot;Alto&quot;))) %&gt;% 
-  mutate(remesas = factor(remesas,labels=c(&quot;Sí&quot;,&quot;No&quot;)))</code></pre>
-<pre class="r"><code>table(data$remesas)</code></pre>
+id="workers-compensation-and-injury-duration-evidence-from-a-natural-experiment"
+class="section level1">
+<h1>Workers’ Compensation and Injury Duration: Evidence from a Natural
+Experiment</h1>
+<p>Este artículo (Meyer, Viscusi y Durbin: 1995) examina el impacto de
+las prestaciones de compensación de los trabajadores en la duración de
+las lesiones laborales aprovechando un experimento natural creado por
+los aumentos significativos de las cuantías máximas de las prestaciones
+semanales en Kentucky y Michigan.</p>
+<p>Los autores comparan la duración de las lesiones de las personas con
+mayores ingresos, que experimentaron un aumento del 50% en las
+prestaciones, con la de las personas con menores ingresos, cuyas
+prestaciones se mantuvieron sin cambios.</p>
+<p>El estudio concluye que unas prestaciones más elevadas conllevan una
+mayor duración de las lesiones, con elasticidades de duración estimadas
+en torno a 0,3-0,4. Los resultados sugieren que las prestaciones por
+accidentes de trabajo influyen significativamente en las decisiones de
+oferta de mano de obra, ya que unas prestaciones más elevadas incentivan
+a los trabajadores a prolongar su baja laboral.</p>
+<pre class="r"><code>library(rio)
+library(tidyverse)  </code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(broom)  
+library(scales)  </code></pre>
 <pre><code>## 
-##   Sí   No 
-## 4443 3867</code></pre>
-<pre class="r"><code>tabla1=table(data$estrato,data$remesas)
-tabla1</code></pre>
-<pre><code>##             
-##                Sí   No
-##   Bajo        555  422
-##   Medio bajo 1397 1168
-##   Medio      1557 1400
-##   Medio alto  848  737
-##   Alto         86  140</code></pre>
-<p>Revisamos el supuesto</p>
-<pre class="r"><code>chisq.test(tabla1)$expected</code></pre>
-<pre><code>##             
-##                     Sí        No
-##   Bajo        522.3599  454.6401
-##   Medio bajo 1371.3953 1193.6047
-##   Medio      1580.9809 1376.0191
-##   Medio alto  847.4314  737.5686
-##   Alto        120.8325  105.1675</code></pre>
-<p>En este caso sí cumple el supuesto!😎</p>
-<p>Creamos porcentajes por columna, para ello tenemos que agregar
-prop.table al comando anterior. El argumento de prop.table puede ser</p>
-<p>1: para calcular porcentaje por fila</p>
-<p>2: para calcular por columna ⚠️ Recuerda que es recomendable calcular
-los porcentajes sobre la variable sociodemográfica o aquella que
-antecede a la otra.</p>
-<pre class="r"><code>tablapor1 = tabla1 %&gt;%
-           prop.table(1) %&gt;%  
-           round(2) #redondear el resultado a 2 decimales
-tablapor1</code></pre>
-<pre><code>##             
-##                Sí   No
-##   Bajo       0.57 0.43
-##   Medio bajo 0.54 0.46
-##   Medio      0.53 0.47
-##   Medio alto 0.54 0.46
-##   Alto       0.38 0.62</code></pre>
-<p><strong>PASO 2: Tabla de contingencia</strong></p>
-<pre class="r"><code>toPlot1 = as.data.frame(tablapor1) 
-names(toPlot1) = c(&quot;Estrato&quot;, &quot;Remesa&quot;, &quot;Porcentaje&quot;)</code></pre>
-<pre class="r"><code>library(ggplot2)
-  ggplot(toPlot1, aes(x=Estrato, y=Porcentaje*100, fill=Remesa)) +
-  geom_bar(position=&quot;stack&quot;, stat=&quot;identity&quot;)+ #Stack indica que son barras apiladas
-  geom_text(aes(label=paste0(Porcentaje*100,&quot;%&quot;)), 
-            position = position_stack(vjust = 0.5), 
-             size = 4,
-             fontface=&quot;bold&quot;)+
-  labs(x=&quot;Estrato&quot;, y=&quot;Porcentaje&quot;, fill=&quot;¿Envía remesa?&quot;)+
-  theme_minimal()</code></pre>
-<p><img src="pd5_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>De forma preliminar ¿Hay diferencias entre la forma cómo se
-distribuye la variable “Situación Económica” en cada subgrupo (hombre y
-mujer)?</p>
-<p><strong>PASO 3: Prueba Chi2</strong></p>
-<pre class="r"><code>chisq.test(tabla1)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
+## Attaching package: &#39;scales&#39;
 ## 
-## data:  tabla1
-## X-squared = 27.771, df = 4, p-value = 1.388e-05</code></pre>
-<p>De acuerdo al p-value obtenido en la prueba de hipótesis de Chi2, al
-ser menor de 0.05, podemos rechazar la hipótesis nula (Las variables son
-independientes)</p>
-<p>Por lo tanto, podemos concluir que existe dependencia entre las
-variables escogidas. Esto quiere decir que el estrato SÍ se vincula con
-el envío de remesas.</p>
-</div>
-</div>
-<div id="repaso" class="section level2">
-<h2><strong>Repaso</strong></h2>
-<p>Ten en consideración que evitar borrar los datos perdidos pero no
-considerarlos en el análisis podemos agregar un filtro:
-<strong>filter(!is.na(variableatrabajar))</strong> recuerda que esto
-debe ir antes del summarise.</p>
-<p>No olvides llamar a los paquetes necesarios y setear tu
-directorio.</p>
-<div id="análisis-descriptivo" class="section level3">
-<h3><strong>1. Análisis descriptivo</strong></h3>
-<div id="cuál-es-la-proporción-de-venezolanos-con-empleo-trabajo"
-class="section level4">
-<h4>¿Cuál es la proporción de venezolanos con empleo? (trabajo)</h4>
-<pre><code>## # A tibble: 2 × 3
-##   trabajo  Freq Porcentaje
-##   &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
-## 1 Si       5987       58.5
-## 2 No       4240       41.5</code></pre>
-<p>En la muestra, un 59% de venezolanos que residen en Perú, contaba con
-empleo.</p>
-<p><img src="pd5_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-</div>
-<div id="cuánto-ganan-los-venezolanos-con-empleo-en-el-perú"
-class="section level4">
-<h4>¿Cuánto ganan los venezolanos con empleo en el Perú?</h4>
-<p>La muestra indica que los venezolan@s ganan entre 0 y 9500 soles por
-cada pago, y en promedio ganan 511 soles. Además la mitad de los
-venezolanos gana de 330 soles o menos. Hay que tomar este dato con
-precaución ya que depende de la frecuencia de pago. Es decir, puede que
-reciban 300 soles en cada pago pero este se realiza de manera quincenal,
-lo que serían 1200 soles mensuales.</p>
-<p>Visualicemos lo hallado</p>
-<p><img src="pd5_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-</div>
-</div>
-<div id="intervalo-de-confianza-para-proporción" class="section level3">
-<h3><strong>2. Intervalo de confianza para proporción</strong></h3>
-<p>Encontramos que la proporción de venezolan@s con empleo en el Perú es
-de 59%, calculemos cuanto será este valor en la población.</p>
-<p>Previamente ya habíamos calculado la frecuencia de los que contaban
-con empleo y los que no, ingresemos esos datos en el prop.test</p>
-<pre><code>## # A tibble: 2 × 3
-##   trabajo  Freq Porcentaje
-##   &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
-## 1 Si       5987       58.5
-## 2 No       4240       41.5</code></pre>
-<pre><code>## 
-##  1-sample proportions test with continuity correction
+## The following object is masked from &#39;package:purrr&#39;:
 ## 
-## data:  5987 out of 5987 + 4240, null probability 0.5
-## X-squared = 298.09, df = 1, p-value &lt; 2.2e-16
-## alternative hypothesis: true p is not equal to 0.5
-## 95 percent confidence interval:
-##  0.5757838 0.5949741
-## sample estimates:
-##         p 
-## 0.5854112</code></pre>
-<p>La proporción de venezolanos/as con empleo en Perú se encuentra entre
-57.5% y 59.4%, a un 95% de confianza.</p>
-</div>
-</div>
-<div id="intervalo-de-confianza-para-media" class="section level2">
-<h2><strong>3. Intervalo de confianza para media</strong></h2>
-<p>Anteriormente, encontramos que los venezolanos en Perú ganan en
-promedio 511 soles. Calculemos cuanto es este valor en la población.</p>
-<p>No olvides llamar al paquete lsr para hallar los intervalos de
-confianza</p>
-<pre><code>##      media Superior.2.5% Superior.97.5% Inferior.2.5% Inferior.97.5%
-## 1 511.0324      492.2745       529.7902      492.2745       529.7902</code></pre>
-<p>A un 95% de confianza podemos concluir que, en promedio, un/a
-venezolan@ que trabaja en Perú gana aproximadamente entre 492.2 y 529.7
-soles. Hay que tener en consideración que este monto es en cada pago,
-que puede ser quincenal, mensual, etc.</p>
-<div id="prueba-t" class="section level3">
-<h3><strong>4. Prueba T</strong></h3>
-<div
-id="existe-diferencia-entre-el-monto-percibido-ingreso-entre-los-venezolanos-que-envían-remesas-remesas-y-los-que-no"
-class="section level4">
-<h4>¿Existe diferencia entre el monto percibido (ingreso) entre los
-venezolanos que envían remesas (remesas) y los que no?</h4>
-<pre><code>## # A tibble: 2 × 4
-##   remesas media Superior Inferior
-##   &lt;fct&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1 Si       543.     518.     567.
-## 2 No       459.     431.     487.</code></pre>
-<p>En la muestra si existe una diferencia entre los ingresos de los que
-envían remesas y los que no. Siendo el ingreso más alto el de los que sí
-envían. Analicemos si esto se cumple en la población de venezolanos en
-Perú.</p>
-<pre><code>## 
-##  Welch Two Sample t-test
+##     discard
 ## 
-## data:  ingreso by remesas
-## t = 4.3886, df = 3677.7, p-value = 1.173e-05
-## alternative hypothesis: true difference in means between group Si and group No is not equal to 0
-## 95 percent confidence interval:
-##   46.16303 120.71568
-## sample estimates:
-## mean in group Si mean in group No 
-##         542.5315         459.0921</code></pre>
-<p>H0: No existe diferencia entre los promedios de ingreso de los que
-envían remesas y los que no. /H1: Existe diferencia entre los promedios
-de ingreso de los que envían remesas y los que no.</p>
-<p>Analizando el pvalor, podemos rechazar la hipótesis nula y así
-afirmar que las medias de ingreso de los que envían remesas y los que
-no, no son iguales.</p>
-<p>Constatemos cual es la media más alta con un gráfico:</p>
-<p><img src="pd5_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-</div>
-</div>
-<div id="prueba-chi-cuadrado" class="section level3">
-<h3><strong>5. Prueba Chi Cuadrado</strong></h3>
-<p>¿De qué manera se relaciona el sexo con si la ocupacion de la persona
-es empleado o no?</p>
-<p>Nos basaremos en la variable ocupación, si es 3 será “Empleado” todos
-los demás casos serán “No empleado”.</p>
-<pre><code>## 
-##    1    2    3    4    5    6    7 
-##   90 1947 3987  110   28  221    4</code></pre>
-<pre><code>## 
-##    Empleado No empleado 
-##        3987        2400</code></pre>
-<p>Agreguemos etiquetas a la variable sexo</p>
-<pre><code>##         
-##          Empleado No empleado
-##   Hombre     2372        1220
-##   Mujer      1615        1180</code></pre>
-<p>Revisemos el supuesto: Recuerda que debe haber por lo menos 5 casos
-por celda.</p>
-<pre><code>##         
-##          Empleado No empleado
-##   Hombre 2242.258    1349.742
-##   Mujer  1744.742    1050.258</code></pre>
-<p>Sí cumple con el mínimo por celda.</p>
-<pre><code>##         
-##          Empleado No empleado
-##   Hombre     0.66        0.34
-##   Mujer      0.58        0.42</code></pre>
-<p><img src="pd5_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+## The following object is masked from &#39;package:readr&#39;:
 ## 
-## data:  tabla1
-## X-squared = 45.302, df = 1, p-value = 1.689e-11</code></pre>
-<p>La prueba confirma lo expuesto en el gráfico. A un 95% de confianza
-podemos afirmar que existe relación entre ser hombre o mujer y el ser
-empleado. Apoyándonos en el gráfico, podemos afirmar que habrá una mayor
-proporción de mujeres cuya ocupación es ser dependiente o empleada que
-en el caso de los hombres.</p>
+##     col_factor</code></pre>
+<pre class="r"><code>library(modelsummary)</code></pre>
+<pre><code>## Warning: package &#39;modelsummary&#39; was built under R version 4.4.3</code></pre>
+<pre class="r"><code>data=import(&quot;INJURY.DTA&quot;)</code></pre>
+<div id="estadístico-descriptivo-y-visuales" class="section level2">
+<h2>Estadístico descriptivo y visuales</h2>
+<p>En primer lugar, podemos observar la distribución de las prestaciones
+de desempleo entre los que ganan más y los que ganan menos (nuestros
+grupos de control y de tratamiento):</p>
+<pre class="r"><code>etiquetas &lt;- c(&quot;0&quot; = &quot;Low Earner&quot;, &quot;1&quot; = &quot;High Earner&quot;)
+
+ggplot(data = data, aes(x = durat)) +
+  # binwidth = 8 hace que cada columna represente 2 meses (8 semanas)
+  # boundary = 0 hace que la barra 0-8 empiece en 0 y no sea de -4 a 4
+  geom_histogram(binwidth = 8, color = &quot;white&quot;, boundary = 0) +
+  facet_wrap(vars(highearn), labeller = labeller(highearn = etiquetas))+
+  labs(x = &quot;Duración en semanas&quot;)</code></pre>
+<p><img src="pd5_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Si utilizamos el logaritmo de la duración (ldurat), podemos obtener
+una distribución menos sesgada que funciona mejor con los modelos de
+regresión:</p>
+<pre class="r"><code>ggplot(data = data, mapping = aes(x = ldurat)) +
+  geom_histogram(binwidth = 0.5, color = &quot;white&quot;, boundary = 0) + 
+  facet_wrap(vars(highearn), labeller = labeller(highearn = etiquetas))+
+  labs(x = &quot;Duración en semana (logaritmos)&quot;)</code></pre>
+<p><img src="pd5_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>También deberíamos comprobar la distribución del desempleo antes y
+después del cambio de política.</p>
+<pre class="r"><code>etiquetas1 &lt;- c(&quot;0&quot; = &quot;Antes 1980&quot;, &quot;1&quot; = &quot;Después 1980&quot;)
+
+ggplot(data = data, mapping = aes(x = ldurat)) +
+  geom_histogram(binwidth = 0.5, color = &quot;white&quot;, boundary = 0) + 
+  facet_wrap(vars(afchnge), labeller = labeller(afchnge = etiquetas1))+
+  labs(x = &quot;Duración en semana (logaritmos)&quot;)</code></pre>
+<p><img src="pd5_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
+<div id="diff-in-diff-manual" class="section level2">
+<h2>Diff-in-Diff manual</h2>
+<pre class="r"><code>differences &lt;- data %&gt;%
+  group_by(afchnge, highearn) %&gt;%
+  summarise(mean_ldurat = mean(ldurat))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;afchnge&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>differences</code></pre>
+<pre><code>## # A tibble: 4 × 3
+## # Groups:   afchnge [2]
+##   afchnge highearn mean_ldurat
+##     &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;
+## 1       0        0        1.20
+## 2       0        1        1.41
+## 3       1        0        1.22
+## 4       1        1        1.63</code></pre>
+<pre class="r"><code># Treatment group (high) before treatment
+highb1980 &lt;- differences[1,3]
+
+# Control group (low) before treatment
+lowb1980 &lt;- differences[2,3]
+
+# Treatment group (high) after treatment
+higha1980 &lt;- differences[3,3]
+
+# Control group (low) after treatment
+lowa1980 &lt;- differences[4,3]
+
+Diff=(highb1980-higha1980)-(lowb1980-lowa1980)
+Diff</code></pre>
+<pre><code>##   mean_ldurat
+## 1   0.1883498</code></pre>
+<p>La estimación diff-in-diff es de 0,19, lo que significa que el
+programa provoca un aumento de la duración del desempleo de 0,19 semanas
+log. Sin embargo, las semanas log no tienen sentido, así que tenemos que
+interpretarlo con porcentajes.</p>
+<p>Recibir el tratamiento (es decir, tener ingresos elevados tras el
+cambio de política) provoca un aumento del 19% en la duración del
+desempleo.</p>
+<pre class="r"><code>before_treatment &lt;- differences %&gt;% 
+  filter(afchnge == 0, highearn == 1) %&gt;% 
+  pull(mean_ldurat)
+
+before_control &lt;- differences %&gt;% 
+  filter(afchnge == 0, highearn == 0) %&gt;% 
+  pull(mean_ldurat)
+
+after_treatment &lt;- differences %&gt;% 
+  filter(afchnge == 1, highearn == 1) %&gt;% 
+  pull(mean_ldurat)
+
+after_control &lt;- differences %&gt;% 
+  filter(afchnge == 1, highearn == 0) %&gt;% 
+  pull(mean_ldurat)
+
+diff_treatment_before_after &lt;- after_treatment - before_treatment
+diff_treatment_before_after</code></pre>
+<pre><code>## [1] 0.2119848</code></pre>
+<pre class="r"><code>diff_control_before_after &lt;- after_control - before_control
+diff_control_before_after</code></pre>
+<pre><code>## [1] 0.02363507</code></pre>
+<pre class="r"><code>diff_diff &lt;- diff_treatment_before_after - diff_control_before_after
+
+diff_diff</code></pre>
+<pre><code>## [1] 0.1883498</code></pre>
+<p>Graficar:</p>
+<pre class="r"><code>ggplot(differences, aes(x = as.factor(afchnge), 
+                        y = mean_ldurat, 
+                        color = as.factor(highearn))) + 
+  geom_point() +
+  geom_line(aes(group = as.factor(highearn))) +
+  annotate(geom = &quot;segment&quot;, x = &quot;0&quot;, xend = &quot;1&quot;,
+           y = before_treatment, yend = after_treatment - diff_diff,
+           linetype = &quot;dashed&quot;, color = &quot;grey50&quot;) +
+  annotate(geom = &quot;segment&quot;, x = &quot;1&quot;, xend = &quot;1&quot;,
+           y = after_treatment, yend = after_treatment - diff_diff,
+           linetype = &quot;dotted&quot;, color = &quot;blue&quot;) +
+  annotate(geom = &quot;label&quot;, x = &quot;1&quot;, y = after_treatment - (diff_diff / 2), 
+           label = &quot;Efecto del programa&quot;, size = 3) +
+  scale_x_discrete(labels = c(&quot;0&quot; = &quot;Antes de 1980&quot;, &quot;1&quot; = &quot;Después de 1980&quot;)) +
+  labs(y = &quot;Promedio de duración en semanas (logaritmos)&quot;) +
+  labs(x = &quot;Aplicación de política&quot;) +
+  scale_color_discrete(name = &quot;Grupo&quot;, labels = c(&quot;0&quot; = &quot;Low Earner&quot;, &quot;1&quot; = &quot;High Earner&quot;))</code></pre>
+<p><img src="pd5_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
-<div id="ejercicios" class="section level2">
-<h2>Ejercicios:</h2>
-<ol style="list-style-type: decimal">
-<li>Describe a la variable frecuencia de pago, realiza el gráfico
-respectivo e interpreta los resultados.</li>
-<li>Ahora analiza si que una persona vive en Lima se relaciona con la
-frecuencia de pago (frecuencia).</li>
-<li>Analiza si existe diferencias entre el promedio de horas de trabajo
-a la semana (horas_trabajo) según modalidad de trabajo (modalidad2)</li>
-</ol>
+<div id="regresión-diff-in-diff-simple" class="section level2">
+<h2>Regresión Diff-in-Diff simple</h2>
+<pre class="r"><code>modelo_simple &lt;- lm(ldurat ~ highearn + afchnge + highearn * afchnge,
+                  data = data)
+summary(modelo_simple)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = ldurat ~ highearn + afchnge + highearn * afchnge, 
+##     data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.0128 -0.7214 -0.0171  0.7714  4.0047 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       1.19934    0.02711  44.241  &lt; 2e-16 ***
+## highearn          0.21520    0.04336   4.963 7.11e-07 ***
+## afchnge           0.02364    0.03970   0.595  0.55164    
+## highearn:afchnge  0.18835    0.06279   2.999  0.00271 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.298 on 7146 degrees of freedom
+## Multiple R-squared:  0.01584,    Adjusted R-squared:  0.01543 
+## F-statistic: 38.34 on 3 and 7146 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="regresión-diff-in-diff-con-variables-control"
+class="section level2">
+<h2>Regresión Diff-in-Diff con variables control</h2>
+<p>Una ventaja de utilizar la regresión para la diferencia en
+diferencias es que podemos incluir variables de control para ayudar a
+aislar el efecto. Por ejemplo, puede que los reclamos de los
+trabajadores de la construcción o la industria manufacturera tiendan a
+ser más largos que los de los trabajadores de otros sectores. O puede
+que las reclamaciones por lesiones de espalda tiendan a ser más largas
+que las reclamaciones por lesiones de cabeza. También podríamos
+controlar los datos demográficos de los trabajadores, como el sexo, el
+estado civil y la edad.</p>
+<pre class="r"><code>modelo_variables_cont &lt;- lm(ldurat ~ highearn + afchnge + highearn * afchnge + 
+                  male + married + age + hosp + lprewage,
+                data = data)
+
+summary(modelo_variables_cont)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = ldurat ~ highearn + afchnge + highearn * afchnge + 
+##     male + married + age + hosp + lprewage, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.2182 -0.7905  0.0702  0.7459  4.3046 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -1.662725   0.291958  -5.695 1.28e-08 ***
+## highearn         -0.291619   0.066404  -4.392 1.14e-05 ***
+## afchnge           0.057927   0.036998   1.566 0.117467    
+## male             -0.131697   0.038406  -3.429 0.000609 ***
+## married           0.022324   0.033629   0.664 0.506816    
+## age               0.007882   0.001222   6.452 1.18e-10 ***
+## hosp              1.078933   0.032773  32.922  &lt; 2e-16 ***
+## lprewage          0.456675   0.056115   8.138 4.73e-16 ***
+## highearn:afchnge  0.162221   0.058943   2.752 0.005936 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.189 on 6835 degrees of freedom
+##   (306 observations deleted due to missingness)
+## Multiple R-squared:  0.1678, Adjusted R-squared:  0.1668 
+## F-statistic: 172.3 on 8 and 6835 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>library(stargazer)</code></pre>
+<pre><code>## 
+## Please cite as:</code></pre>
+<pre><code>##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
+<pre><code>##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer</code></pre>
+<pre class="r"><code>stargazer::stargazer(modelo_simple,modelo_variables_cont, type=&#39;text&#39;)</code></pre>
+<pre><code>## 
+## ======================================================================
+##                                    Dependent variable:                
+##                     --------------------------------------------------
+##                                           ldurat                      
+##                               (1)                       (2)           
+## ----------------------------------------------------------------------
+## highearn                    0.215***                 -0.292***        
+##                             (0.043)                   (0.066)         
+##                                                                       
+## afchnge                      0.024                     0.058          
+##                             (0.040)                   (0.037)         
+##                                                                       
+## male                                                 -0.132***        
+##                                                       (0.038)         
+##                                                                       
+## married                                                0.022          
+##                                                       (0.034)         
+##                                                                       
+## age                                                  0.008***         
+##                                                       (0.001)         
+##                                                                       
+## hosp                                                 1.079***         
+##                                                       (0.033)         
+##                                                                       
+## lprewage                                             0.457***         
+##                                                       (0.056)         
+##                                                                       
+## highearn:afchnge            0.188***                 0.162***         
+##                             (0.063)                   (0.059)         
+##                                                                       
+## Constant                    1.199***                 -1.663***        
+##                             (0.027)                   (0.292)         
+##                                                                       
+## ----------------------------------------------------------------------
+## Observations                 7,150                     6,844          
+## R2                           0.016                     0.168          
+## Adjusted R2                  0.015                     0.167          
+## Residual Std. Error    1.298 (df = 7146)         1.189 (df = 6835)    
+## F Statistic         38.342*** (df = 3; 7146) 172.284*** (df = 8; 6835)
+## ======================================================================
+## Note:                                      *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
 </div>
 </div>
 
