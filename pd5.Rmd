@@ -21,428 +21,235 @@ Curso: SOC285 - Estadística para el análisis sociológico 2
 
 Semestre 2025 - 1
 
-# Dif-in-Dif
+# Diff-in-Diff (2)
 
-¿Quién paga la cobertura obligatoria del parto?
+## Recordando brevemente
 
-Cuando el gobierno obliga a las empresas a proporcionar prestaciones, ¿quién paga realmente la factura?
-
-¿Es el empresario?
-
-¿O es el empleado quien la paga indirectamente en forma de recorte salarial?
-
-Se reproducirá el paper llamado "The Incidence of Mandated Maternity Benefits". Este análisis fue realizado por primera vez en 1994 por Jonathan Gruber, profesor del MIT y director del Programa de Asistencia Sanitaria de la Oficina Nacional de Investigación Económica (NBER). 
-
-## **Línea de tiempo**
-
-Comprender la cronología es importante para identificar el efecto causal:
-
-Antes de 1978: la cobertura sanitaria del parto era limitada.
-
-1975-1979: un subgrupo de estados aprueba leyes que obligan a la cobertura sanitaria del parto.
-
-A partir de 1978: la legislación federal impone la cobertura sanitaria del parto en todos los estados.
+### Sobre la relación causal:
 
 ![](dif1.png)
 
-```{r}
-require(foreign)
-data<-read.dta("https://github.com/CausalReinforcer/Stata/raw/master/eitc.dta")
-```
+Ilustración de la vía causal: Z es la causa tanto de X (variable
+independiente) como de Y (variable dependiente) y, por tanto, oscurece
+la relación entre X e Y.
 
+Dif-in-Dif es una combinación de la diferencia de series temporales
+(compara los resultados entre los periodos anterior y posterior al
+tratamiento) y la diferencia transversal (compara los resultados entre
+los grupos de tratamiento y control):
 
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("Tabla_contingencia1.png") 
-```
+![](dif3.png)
 
-## **Frecuencias observadas y esperadas**
+Visualmente, Diff-in-Diff es la diferencia entre 1) cambios en el
+resultado entre pre-tratamiento y post-tratamiento, 2) cambios en el
+resultado entre grupo de control y grupo de tratamiento:
 
--   Frecuencia esperada: Estas son las frecuencia que deberían darse si
-    las variables fueran independientes.
+![](dif2.png)
 
--   Frecuencia observada: Estas son las frecuencias reales que se
-    observa en nuestra data.
+### Regresión Diff-in-Diff:
 
-Ejemplo:
+![](dif4.png)
 
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("Tabla_contingencia2.png") 
-```
+Aunque es posible obtener el estimador DiD calculando las medias a mano,
+utilizar un marco de regresión puede resultar más ventajoso, ya que
 
-## **Prueba Chi2**
+produce errores estándar para la comprobación de hipótesis
 
-Chi2 es una prueba para estimar el grado de asociación entre variables
-categóricas:
+puede ampliarse fácilmente para incluir múltiples periodos y grupos
 
--   "Nominal - Nominal",
+permite añadir covariables
 
--   "Nominal - Ordinal"
+### Efecto de tratamiento:
 
--   "Ordinal - Ordinal"
+![](dif5.png)
 
-Esto significa que una parte de la variabilidad de una variable puede
-ser explicada por otra variable.
+-   β0 : Valor medio de ***Y*** en el grupo de control durante el
+    preperiodo.
 
-Supuestos:
+-   β1: Variación media de ***Y*** entre el primer y el segundo periodo
+    de tiempo que es común a ambos grupos.
 
-Para analizar asociación se requiere que el número de observaciones
-esperadas en cada celda de la tabla de contingencia debe ser
-suficientemente grande.
+-   β2 : Diferencia media en ***Y*** entre los dos grupos que es común
+    en ambos periodos de tiempo.
 
-Para fines de este curso, al menos cada celda de la tabla de
-contingencia de frecuencias esperadas debe ser de 5.
+-   β3 : Cambio diferencial medio en ***Y*** del primer al segundo
+    periodo de tiempo del grupo de tratamiento en relación con el grupo
+    de control
 
-Ten en cuenta que si estas condiciones no se cumplen, entonces la prueba
-podría no funcionar adecuadamente y los resultados de la prueba podrían
-no ser válidos.
+![](dif6.png)
 
-Hipótesis:
+# Workers' Compensation and Injury Duration: Evidence from a Natural Experiment
 
--   Hipótesis nula (H0): Las variables son estadísticamente
-    independientes (No hay asociación) 🚫
+Este artículo (Meyer, Viscusi y Durbin: 1995) examina el impacto de las prestaciones de compensación de los trabajadores en la duración de las lesiones laborales aprovechando un experimento natural creado por los aumentos significativos de las cuantías máximas de las prestaciones semanales en Kentucky y Michigan. 
 
--   Hipótesis alternativa (H1): Las variables son estadísticamente
-    dependientes (Sí hay asociación)✅
+Los autores comparan la duración de las lesiones de las personas con mayores ingresos, que experimentaron un aumento del 50% en las prestaciones, con la de las personas con menores ingresos, cuyas prestaciones se mantuvieron sin cambios. 
 
-Que dos variables estén asociadas significa que parte de la variabilidad
-en una variable puede ser explicada por la otra variable.
-
-El Chi2 específica grado de asociación, **NO LA FORMA DE ASOCIACIÓN**.
-
-## **Ejercicio**
-
-Para la clase de hoy, se usará la base de datos de la ENPOVE 2022, el
-módulo de empleo. Esta "es una investigación estadística que permite
-suministrar información estadística que refleje la situación migratoria
-de la población venezolana refugiada y migrante en el Perú, con énfasis
-en el contexto de la pandemia por la COVID-19, para así apoyar a tomar
-las decisiones de política pública basadas en datos sólidos y
-confiables"
-
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("DicPD5.png") 
-```
+El estudio concluye que unas prestaciones más elevadas conllevan una mayor duración de las lesiones, con elasticidades de duración estimadas en torno a 0,3-0,4. Los resultados sugieren que las prestaciones por accidentes de trabajo influyen significativamente en las decisiones de oferta de mano de obra, ya que unas prestaciones más elevadas incentivan a los trabajadores a prolongar su baja laboral.
 
 ```{r}
-library(rio) #Convocamos el paquete   
-data=import("PD5_enpove2022.sav")
+library(rio)
+library(tidyverse)  
+library(broom)  
+library(scales)  
+library(modelsummary)
+data=import("INJURY.DTA")
 ```
 
-### **¿Existe una relación significativa entre el estrato con el envío deremesas?**
+## Estadístico descriptivo y visuales
 
-**PASO 1: Tabla de contingencia**
+En primer lugar, podemos observar la distribución de las prestaciones de
+desempleo entre los que ganan más y los que ganan menos (nuestros grupos
+de control y de tratamiento):
 
-```{r, warning=FALSE,message=FALSE}
-library(dplyr)
-data = data %>% 
-  mutate(estrato = factor(estrato,labels=c("Bajo","Medio bajo","Medio","Medio alto","Alto"))) %>% 
-  mutate(remesas = factor(remesas,labels=c("Sí","No")))
+```{r}
+etiquetas <- c("0" = "Low Earner", "1" = "High Earner")
+
+ggplot(data = data, aes(x = durat)) +
+  # binwidth = 8 hace que cada columna represente 2 meses (8 semanas)
+  # boundary = 0 hace que la barra 0-8 empiece en 0 y no sea de -4 a 4
+  geom_histogram(binwidth = 8, color = "white", boundary = 0) +
+  facet_wrap(vars(highearn), labeller = labeller(highearn = etiquetas))+
+  labs(x = "Duración en semanas")
+```
+
+Si utilizamos el logaritmo de la duración (ldurat), podemos obtener una
+distribución menos sesgada que funciona mejor con los modelos de
+regresión:
+
+```{r}
+ggplot(data = data, mapping = aes(x = ldurat)) +
+  geom_histogram(binwidth = 0.5, color = "white", boundary = 0) + 
+  facet_wrap(vars(highearn), labeller = labeller(highearn = etiquetas))+
+  labs(x = "Duración en semana (logaritmos)")
+```
+
+También deberíamos comprobar la distribución del desempleo antes y
+después del cambio de política.
+
+```{r}
+etiquetas1 <- c("0" = "Antes 1980", "1" = "Después 1980")
+
+ggplot(data = data, mapping = aes(x = ldurat)) +
+  geom_histogram(binwidth = 0.5, color = "white", boundary = 0) + 
+  facet_wrap(vars(afchnge), labeller = labeller(afchnge = etiquetas1))+
+  labs(x = "Duración en semana (logaritmos)")
+```
+
+## Diff-in-Diff manual
+
+```{r}
+differences <- data %>%
+  group_by(afchnge, highearn) %>%
+  summarise(mean_ldurat = mean(ldurat))
+
+differences
+
 ```
 
 ```{r}
-table(data$remesas)
+# Treatment group (high) before treatment
+highb1980 <- differences[1,3]
+
+# Control group (low) before treatment
+lowb1980 <- differences[2,3]
+
+# Treatment group (high) after treatment
+higha1980 <- differences[3,3]
+
+# Control group (low) after treatment
+lowa1980 <- differences[4,3]
+
+Diff=(highb1980-higha1980)-(lowb1980-lowa1980)
+Diff
+```
+
+La estimación diff-in-diff es de 0,19, lo que significa que el programa
+provoca un aumento de la duración del desempleo de 0,19 semanas log. Sin
+embargo, las semanas log no tienen sentido, así que tenemos que
+interpretarlo con porcentajes.
+
+Recibir el tratamiento (es decir, tener ingresos elevados tras el cambio
+de política) provoca un aumento del 19% en la duración del desempleo.
+
+```{r}
+before_treatment <- differences %>% 
+  filter(afchnge == 0, highearn == 1) %>% 
+  pull(mean_ldurat)
+
+before_control <- differences %>% 
+  filter(afchnge == 0, highearn == 0) %>% 
+  pull(mean_ldurat)
+
+after_treatment <- differences %>% 
+  filter(afchnge == 1, highearn == 1) %>% 
+  pull(mean_ldurat)
+
+after_control <- differences %>% 
+  filter(afchnge == 1, highearn == 0) %>% 
+  pull(mean_ldurat)
+
+diff_treatment_before_after <- after_treatment - before_treatment
+diff_treatment_before_after
+
+diff_control_before_after <- after_control - before_control
+diff_control_before_after
+
+diff_diff <- diff_treatment_before_after - diff_control_before_after
+
+diff_diff
+```
+
+Graficar:
+
+```{r}
+ggplot(differences, aes(x = as.factor(afchnge), 
+                        y = mean_ldurat, 
+                        color = as.factor(highearn))) + 
+  geom_point() +
+  geom_line(aes(group = as.factor(highearn))) +
+  annotate(geom = "segment", x = "0", xend = "1",
+           y = before_treatment, yend = after_treatment - diff_diff,
+           linetype = "dashed", color = "grey50") +
+  annotate(geom = "segment", x = "1", xend = "1",
+           y = after_treatment, yend = after_treatment - diff_diff,
+           linetype = "dotted", color = "blue") +
+  annotate(geom = "label", x = "1", y = after_treatment - (diff_diff / 2), 
+           label = "Efecto del programa", size = 3) +
+  scale_x_discrete(labels = c("0" = "Antes de 1980", "1" = "Después de 1980")) +
+  labs(y = "Promedio de duración en semanas (logaritmos)") +
+  labs(x = "Aplicación de política") +
+  scale_color_discrete(name = "Grupo", labels = c("0" = "Low Earner", "1" = "High Earner"))
+```
+
+## Regresión Diff-in-Diff simple
+
+```{r}
+modelo_simple <- lm(ldurat ~ highearn + afchnge + highearn * afchnge,
+                  data = data)
+summary(modelo_simple)
+```
+
+## Regresión Diff-in-Diff con variables control
+
+Una ventaja de utilizar la regresión para la diferencia en diferencias
+es que podemos incluir variables de control para ayudar a aislar el
+efecto. Por ejemplo, puede que los reclamos de los trabajadores de la
+construcción o la industria manufacturera tiendan a ser más largos que
+los de los trabajadores de otros sectores. O puede que las reclamaciones
+por lesiones de espalda tiendan a ser más largas que las reclamaciones
+por lesiones de cabeza. También podríamos controlar los datos
+demográficos de los trabajadores, como el sexo, el estado civil y la
+edad.
+
+```{r}
+modelo_variables_cont <- lm(ldurat ~ highearn + afchnge + highearn * afchnge + 
+                  male + married + age + hosp + lprewage,
+                data = data)
+
+summary(modelo_variables_cont)
 ```
 
 ```{r}
-tabla1=table(data$estrato,data$remesas)
-tabla1
+library(stargazer)
+stargazer::stargazer(modelo_simple,modelo_variables_cont, type='text')
 ```
-
-Revisamos el supuesto
-
-```{r}
-chisq.test(tabla1)$expected
-```
-
-En este caso sí cumple el supuesto!😎
-
-Creamos porcentajes por columna, para ello tenemos que agregar
-prop.table al comando anterior. El argumento de prop.table puede ser
-
-1: para calcular porcentaje por fila
-
-2: para calcular por columna ⚠️ Recuerda que es recomendable calcular
-los porcentajes sobre la variable sociodemográfica o aquella que
-antecede a la otra.
-
-```{r}
-tablapor1 = tabla1 %>%
-           prop.table(1) %>%  
-           round(2) #redondear el resultado a 2 decimales
-tablapor1
-```
-
-**PASO 2: Tabla de contingencia**
-
-```{r}
-toPlot1 = as.data.frame(tablapor1) 
-names(toPlot1) = c("Estrato", "Remesa", "Porcentaje")
-```
-
-```{r, warning=FALSE,message=FALSE}
-library(ggplot2)
-  ggplot(toPlot1, aes(x=Estrato, y=Porcentaje*100, fill=Remesa)) +
-  geom_bar(position="stack", stat="identity")+ #Stack indica que son barras apiladas
-  geom_text(aes(label=paste0(Porcentaje*100,"%")), 
-            position = position_stack(vjust = 0.5), 
-             size = 4,
-             fontface="bold")+
-  labs(x="Estrato", y="Porcentaje", fill="¿Envía remesa?")+
-  theme_minimal()
-```
-
-De forma preliminar ¿Hay diferencias entre la forma cómo se distribuye
-la variable "Situación Económica" en cada subgrupo (hombre y mujer)?
-
-**PASO 3: Prueba Chi2**
-
-```{r, warning=FALSE,message=FALSE}
-chisq.test(tabla1)
-```
-
-De acuerdo al p-value obtenido en la prueba de hipótesis de Chi2, al ser
-menor de 0.05, podemos rechazar la hipótesis nula (Las variables son
-independientes)
-
-Por lo tanto, podemos concluir que existe dependencia entre las
-variables escogidas. Esto quiere decir que el estrato SÍ se vincula con
-el envío de remesas.
-
-## **Repaso**
-
-Ten en consideración que evitar borrar los datos perdidos pero no
-considerarlos en el análisis podemos agregar un filtro:
-**filter(!is.na(variableatrabajar))** recuerda que esto debe ir antes
-del summarise.
-
-No olvides llamar a los paquetes necesarios y setear tu directorio.
-
-### **1. Análisis descriptivo**
-
-#### ¿Cuál es la proporción de venezolanos con empleo? (trabajo)
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-data = data %>% 
-  mutate(trabajo =factor(trabajo,labels=c("Si","No")))
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-tabla1 = data %>% 
-  filter(!is.na(trabajo)) %>% 
-  group_by(trabajo) %>% 
-  summarise(Freq=n()) %>% 
-  mutate(Porcentaje = (Freq/sum(Freq))*100)
-tabla1
-```
-
-En la muestra, un 59% de venezolanos que residen en Perú, contaba con
-empleo.
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-ggplot(tabla1, aes(x=trabajo,y=Porcentaje,fill=trabajo))+
-  geom_bar(stat="identity")+
-  geom_text(aes(label=paste(round(Porcentaje,1),"%")),vjust=1.30, color="black", size=3)+
-  ggtitle("Venezolanos en Perú con empleo (%)")+xlab("¿La semana pasada tuvo algún trabajo?")+theme_classic()
-
-```
-
-#### ¿Cuánto ganan los venezolanos con empleo en el Perú?
-
-```{r, include=FALSE, echo=T}
-data %>% 
-  summarise(minimo=min(ingreso,na.rm = T),
-            maximo=max(ingreso,na.rm = T),
-            media=mean(ingreso,na.rm = T),
-            mediana=median(ingreso,na.rm = T),
-            sd=sd(ingreso,na.rm = T),
-            Q1=quantile(ingreso,na.rm = T,0.25),
-            Q3=quantile(ingreso,na.rm = T,0.75))
-```
-
-La muestra indica que los venezolan\@s ganan entre 0 y 9500 soles por
-cada pago, y en promedio ganan 511 soles. Además la mitad de los
-venezolanos gana de 330 soles o menos. Hay que tomar este dato con
-precaución ya que depende de la frecuencia de pago. Es decir, puede que
-reciban 300 soles en cada pago pero este se realiza de manera quincenal,
-lo que serían 1200 soles mensuales.
-
-Visualicemos lo hallado
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-data %>%
-  ggplot(aes(x = ingreso)) + 
-  geom_histogram(color = "black", fill = "hotpink1", bins = 40) +
-  ggtitle("Salario de la población venezolana en Perú ") +
-  ylab("Frecuencia")+xlab("Salario")+
-  geom_vline(xintercept =  mean(data$ingreso, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) + # Línea de la media
-  geom_vline(xintercept = median(data$ingreso, na.rm = TRUE), color = "grey", linetype = "dashed", size = 1) + # Línea de la mediana
-  theme_minimal()
-
-```
-
-### **2. Intervalo de confianza para proporción**
-
-Encontramos que la proporción de venezolan\@s con empleo en el Perú es
-de 59%, calculemos cuanto será este valor en la población.
-
-Previamente ya habíamos calculado la frecuencia de los que contaban con
-empleo y los que no, ingresemos esos datos en el prop.test
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-tabla1
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-prop.test(5987,5987+4240)
-```
-
-La proporción de venezolanos/as con empleo en Perú se encuentra entre
-57.5% y 59.4%, a un 95% de confianza.
-
-## **3. Intervalo de confianza para media**
-
-Anteriormente, encontramos que los venezolanos en Perú ganan en promedio
-511 soles. Calculemos cuanto es este valor en la población.
-
-No olvides llamar al paquete lsr para hallar los intervalos de confianza
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-library(lsr)
-data %>% 
-  summarise(media = mean(ingreso,na.rm=T),
-            Superior = ciMean(ingreso,na.rm=T),
-            Inferior = ciMean(ingreso,na.rm=T))
-```
-
-A un 95% de confianza podemos concluir que, en promedio, un/a
-venezolan\@ que trabaja en Perú gana aproximadamente entre 492.2 y 529.7
-soles. Hay que tener en consideración que este monto es en cada pago,
-que puede ser quincenal, mensual, etc.
-
-### **4. Prueba T**
-
-#### ¿Existe diferencia entre el monto percibido (ingreso) entre los venezolanos que envían remesas (remesas) y los que no?
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-data = data %>% mutate(remesas = factor(remesas, labels = c("Si","No")))
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-grafico = data %>% 
-  filter(!is.na(remesas)) %>% 
-  group_by(remesas) %>% 
-  summarise(media = mean(ingreso,na.rm=T),
-            Superior = ciMean(ingreso,na.rm=T)[1],
-            Inferior = ciMean(ingreso,na.rm=T)[2])
-grafico
-```
-
-En la muestra si existe una diferencia entre los ingresos de los que
-envían remesas y los que no. Siendo el ingreso más alto el de los que sí
-envían. Analicemos si esto se cumple en la población de venezolanos en
-Perú.
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-t.test(ingreso~remesas,data)
-```
-
-H0: No existe diferencia entre los promedios de ingreso de los que
-envían remesas y los que no. /H1: Existe diferencia entre los promedios
-de ingreso de los que envían remesas y los que no.
-
-Analizando el pvalor, podemos rechazar la hipótesis nula y así afirmar
-que las medias de ingreso de los que envían remesas y los que no, no son
-iguales.
-
-Constatemos cual es la media más alta con un gráfico:
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-ggplot(grafico,aes(x=remesas,y=media))+
-  geom_errorbar(aes(ymin=Inferior,ymax=Superior),width=0.4)+
-  xlab("Ingreso")+
-  ylab("¿Envía remesa?")+theme_classic()
-```
-
-### **5. Prueba Chi Cuadrado**
-
-¿De qué manera se relaciona el sexo con si la ocupacion de la persona es
-empleado o no?
-
-Nos basaremos en la variable ocupación, si es 3 será "Empleado" todos
-los demás casos serán "No empleado".
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-table(data$ocupacion)
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-data = data %>% 
-  mutate(empleado = ifelse(ocupacion == 3,"Empleado","No empleado"))
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-table(data$empleado)
-```
-
-Agreguemos etiquetas a la variable sexo
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-data = data %>% 
-  mutate(sexo = factor(sexo, labels=c("Hombre","Mujer")))
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-tabla1=table(data$sexo,data$empleado)
-tabla1
-```
-
-Revisemos el supuesto: Recuerda que debe haber por lo menos 5 casos por
-celda.
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-chisq.test(tabla1)$expected
-```
-
-Sí cumple con el mínimo por celda.
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-tablapor1 = tabla1 %>%
-           prop.table(1) %>%  
-           round(2) #redondear el resultado a 2 decimales
-tablapor1
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-toPlot1 = as.data.frame(tablapor1) 
-names(toPlot1) = c("Sexo", "Ocupacion", "Porcentaje")
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-  ggplot(toPlot1, aes(x=Sexo, y=Porcentaje*100, fill=Ocupacion)) +
-  geom_bar(position="stack", stat="identity")+ #Stack indica que son barras apiladas
-  geom_text(aes(label=paste0(Porcentaje*100,"%")), 
-            position = position_stack(vjust = 0.5), 
-             size = 4,
-             fontface="bold")+
-  labs(x="Sexo", y="Porcentaje", fill="¿Es empleador?")+
-  theme_minimal()
-```
-
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
-chisq.test(tabla1)
-```
-
-La prueba confirma lo expuesto en el gráfico. A un 95% de confianza
-podemos afirmar que existe relación entre ser hombre o mujer y el ser
-empleado. Apoyándonos en el gráfico, podemos afirmar que habrá una mayor
-proporción de mujeres cuya ocupación es ser dependiente o empleada que
-en el caso de los hombres.
-
-## Ejercicios:
-
-1.  Describe a la variable frecuencia de pago, realiza el gráfico
-    respectivo e interpreta los resultados.
-2.  Ahora analiza si que una persona vive en Lima se relaciona con la
-    frecuencia de pago (frecuencia).
-3.  Analiza si existe diferencias entre el promedio de horas de trabajo
-    a la semana (horas_trabajo) según modalidad de trabajo (modalidad2)
