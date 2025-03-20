@@ -13,7 +13,7 @@
 
 <title>Práctica Dirigida 6</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -363,423 +363,435 @@ div.tocify {
 
 
 <p>FACULTAD DE CIENCIAS SOCIALES - PUCP</p>
-<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="anova" class="section level2">
-<h2><strong>ANOVA</strong></h2>
-<p><strong>¿Qué es el Análisis de Varianza (ANOVA)?</strong></p>
-<p>Es una prueba estadística que permite comparar la media (promedio) de
-<strong>más de 2 grupos</strong>. Es decir, es como una prueba T, pero
-de más de dos grupos.</p>
-<p>Al igual que con la prueba T, en esta oportunidad debemos observar el
-<strong>p-value</strong> de la prueba. Para ello, se establecen 2
-hipótesis:</p>
-<p>H0 (p-value &gt; 0.05): no hay diferencia significativa entre las
-medias de ningún grupo. H1 (p-value =&lt; 0.05): al menos una media
-poblacional (de un grupo) es significativamente distinta a las otras</p>
-<p><strong>Estadístico F</strong></p>
-<p>Indica la variablidad entre grupos y dentro de un mismo grupo.</p>
-<p>Si F es grande, hay mucha variabilidad entre grupos y poca
-variabilidad dentro de un mismo grupo. Si F es pequeño, hay poca
-variabilidad entre grupos pero mucha variabilidad dentro de un mismo
-grupo.</p>
-<p><strong>Prueba Tukey</strong></p>
-<p>Prueba “post-hoc” (luego de), realizada para revisar entre qué grupos
-existe una diferencia significativa.</p>
-<p>OJO: como es una prueba complementaria a la ANOVA, <strong>solo
-resulta necesaria si se rechaza la H0</strong> en ANOVA. Si la H0 no se
-rechaza en ANOVA, no hay necesidad de hacer prueba Tukey.</p>
-<p>Al igual que las otras pruebas estadísticas, se debe ver el p-value
-en cada emparejamiento</p>
-<p><img src="Dicpd6.png" /></p>
-<pre class="r"><code>library(rio)
-data=import(&quot;dataWorld_q.rda&quot;)</code></pre>
-<div
-id="existe-diferencias-en-la-tasa-de-fecundidad-según-la-quinquenio-entre-el-2000-y-el-2019"
-class="section level3">
-<h3>¿Existe diferencias en la tasa de fecundidad según la quinquenio
-(entre el 2000 y el 2019)?</h3>
-<p>Observemos algunos estadísticos descriptivos.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.3</code></pre>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.3     ✔ readr     2.1.4
-## ✔ forcats   1.0.0     ✔ stringr   1.5.0
-## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-## ✔ purrr     1.0.1     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(lsr)
-
-library(dplyr)
-
-data &lt;- data %&gt;%
-  filter(quinq %in% c(&quot;2000-2004&quot;, &quot;2005-2009&quot;, &quot;2010-2014&quot;, &quot;2015-2019&quot;))
-
-
-tabla1 = data %&gt;%
-  group_by(quinq) %&gt;%
-  summarise(Media = mean(tfr, na.rm = T),
-            Mediana = median(tfr, na.rm = T),
-            Desviacion = sd(tfr, na.rm = T),
-            Inferior = ciMean(tfr, na.rm = T)[1],
-            Superior = ciMean(tfr, na.rm = T)[2])
-
-tabla1</code></pre>
-<pre><code>## # A tibble: 4 × 6
-##   quinq     Media Mediana Desviacion Inferior Superior
-##   &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1 2000-2004  3.25    2.72       1.74     3.00     3.51
-## 2 2005-2009  3.08    2.57       1.61     2.84     3.31
-## 3 2010-2014  2.93    2.41       1.46     2.72     3.14
-## 4 2015-2019  2.79    2.30       1.33     2.59     2.98</code></pre>
-<p>Veámoslo en gráficos</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(tabla1, aes(x=quinq, y=Media, fill = quinq))+
-  geom_bar(stat=&quot;identity&quot;)+
-  geom_errorbar(aes(ymin=Inferior, ymax=Superior), width=0.2)+
-  geom_text(aes(label=paste(round(Media, 1))), vjust=-2, size=3)+
-  xlab(&quot;Quinquenio&quot;) + ylab(&quot;Tasa global de fecundidad&quot;)+
-  ylim(0, 5) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Realicemos un ANOVA</p>
-<pre class="r"><code>anova1 = aov(data$tfr ~ data$quinq)
-summary(anova1)</code></pre>
-<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)  
-## data$quinq    3   22.2   7.402   3.121 0.0255 *
-## Residuals   732 1736.3   2.372                 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 40 observations deleted due to missingness</code></pre>
-<p>Observamos que el p-value es menor a 0.05, lo que significa que al
-menos un grupo tiene la media estadísticamente significativa respecto
-del resto.</p>
-<p>Para saber qué media es distinta, aplicamos la prueba Tukey.</p>
-<pre class="r"><code>comparacion = TukeyHSD(anova1)
-comparacion</code></pre>
-<pre><code>##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = data$tfr ~ data$quinq)
-## 
-## $`data$quinq`
-##                           diff        lwr         upr     p adj
-## 2005-2009-2000-2004 -0.1772826 -0.5907450  0.23617975 0.6871398
-## 2010-2014-2000-2004 -0.3226739 -0.7361363  0.09078845 0.1853354
-## 2015-2019-2000-2004 -0.4687799 -0.8822423 -0.05531753 0.0189101
-## 2010-2014-2005-2009 -0.1453913 -0.5588537  0.26807105 0.8019407
-## 2015-2019-2005-2009 -0.2914973 -0.7049596  0.12196508 0.2668386
-## 2015-2019-2010-2014 -0.1461060 -0.5595683  0.26735638 0.7995750</code></pre>
-<p>solo la comparación 2015-2019 vs. 2000-2004 tiene un valor p ajustado
-de 0.0189, que es menor que 0.05, lo cual indica que esta diferencia es
-estadísticamente significativa.</p>
-</div>
-</div>
-<div id="diagramas-de-dispersión-y-correlación" class="section level2">
-<h2><strong>Diagramas de dispersión y correlación</strong></h2>
-<div id="ideas-clave" class="section level3">
-<h3>Ideas clave</h3>
-<p>La correlación es en esencia una medida normalizada de asociación o
-covariación lineal entre dos variables.</p>
-<ul>
-<li><p>La <strong>correlación</strong> es una medida de la relación
-(covariación) entre <strong>dos variables
-cuantitativas.</strong></p></li>
-<li><p>La manera más sencilla de saber si dos variables están
-correlacionadas es determinar si co-varían (varían
-conjuntamente).</p></li>
-<li><p>Es importante hacer notar que <strong>esta covariación o relación
-no implica necesariamente causalidad</strong>: La correlación puede ser
-fortuita, como en el caso clásico de la correlación entre el número de
-venta de helados e incendios, debido al efecto de una tercera variable,
-la temperatura ambiental. A este tipo de relación se le llama
-“espuria”.</p></li>
-</ul>
-</div>
-<div id="hipótesis-de-la-prueba-de-correlación" class="section level3">
-<h3>Hipótesis de la prueba de correlación</h3>
-<ul>
-<li>H0 : No existe correlación entre las variables</li>
-<li>H1 : Existe correlación entre las variables</li>
-</ul>
-</div>
-<div id="coeficiente-de-correlación-de-pearson" class="section level3">
-<h3>Coeficiente de Correlación de Pearson</h3>
-<ul>
-<li><p>“El Coeficiente de Correlación de Pearson es un estadístico
-paramétrico, pues se asume que ambas variables tienen una distribución
-aproximadamente normal, o sea, distribución normal bivariante”.</p></li>
-<li><p>Es una medida que <strong>puede variar entre -1 y +1</strong>,
-ambos extremos indicando correlaciones perfectas, negativa y positiva
-respectivamente.</p></li>
-<li><p>Un valor de r = 0 indica que no existe relación lineal entre las
-dos variables.</p></li>
-</ul>
-<p><img src="G1.png" /></p>
-</div>
-<div id="gráfico-de-dispersión" class="section level3">
-<h3>Gráfico de dispersión</h3>
-<p><img src="G2.png" /></p>
-<p>Otros ejemplos:</p>
-<p><img src="G3.png" /></p>
-</div>
-<div id="aplicación-práctica" class="section level3">
-<h3>Aplicación práctica</h3>
-</div>
-</div>
-<div
-id="que-factores-se-relacionan-con-la-tasa-de-fecundidad-en-los-países-entre-los-años-2015-2019"
+<p>Curso: SOC285 - Estadística para el análisis sociológico 2</p>
+<p>Semestre 2025 - 1</p>
+<div id="qué-es-un-diseño-de-regresión-discontinua-rdd"
 class="section level1">
-<h1>¿Que factores se relacionan con la tasa de fecundidad en los países
-entre los años 2015-2019?</h1>
-<p>Como vimos anteriormente, nuestra data abarca distintos periodos.
-Analicemos los factores que se relacionan con la tasa de fecundidad en
-el periodo más reciente: 2015-2019</p>
-<p>Primero revisemos como está escrito y luego filtremos</p>
-<pre class="r"><code>table(data$quinq)</code></pre>
-<pre><code>## 
-## 1950-1954 1955-1959 1960-1964 1965-1969 1970-1974 1975-1979 1980-1984 1985-1989 
-##         0         0         0         0         0         0         0         0 
-## 1990-1994 1995-1999 2000-2004 2005-2009 2010-2014 2015-2019     2020+ 
-##         0         0       194       194       194       194         0</code></pre>
-<pre class="r"><code>data2 = data %&gt;% 
-  filter(quinq==&quot;2015-2019&quot;)</code></pre>
-<p>Ahora sí, analicemos!</p>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-trabajo-femenino"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el trabajo
-femenino?</h3>
-<p><strong>Paso 1</strong>: Exploramos variables de interés</p>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(tfr, na.rm = TRUE),
-           Media = mean(tfr, na.rm = TRUE),
-           Mediana = median(tfr, na.rm = TRUE),
-           Max = max(tfr, na.rm = TRUE))</code></pre>
-<pre><code>##      Min    Media Mediana  Max
-## 1 1.2375 2.786209 2.29875 7.21</code></pre>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(femWork, na.rm = TRUE),
-           Media = mean(femWork, na.rm = TRUE),
-           Mediana = median(femWork, na.rm = TRUE),
-           Max = max(femWork, na.rm = TRUE))</code></pre>
-<pre><code>##    Min   Media Mediana   Max
-## 1 6.03 51.9302   52.95 86.05</code></pre>
-<p><strong>Paso 2</strong>: Realizamos el gráfico</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=femWork)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Participación femenina en la fuerza laboral&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el trabajo femenino&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 15 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p><strong>Paso 3</strong>: Realizamos el ANOVA</p>
-<pre class="r"><code>cor.test(data2$femWork, data2$tfr)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$femWork and data2$tfr
-## t = 1.9083, df = 177, p-value = 0.05798
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.004791544  0.282764344
-## sample estimates:
-##       cor 
-## 0.1419805</code></pre>
+<h1>¿Qué es un Diseño de Regresión Discontinua (RDD)?</h1>
+<p>El Diseño de Regresión Discontinua (RDD, por sus siglas en inglés) es
+una estrategia cuasi-experimental que permite evaluar el impacto causal
+de una política o intervención cuando la asignación a un tratamiento se
+basa en un umbral en una variable continua. La idea central es que los
+individuos justo por encima y por debajo de este umbral son muy
+similares en todo, excepto en que unos reciben el tratamiento y otros
+no, lo que permite estimar efectos causales de manera robusta, como si
+se tratara de un experimento natural.</p>
+<div id="cómo-funciona" class="section level2">
+<h2>¿Cómo funciona?</h2>
+<p>El Diseño de Regresión Discontinua (RDD) se basa en la idea de que
+cuando una política, programa o tratamiento se asigna en función de un
+umbral en una variable continua (llamada <strong>running
+variable</strong>), los individuos justo por encima y por debajo de ese
+umbral son muy similares, excepto por el hecho de haber recibido o no el
+tratamiento. Esto nos permite estimar un efecto causal, como si
+tuviéramos un experimento natural.</p>
+</div>
+<div id="ejemplo" class="section level2">
+<h2>Ejemplo</h2>
+<p>Supongamos que un programa gubernamental otorga becas a estudiantes
+con un puntaje de examen mayor o igual a 70. Los estudiantes que
+obtienen 69 y 70 son muy parecidos en habilidades, pero solo los de 70
+reciben la beca. Comparar el desempeño académico futuro de ambos grupos
+nos permite estimar el impacto causal de la beca sobre el rendimiento
+educativo.</p>
+<p><img src="RDD1.png" /></p>
+</div>
+<div id="regresión" class="section level2">
+<h2>Regresión</h2>
+<p>Y𝑖​=α+β𝐷𝑖​+𝑓(𝑋𝑖)+ϵi</p>
+<p>Donde:</p>
 <ul>
-<li><p>p &lt; 0.05 Rechazas la H0 (por lo tanto, sí hay
-correlación)</p></li>
-<li><p>P &gt; 0.05 No rechazas la H0</p></li>
+<li><p>Y𝑖​ ​es la variable de resultado de interés para el individuo
+𝑖.</p></li>
+<li><p>α representa el valor esperado de la variable de resultado 𝑌
+justo por debajo del umbral 𝑐</p></li>
+<li><p>𝐷𝑖​ es la variable indicadora del tratamiento, donde 𝐷𝑖=1 si 𝑋𝑖
+supera el umbral y 𝐷𝑖=0 en caso contrario.</p></li>
+<li><p>𝑋𝑖 es la variable de asignación (o running variable), que
+determina la elegibilidad para el tratamiento.</p></li>
+<li><p>𝑓(𝑋𝑖) es una función flexible de la variable de asignación que
+captura la tendencia de 𝑌𝑖 ​en ausencia del tratamiento (puede ser
+lineal, cuadrática o de orden superior).</p></li>
+<li><p>𝜖𝑖 ​es el término de error.</p></li>
+<li><p>𝛽 es el parámetro clave de interés, que mide el efecto causal del
+tratamiento en el umbral.​</p></li>
 </ul>
-<p>¿Qué nos dice el resultado? Recuerda que en la interpretación no debe
-faltar: (i) intepretación del p-valor y (ii) interpretación del
-coeficiente de correlación (cor)</p>
-<p>Reporte: Dado que el p-valor es mayor a 0.05, no hay evidencia
-suficiente para rechazar la H0. Por lo tanto, podemos afirmar que no
-existe correlación entre el porcentaje de mujeres que trabajan y la tasa
-de fecundidad</p>
 </div>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-trabajo-masculino"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el trabajo
-masculino?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(maleWork, na.rm = TRUE),
-           Media = mean(maleWork, na.rm = TRUE),
-           Mediana = median(maleWork, na.rm = TRUE),
-           Max = max(maleWork, na.rm = TRUE))</code></pre>
-<pre><code>##     Min    Media Mediana   Max
-## 1 39.05 73.09888   73.95 94.75</code></pre>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=maleWork)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Participación masculina en la fuerza laboral&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el trabajo femenino&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code>cor.test(data2$maleWork, data2$tfr)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$maleWork and data2$tfr
-## t = 1.9935, df = 177, p-value = 0.04775
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.001544092 0.288582943
-## sample estimates:
-##       cor 
-## 0.1481828</code></pre>
-<p>Se puede apreciar que, al igual que con el trabajo femenino, el
-p-valor es menor a 0.05, por lo que se rechaza la H0. El coeficiente es
-de 0.21, lo que indica una correlación positiva pequeña.</p>
-<p>Entonces, a mayor número promedio de hijos, aumenta la participación
-de la fuerza laboral, tanto de hombres como mujeres. ¿Cuál podría ser
-una posible explicación? Se puede pensar en la necesidad de suplir las
-demandas que requieren los hijos en términos monetarios, lo que lleva a
-un mayor trabajo. Se puede pensar en las políticas públicas de apoyo y
-como estas permiten continuar trabajar a los padres de familia. ¿Alguna
-otra posible explicación?</p>
+<div id="por-qué-es-útil-para-la-sociología" class="section level2">
+<h2>¿Por qué es útil para la sociología?</h2>
+<p>En sociología, el RDD es valioso para evaluar el impacto de políticas
+públicas, programas sociales y regulaciones. Por ejemplo, podríamos
+analizar cómo una ley que establece un límite de edad para acceder a
+beneficios sociales afecta la calidad de vida de los beneficiarios. Al
+aprovechar decisiones administrativas que generan discontinuidades, los
+sociólogos pueden obtener inferencias causales en contextos donde los
+experimentos aleatorizados no son factibles.</p>
 </div>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-la-esperanza-de-vida-de-las-mujeres"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y la esperanza de
-vida de las mujeres?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(lifExpFem, na.rm = TRUE),
-           Media = mean(lifExpFem, na.rm = TRUE),
-           Mediana = median(lifExpFem, na.rm = TRUE),
-           Max = max(lifExpFem, na.rm = TRUE))</code></pre>
-<pre><code>##    Min    Media Mediana Max
-## 1 52.6 74.16875    76.3  87</code></pre>
-<p>Podemos apreciar que la esperanza de vida de las mujeres entre países
-tiene un rango de 35 años entre el menor valor y el mayor. En la mayoría
-de los países, este valor supera a los 76 años.</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=lifExpFem)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y la esperanza de vida de las mujeres&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-15-1.png" width="672" />
-El gráfico nos permite observar que existe una relación inversa entre
-las variables, además se puede esperar que esta relación sea grande ya
-que la mayoría de puntos se están ajustando a la recta que se
-modela.</p>
-<pre class="r"><code>cor.test(data2$tfr, data2$lifExpFem)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$tfr and data2$lifExpFem
-## t = -21.932, df = 182, p-value &lt; 2.2e-16
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.8871151 -0.8064711
-## sample estimates:
-##        cor 
-## -0.8517614</code></pre>
-<p>La prueba de correlación no permite comprobar lo que visualizamos en
-el gráfico. Es así que obtenemos tres conclusiones principales. 1. A un
-95% de confianza tenemos la evidencia suficiente para rechazar que no
-haya relación entre la tasa de fecundidad y la esperanza de vida de las
-mujeres en los países. 2. Esta relación es negativa, lo que implica que
-en los países que tienen una tasa de fecundidad más elevada, se espera
-que la esperanza de vida sea menor. 3. El coeficiente nos indica que es
-una relación grande, lo que se puede ver claramente en el gráfico. Esta
-relación podría explicarse por el nivel de desarrollo de algunos países
-donde el acceso a servicios de salud y de educación sexual es limitado.
-Esto implica que las mujeres enfrenten mayores obstáculos en cuanto a
-cuidados prenatales, nutrición y/o atención médica, lo cual afecta su
-salud, y así también la esperanza de vida de las mismas.</p>
-</div>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-ingreso-per-cápita-en-los-países"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el ingreso per
-cápita en los países?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(incomePp, na.rm = TRUE),
-           Media = mean(incomePp, na.rm = TRUE),
-           Mediana = median(incomePp, na.rm = TRUE),
-           Max = max(incomePp, na.rm = TRUE))</code></pre>
-<pre><code>##   Min    Media Mediana    Max
-## 1 626 17798.48   11550 119750</code></pre>
-<p>Para esta variable vemos aún más dispersión de los datos, ya que el
-valor puede ir desde 626 dólares hasta más de 110 mil dólares.</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=incomePp)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Ingreso per cápita&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el ingreso per cápita&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Nuevamente, podemos esperar una relación negativa entre las
-variables. En esta ocasión es más sencillo notar la presencia de los
-datos atípicos.</p>
-<pre class="r"><code>cor.test(data2$tfr, data2$incomePp)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$tfr and data2$incomePp
-## t = -8.4911, df = 182, p-value = 7.085e-15
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.6288773 -0.4204107
-## sample estimates:
-##        cor 
-## -0.5326759</code></pre>
-<p>Finalmente la prueba evidencia que podemos rechazar la ausencia de
-relación entre ambas variables. Y así afirmar que la tasa de fecundidad
-y el ingreso per capita tienen una relación inversa, lo que quiere decir
-que se espera que a medida que aumente el ingreso per capita, disminuya
-la tasa de fecundidad, y viceversa. Además, esta relación es también
-grande.</p>
-<div id="conclusión" class="section level4">
-<h4>Conclusión</h4>
+<div id="tabla-de-comparaciones-rdd-y-diff-in-diff"
+class="section level2">
+<h2><strong>Tabla de comparaciones RDD y Diff-in-Diff</strong></h2>
 <table>
-<caption>Correlación entre variables y tasa de fecundidad</caption>
-<thead>
-<tr class="header">
-<th align="left">Variables</th>
-<th align="left">Coeficiente</th>
-</tr>
-</thead>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
 <tbody>
 <tr class="odd">
-<td align="left">Tasa de fec. y trabajo femenino</td>
-<td align="left">No hay correlación</td>
+<td align="center"><strong>Característica</strong></td>
+<td align="center"><strong>RDD</strong></td>
+<td align="center"><strong>Diff-in-Diff</strong></td>
 </tr>
 <tr class="even">
-<td align="left">Tasa de fec. y trabajo masculino</td>
-<td align="left">0.148182813219316</td>
+<td align="center">Asignación del tratamiento</td>
+<td align="center">Basada en un umbral (variable continua).</td>
+<td align="center">Basada en grupos (tratamiento vs. control).</td>
 </tr>
 <tr class="odd">
-<td align="left">Tasa de fec. y esperanza de vida de las mujeres</td>
-<td align="left">-0.851761415467274</td>
+<td align="center">Comparabilidad</td>
+<td align="center">Individuos cerca del umbral.</td>
+<td align="center">Grupos con tendencias paralelas.</td>
 </tr>
 <tr class="even">
-<td align="left">Tasa de fec. e ingreso per cápita</td>
-<td align="left">-0.532675904566006</td>
+<td align="center">Datos necesarios</td>
+<td align="center">Datos en un punto específico (cerca del umbral).</td>
+<td align="center">Datos longitudinales (antes y después).</td>
+</tr>
+<tr class="odd">
+<td align="center">Ejemplo de uso</td>
+<td align="center">Efecto de becas en estudiantes cerca del puntaje de
+corte.</td>
+<td align="center">Efecto de una política en una región vs. otra.</td>
 </tr>
 </tbody>
 </table>
-<p>Finalmente, podemos concluir que todas las variables analizadas se
-relacionan con la tasa de fecundidad a nivel país, menos la fuerza
-laboral femenina. Además, la variable que se relaciona más sería la
-esperanza de vida de las mujeres, ya que su coeficiente es el más
-cercano a 1, aún cuando su relación sea negativa.</p>
 </div>
 </div>
-<div id="ejercicios-para-clase" class="section level2">
-<h2>Ejercicios para clase</h2>
-<ol style="list-style-type: decimal">
-<li><p>¿Cómo se relaciona la tasa de fecundidad (tfr) con la equidad de
-género en la educación en los países (schGenEq)?</p></li>
-<li><p>¿Cómo se relaciona la tasa de fecundidad (tfr) con el porcentaje
-de personas con acceso a agua en los países (water)?</p></li>
-</ol>
+<div
+id="how-do-extended-benefits-affect-unemployment-duration-a-regression-discontinuity-approach."
+class="section level1">
+<h1>How do extended benefits affect unemployment duration? A regression
+discontinuity approach.</h1>
+<p>En esta sesión se replicará el artículo de Rafael Lalive: “How do
+extended benefits affect unemployment duration? A regression
+discontinuity approach”. El autor buscar estudiar el efecto de un
+programa que extendió la duración de los beneficios del desempleo de 30
+semanas a 209 semanas en Austria. El punto de corte para recibir estos
+beneficios era tener al menos 50 años y ser parte de las regiones
+elegibles.</p>
+<p>De esta forma tenemos 2 umbrales: edad y zona geográfica. El autor
+decide quedarse con el segundo umbral como punto de corte porque las
+compañías podían esperar a que sus empleados cumplan los 50 años para
+darles de baja y así ellos puedan acceder al beneficio. En cambio, la
+zona geográfica era un aspecto no manipulable. El autor se enfocará en
+los individuos que viven cerca a la frontera entre las regiones tratadas
+y no tratadas.</p>
+<pre class="r"><code>library(rio)
+library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>data = import(&#39;releaseData.dta&#39;)</code></pre>
+<div id="exploración-de-datos" class="section level2">
+<h2>Exploración de datos</h2>
+<div
+id="datos-de-las-personas-que-pasan-el-umbral-de-edad-y-están-en-la-región-tratada."
+class="section level3">
+<h3>Datos de las personas que pasan el umbral de edad y están en la
+región tratada.</h3>
+<pre class="r"><code>c_1a = data %&gt;% 
+  filter(age %in% c(50:53) &amp; female == 0 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau)) %&gt;% 
+  mutate(tipo = &quot;Región tratados 50-53 años&quot;,
+         sexo = &quot;Hombre&quot;)
+
+c_1b = data %&gt;% 
+  filter(age %in% c(50:53) &amp; female == 1 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%&gt;% 
+  mutate(tipo = &quot;Región tratados 50-53 años&quot;,
+         sexo = &quot;Mujer&quot;)</code></pre>
+</div>
+<div
+id="datos-de-las-personas-que-no-pasan-el-umbral-de-edad-y-están-en-la-región-tratada"
+class="section level3">
+<h3>Datos de las personas que NO pasan el umbral de edad y están en la
+región tratada:</h3>
+<pre class="r"><code>c_2a= data %&gt;% 
+  filter(age %in% c(46:49) &amp; female == 0 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%&gt;% 
+  mutate(tipo = &quot;Región tratados 46-49 años&quot;,
+         sexo = &quot;Hombre&quot;)
+
+c_2b=data %&gt;% 
+  filter(age %in% c(46:49) &amp; female == 1 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%&gt;% 
+  mutate(tipo = &quot;Región tratados 46-49 años&quot;,
+         sexo = &quot;Mujer&quot;)</code></pre>
+</div>
+<div
+id="datos-de-las-personas-que-pasan-el-umbral-de-edad-y-no-están-en-la-región-tratada"
+class="section level3">
+<h3>Datos de las personas que pasan el umbral de edad y NO están en la
+región tratada:</h3>
+<pre class="r"><code>c_3a=data %&gt;% 
+  filter(age %in% c(50:53) &amp; female == 0 &amp; period == 1 &amp; tr == 0) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%&gt;% 
+  mutate(tipo = &quot;Región NO tratados 50-53 años&quot;,
+         sexo = &quot;Hombre&quot;)
+
+c_3b =data %&gt;% 
+  filter(age %in% c(50:53) &amp; female == 1 &amp; period == 1 &amp; tr == 0) %&gt;% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%&gt;% 
+  mutate(tipo = &quot;Región NO tratados 50-53 años&quot;,
+         sexo = &quot;Mujer&quot;)</code></pre>
+</div>
+<div id="unión-de-los-descriptivos" class="section level3">
+<h3>Unión de los descriptivos:</h3>
+<pre class="r"><code>rbind(c_1a,c_1b,c_2a,c_2b,c_3a,c_3b) %&gt;% 
+  gather(parametro,valor,-c(&quot;sexo&quot;,&quot;tipo&quot;)) %&gt;% 
+  arrange(sexo) %&gt;% 
+  mutate(valor = round(valor,2)) %&gt;% 
+  spread(tipo,valor) %&gt;% 
+  View()</code></pre>
+</div>
+<div
+id="promedio-de-semanas-de-desempleo-entre-ambos-grupos-46-49-y-50-53-dentro-de-la-región-tratada-en-un-gráfico"
+class="section level3">
+<h3>Promedio de semanas de desempleo entre ambos grupos (46-49 y 50-53)
+dentro de la región tratada en un gráfico:</h3>
+<div id="hombres" class="section level4">
+<h4>Hombres:</h4>
+<pre class="r"><code>toPlot1 = data %&gt;%
+  filter(female == 0 &amp; tr == 1) %&gt;%
+  mutate(color_age = ifelse(age&gt;=50,1,0)) %&gt;% 
+  group_by(color_age,age) %&gt;% 
+  summarise(promedio = mean(unemployment_duration))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;color_age&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>ggplot(toPlot1, aes(x = age, y = promedio, color =color_age )) +
+  geom_line()+
+  geom_point()+
+  geom_vline(xintercept = 50, colour = &quot;red&quot;) + 
+  labs(x = &quot;Edad&quot;, y = &quot;Semanas de desempleo&quot;) + 
+  guides(color = FALSE)+
+  theme_bw()</code></pre>
+<pre><code>## Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use &quot;none&quot; instead as
+## of ggplot2 3.3.4.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="mujeres" class="section level4">
+<h4>Mujeres:</h4>
+<pre class="r"><code>toPlot2 = data %&gt;%
+  filter(female == 1 &amp; tr == 1) %&gt;%
+  mutate(color_age = ifelse(age&gt;=50,1,0)) %&gt;% 
+  group_by(color_age,age) %&gt;% 
+  summarise(promedio = mean(unemployment_duration))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;color_age&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>ggplot(toPlot2, aes(x = age, y = promedio, color =color_age )) +
+  geom_line()+
+  geom_point()+
+  geom_vline(xintercept = 50, colour = &quot;red&quot;) + 
+  labs(x = &quot;Edad&quot;, y = &quot;Semanas de desempleo&quot;) + 
+  guides(color = FALSE)+
+  theme_bw()</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="comparación-entre-región-control-y-no-control-por-sexo"
+class="section level4">
+<h4>Comparación entre región control y no control por sexo:</h4>
+<pre class="r"><code>toPlot3 &lt;- data %&gt;%
+  filter(age %in% c(50:53)) %&gt;%  # Filtrar edades entre 50 y 53
+  group_by(tr, female, age) %&gt;%  # Agrupar por tr, female y age
+  mutate(
+    tr = factor(tr, levels = c(0, 1), labels = c(&quot;Región no tratada&quot;, &quot;Región tratada&quot;)),  # Etiquetar tr
+    female = factor(female, levels = c(0, 1), labels = c(&quot;Hombre&quot;, &quot;Mujer&quot;))  # Etiquetar female
+  ) %&gt;%
+  summarise(promedio = mean(unemployment_duration))  # Calcular el promedio de duración del desempleo</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;tr&#39;, &#39;female&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code># Crear el gráfico
+ggplot(toPlot3, aes(x = age, y = promedio, group = tr, color = tr)) +
+  geom_line() +  # Líneas
+  geom_point() +  # Puntos
+  facet_wrap(~female) +  # Dividir por sexo
+  labs(
+    x = &quot;Edad&quot;, 
+    y = &quot;Semanas de desempleo&quot;, 
+    color = &quot;Región&quot;  # Cambiar el título de la leyenda de color
+  ) +
+  theme_bw()  # Usar un tema limpio</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="modelos-de-regresión" class="section level2">
+<h2>Modelos de regresión</h2>
+<div id="hombres-1" class="section level3">
+<h3>Hombres</h3>
+<div id="modelo-de-regresión---umbral-de-edad" class="section level4">
+<h4>Modelo de regresión - umbral de edad:</h4>
+<pre class="r"><code>datos_regresion1 = data %&gt;% 
+  filter(female == 0 &amp; period == 1 &amp; tr == 1)
+
+modelo_hombres1 = lm(unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+
+summary(modelo_hombres1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -28.98 -20.72 -12.31  -3.12 506.34 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        14.5192     0.8224   17.66   &lt;2e-16 ***
+## as.factor(age50)1  14.6047     1.1761   12.42   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 58 on 9732 degrees of freedom
+## Multiple R-squared:  0.0156, Adjusted R-squared:  0.0155 
+## F-statistic: 154.2 on 1 and 9732 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Incrementar los beneficios de desempleo hasta en 209 semanas prolongó
+la duración de desempleo en 14.6 semanas en promedio entre hombres de 50
+a 53 años comparados a hombres entre 46-49 años de edad.</p>
+</div>
+<div id="modelo-de-regresión---umbral-de-zona-geográfica"
+class="section level4">
+<h4>Modelo de regresión - umbral de zona geográfica:</h4>
+<pre class="r"><code>datos_regresion2 = data %&gt;% 
+  mutate(db_0 = ifelse(db&gt;=0,1,0)) %&gt;% 
+  filter(female == 0 &amp; period == 1 &amp; age %in% c(50:53))
+
+modelo_hombres2 = lm(unemployment_duration ~ db_0, data = datos_regresion2)
+
+summary(modelo_hombres2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = unemployment_duration ~ db_0, data = datos_regresion2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -32.10 -20.56  -9.81  -1.97 492.17 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   12.517      2.099   5.962 3.24e-09 ***
+## db_0          19.726      3.410   5.785 9.18e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 58.06 on 1230 degrees of freedom
+## Multiple R-squared:  0.02649,    Adjusted R-squared:  0.0257 
+## F-statistic: 33.47 on 1 and 1230 DF,  p-value: 9.176e-09</code></pre>
+<p>En las regiones donde se incrementó los beneficios de desempleo hasta
+en 209 semanas, hubo un aumento promedio de 19.7 semanas de desempleo en
+hombres entre 50-53 años de edad.</p>
+</div>
+</div>
+<div id="mujeres-1" class="section level3">
+<h3>Mujeres</h3>
+<div id="modelo-de-regresión---umbral-de-edad-1" class="section level4">
+<h4>Modelo de regresión - umbral de edad:</h4>
+<pre class="r"><code>datos_regresion3 = data %&gt;% 
+  filter(female == 1 &amp; period == 1 &amp; tr == 1)
+
+modelo_mujeres1 = lm(unemployment_duration ~as.factor(age50), data = datos_regresion3)
+
+summary(modelo_mujeres1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = unemployment_duration ~ as.factor(age50), data = datos_regresion3)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -89.25 -60.54 -16.82  27.53 499.76 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         21.233      1.733   12.26   &lt;2e-16 ***
+## as.factor(age50)1   68.158      2.214   30.79   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 81.14 on 5657 degrees of freedom
+## Multiple R-squared:  0.1435, Adjusted R-squared:  0.1434 
+## F-statistic: 947.8 on 1 and 5657 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Incrementar los beneficios de desempleo hasta en 209 semanas prolongó
+la duración de desempleo en 68.1 semanas en promedio entre mujeres de 50
+a 53 años comparados a mujeres entre 46-49 años de edad.</p>
+</div>
+<div id="modelo-de-rgeresión---umbral-de-zona-geográfica"
+class="section level4">
+<h4>Modelo de rgeresión - umbral de zona geográfica:</h4>
+<pre class="r"><code>datos_regresion4 = data %&gt;% 
+  mutate(db_0 = ifelse(db&gt;=0,1,0)) %&gt;% 
+  filter(female == 1 &amp; period == 1 &amp; age %in% c(50:53))
+
+modelo_mujeres4 = lm(unemployment_duration ~ db_0, data = datos_regresion4)
+
+summary(modelo_mujeres4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = unemployment_duration ~ db_0, data = datos_regresion4)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -112.13  -30.42  -12.75   31.00  500.41 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   30.562      4.837   6.319 4.69e-10 ***
+## db_0          81.714      6.617  12.349  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 87.33 on 698 degrees of freedom
+## Multiple R-squared:  0.1793, Adjusted R-squared:  0.1781 
+## F-statistic: 152.5 on 1 and 698 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>En las regiones donde se incrementó los beneficios de desempleo hasta
+en 209 semanas, hubo un aumento promedio de 81.7 semanas de desempleo en
+mujeres entre 50-53 años de edad.</p>
+</div>
+</div>
 </div>
 </div>
 

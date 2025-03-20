@@ -21,7 +21,7 @@ Curso: SOC285 - Estadística para el análisis sociológico 2
 
 Semestre 2025 - 1
 
-Qué es un Diseño de Regresión Discontinua (RDD)
+# ¿Qué es un Diseño de Regresión Discontinua (RDD)?
 
 El Diseño de Regresión Discontinua (RDD, por sus siglas en inglés) es
 una estrategia cuasi-experimental que permite evaluar el impacto causal
@@ -32,25 +32,27 @@ similares en todo, excepto en que unos reciben el tratamiento y otros
 no, lo que permite estimar efectos causales de manera robusta, como si
 se tratara de un experimento natural.
 
-¿Cómo funciona?
+## ¿Cómo funciona?
 
 El Diseño de Regresión Discontinua (RDD) se basa en la idea de que
 cuando una política, programa o tratamiento se asigna en función de un
-umbral en una variable continua (llamada running variable), los
+umbral en una variable continua (llamada **running variable**), los
 individuos justo por encima y por debajo de ese umbral son muy
 similares, excepto por el hecho de haber recibido o no el tratamiento.
 Esto nos permite estimar un efecto causal, como si tuviéramos un
 experimento natural.
 
-Ejemplo
+## Ejemplo
 
-Supongamos que un programa gubernamental otorga becas aestudiantes con
+Supongamos que un programa gubernamental otorga becas a estudiantes con
 un puntaje de examen mayor o igual a 70. Los estudiantes que obtienen 69
 y 70 son muy parecidos en habilidades, pero solo los de 70 reciben la
 beca. Comparar el desempeño académico futuro de ambos grupos nos permite
 estimar el impacto causal de la beca sobre el rendimiento educativo.
 
-Regresión
+![](RDD1.png)
+
+## Regresión
 
 Y𝑖​=α+β𝐷𝑖​+𝑓(𝑋𝑖)+ϵi
 
@@ -76,7 +78,7 @@ Donde:
 -   𝛽 es el parámetro clave de interés, que mide el efecto causal del
     tratamiento en el umbral.​
 
-¿Por qué es útil para la sociología?
+## ¿Por qué es útil para la sociología?
 
 En sociología, el RDD es valioso para evaluar el impacto de políticas
 públicas, programas sociales y regulaciones. Por ejemplo, podríamos
@@ -86,4 +88,252 @@ aprovechar decisiones administrativas que generan discontinuidades, los
 sociólogos pueden obtener inferencias causales en contextos donde los
 experimentos aleatorizados no son factibles.
 
-![](Dicpd6.png)
+## **Tabla de comparaciones RDD y Diff-in-Diff**
+
+|                            |                                                            |                                                |
+|:----------------------:|:----------------------:|:----------------------:|
+|     **Característica**     |                          **RDD**                           |                **Diff-in-Diff**                |
+| Asignación del tratamiento |          Basada en un umbral (variable continua).          |  Basada en grupos (tratamiento vs. control).   |
+|       Comparabilidad       |                Individuos cerca del umbral.                |        Grupos con tendencias paralelas.        |
+|      Datos necesarios      |      Datos en un punto específico (cerca del umbral).      |    Datos longitudinales (antes y después).     |
+|       Ejemplo de uso       | Efecto de becas en estudiantes cerca del puntaje de corte. | Efecto de una política en una región vs. otra. |
+
+# How do extended benefits affect unemployment duration? A regression discontinuity approach.
+
+En esta sesión se replicará el artículo de Rafael Lalive: "How do
+extended benefits affect unemployment duration? A regression
+discontinuity approach". El autor buscar estudiar el efecto de un
+programa que extendió la duración de los beneficios del desempleo de 30
+semanas a 209 semanas en Austria. El punto de corte para recibir estos
+beneficios era tener al menos 50 años y ser parte de las regiones
+elegibles.
+
+De esta forma tenemos 2 umbrales: edad y zona geográfica. El autor
+decide quedarse con el segundo umbral como punto de corte porque las
+compañías podían esperar a que sus empleados cumplan los 50 años para
+darles de baja y así ellos puedan acceder al beneficio. En cambio, la
+zona geográfica era un aspecto no manipulable. El autor se enfocará en
+los individuos que viven cerca a la frontera entre las regiones tratadas
+y no tratadas.
+
+```{r}
+library(rio)
+library(tidyverse)
+data = import('releaseData.dta')
+```
+
+## Exploración de datos
+
+### Datos de las personas que pasan el umbral de edad y están en la región tratada.
+
+```{r}
+c_1a = data %>% 
+  filter(age %in% c(50:53) & female == 0 & period == 1 & tr == 1) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau)) %>% 
+  mutate(tipo = "Región tratados 50-53 años",
+         sexo = "Hombre")
+
+c_1b = data %>% 
+  filter(age %in% c(50:53) & female == 1 & period == 1 & tr == 1) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%>% 
+  mutate(tipo = "Región tratados 50-53 años",
+         sexo = "Mujer")
+```
+
+### Datos de las personas que NO pasan el umbral de edad y están en la región tratada:
+
+```{r}
+c_2a= data %>% 
+  filter(age %in% c(46:49) & female == 0 & period == 1 & tr == 1) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%>% 
+  mutate(tipo = "Región tratados 46-49 años",
+         sexo = "Hombre")
+
+c_2b=data %>% 
+  filter(age %in% c(46:49) & female == 1 & period == 1 & tr == 1) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%>% 
+  mutate(tipo = "Región tratados 46-49 años",
+         sexo = "Mujer")
+```
+
+### Datos de las personas que pasan el umbral de edad y NO están en la región tratada:
+
+```{r}
+c_3a=data %>% 
+  filter(age %in% c(50:53) & female == 0 & period == 1 & tr == 0) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%>% 
+  mutate(tipo = "Región NO tratados 50-53 años",
+         sexo = "Hombre")
+
+c_3b =data %>% 
+  filter(age %in% c(50:53) & female == 1 & period == 1 & tr == 0) %>% 
+  summarise(total = n(),
+            promedio_edad = mean(age),
+            promedio_distancia = mean(db),
+            promedio_casado = mean(marr),
+            promedio_construccion = mean(bau))%>% 
+  mutate(tipo = "Región NO tratados 50-53 años",
+         sexo = "Mujer")
+```
+
+### Unión de los descriptivos:
+
+```{r}
+rbind(c_1a,c_1b,c_2a,c_2b,c_3a,c_3b) %>% 
+  gather(parametro,valor,-c("sexo","tipo")) %>% 
+  arrange(sexo) %>% 
+  mutate(valor = round(valor,2)) %>% 
+  spread(tipo,valor) %>% 
+  View()
+```
+
+### Promedio de semanas de desempleo entre ambos grupos (46-49 y 50-53) dentro de la región tratada en un gráfico:
+
+#### Hombres:
+
+```{r}
+toPlot1 = data %>%
+  filter(female == 0 & tr == 1) %>%
+  mutate(color_age = ifelse(age>=50,1,0)) %>% 
+  group_by(color_age,age) %>% 
+  summarise(promedio = mean(unemployment_duration))
+  
+ggplot(toPlot1, aes(x = age, y = promedio, color =color_age )) +
+  geom_line()+
+  geom_point()+
+  geom_vline(xintercept = 50, colour = "red") + 
+  labs(x = "Edad", y = "Semanas de desempleo") + 
+  guides(color = FALSE)+
+  theme_bw()
+```
+
+#### Mujeres:
+
+```{r}
+toPlot2 = data %>%
+  filter(female == 1 & tr == 1) %>%
+  mutate(color_age = ifelse(age>=50,1,0)) %>% 
+  group_by(color_age,age) %>% 
+  summarise(promedio = mean(unemployment_duration))
+  
+ggplot(toPlot2, aes(x = age, y = promedio, color =color_age )) +
+  geom_line()+
+  geom_point()+
+  geom_vline(xintercept = 50, colour = "red") + 
+  labs(x = "Edad", y = "Semanas de desempleo") + 
+  guides(color = FALSE)+
+  theme_bw()
+```
+
+#### Comparación entre región control y no control por sexo:
+
+```{r}
+toPlot3 <- data %>%
+  filter(age %in% c(50:53)) %>%  # Filtrar edades entre 50 y 53
+  group_by(tr, female, age) %>%  # Agrupar por tr, female y age
+  mutate(
+    tr = factor(tr, levels = c(0, 1), labels = c("Región no tratada", "Región tratada")),  # Etiquetar tr
+    female = factor(female, levels = c(0, 1), labels = c("Hombre", "Mujer"))  # Etiquetar female
+  ) %>%
+  summarise(promedio = mean(unemployment_duration))  # Calcular el promedio de duración del desempleo
+
+# Crear el gráfico
+ggplot(toPlot3, aes(x = age, y = promedio, group = tr, color = tr)) +
+  geom_line() +  # Líneas
+  geom_point() +  # Puntos
+  facet_wrap(~female) +  # Dividir por sexo
+  labs(
+    x = "Edad", 
+    y = "Semanas de desempleo", 
+    color = "Región"  # Cambiar el título de la leyenda de color
+  ) +
+  theme_bw()  # Usar un tema limpio
+```
+
+## Modelos de regresión
+
+### Hombres
+
+#### Modelo de regresión - umbral de edad:
+
+```{r}
+datos_regresion1 = data %>% 
+  filter(female == 0 & period == 1 & tr == 1)
+
+modelo_hombres1 = lm(unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+
+summary(modelo_hombres1)
+```
+
+Incrementar los beneficios de desempleo hasta en 209 semanas prolongó la
+duración de desempleo en 14.6 semanas en promedio entre hombres de 50 a
+53 años comparados a hombres entre 46-49 años de edad.
+
+#### Modelo de regresión - umbral de zona geográfica:
+
+```{r}
+datos_regresion2 = data %>% 
+  mutate(db_0 = ifelse(db>=0,1,0)) %>% 
+  filter(female == 0 & period == 1 & age %in% c(50:53))
+
+modelo_hombres2 = lm(unemployment_duration ~ db_0, data = datos_regresion2)
+
+summary(modelo_hombres2)
+```
+
+En las regiones donde se incrementó los beneficios de desempleo hasta en
+209 semanas, hubo un aumento promedio de 19.7 semanas de desempleo en
+hombres entre 50-53 años de edad.
+
+### Mujeres
+
+#### Modelo de regresión - umbral de edad:
+
+```{r}
+datos_regresion3 = data %>% 
+  filter(female == 1 & period == 1 & tr == 1)
+
+modelo_mujeres1 = lm(unemployment_duration ~as.factor(age50), data = datos_regresion3)
+
+summary(modelo_mujeres1)
+```
+
+Incrementar los beneficios de desempleo hasta en 209 semanas prolongó la
+duración de desempleo en 68.1 semanas en promedio entre mujeres de 50 a
+53 años comparados a mujeres entre 46-49 años de edad.
+
+#### Modelo de rgeresión - umbral de zona geográfica:
+
+```{r}
+datos_regresion4 = data %>% 
+  mutate(db_0 = ifelse(db>=0,1,0)) %>% 
+  filter(female == 1 & period == 1 & age %in% c(50:53))
+
+modelo_mujeres4 = lm(unemployment_duration ~ db_0, data = datos_regresion4)
+
+summary(modelo_mujeres4)
+```
+
+En las regiones donde se incrementó los beneficios de desempleo hasta en
+209 semanas, hubo un aumento promedio de 81.7 semanas de desempleo en
+mujeres entre 50-53 años de edad.
