@@ -17,293 +17,141 @@ editor_options:
 
 **FACULTAD DE CIENCIAS SOCIALES - PUCP**
 
-Curso: SOC294 - Estadística para el análisis sociológico 1
+Curso: SOC285 - Estadística para el análisis sociológico 2
 
-Semestre 2024 - 2
+Semestre 2025 - 1
 
-# Análisis de Componentes principales
+# Modelo de efectos fijos y aleatorios
 
-```{r, warning=FALSE,message=FALSE}
-library(rio)
-library(dplyr)
-library(psych)
-library(FactoMineR)
-```
+En el contexto de los modelos estadísticos para datos panel o
+longitudinales (donde se observa a los mismos individuos, grupos o
+unidades a lo largo del tiempo), los modelos de efectos fijos (FE) y
+efectos aleatorios (RE) son dos enfoques comunes para manejar la
+heterogeneidad no observada. Aquí te los explico con definiciones,
+ejemplos y diferencias:
 
-La base de datos está a nivel país distintas variables que ayudan a
-crear el indicador de desigualdad de género (DesigualdadGenero). Además,
-todas las variables han sido escaladas del 0 al 10. Estas variables son
+![](panel.png)
 
-MLAutonomia: Mide que tanto el sistema legal protege derechos
-reporductivos de las mujeres
+## Modelo de Efectos Fijos (FE)
 
-MLViolencia: Mide que tanto el sistema legal protege a las mujeres de la
-violencia
+Captura la heterogeneidad no observada entre unidades (individuos,
+empresas, países, etc.) asumiendo que cada una tiene un efecto propio
+constante en el tiempo (un "efecto fijo"). Estos efectos pueden estar
+correlacionados con las variables independientes del modelo. Se estima
+eliminando la variación entre unidades (usando transformaciones como
+within-estimator o diferencias). Ejemplo: Queremos estudiar cómo el
+ingreso (X) afecta la felicidad (Y) en una encuesta a 500 personas
+durante 5 años. Un modelo FE controla por características invariantes en
+el tiempo de cada persona (ej.: personalidad, habilidades innatas),
+asumiendo que estas influyen en Y pero no se observan directamente.
 
-VozPolítica: Presencia de mujeres en el parlamento
+Ecuación básica:
 
-LibertadMov: Porcentaje de mujeres que declaran no sentirse seguras en
-las calles
+Yit=βXit+αi+ϵit
 
-DesconfianzaSJ: Porcentaje de mujeres que no confian en el sistema de
-justicia
+αi: Efecto fijo de la unidad
 
-SecundariaC: Porcentaje de población con secundaria completa
+ϵit Término de error
 
-DesempleoMuj: Ratio de desempleo de muejeres frente a hombres
+## Modelo de Efectos Aleatorios (RE)
 
-CuentaF: Porcentaje de mujeres que cuentan con una cuenta en el sistema
-financiero
+Trata la heterogeneidad no observada como una variable aleatoria no
+correlacionada con las variables independientes. Asume que los efectos
+individuales son independientes de los predictores. Usa tanto la
+variación entre unidades como dentro de unidades para estimar los
+coeficientes. Ejemplo: En el mismo estudio de ingreso y felicidad, un
+modelo RE asume que las diferencias individuales (ej.: personalidad) son
+aleatorias y no están relacionadas con el ingreso.
 
-Recuerda que solo pueden entrar al análisis variables númerica, también
-dejaremos por fuera el indicador de desigualdad ya que fue creado a
-partir de las otras variables. Es decir, utilizaremos desde MLautonomia
-hasta Cuenta F
+Ecuación básica:
 
-```{r}
-data0 = import("desigualdad_v2.xlsx")
-```
+Yit=βXit+ui+ϵit
 
-```{r}
-names(data0)
-```
+ui: Efecto aleatorio de la unidad i
 
-Le asignamos el id de cada país a la fila, es decir, asignamos los
-valores de la primera columna como el nombre identificador de la fila.
+## Ejemplo de cada una:
 
-```{r}
-rownames(data0)<-data0[,1]
-```
+Imagina que eres sociólogo/a y quieres estudiar cómo el desempleo (X)
+afecta el bienestar emocional (Y) de las personas. Tienes datos de las
+mismas 100 personas entrevistadas durante 3 años.
 
-Ahora dejaremos por fuera las variables Pais y DesigualdadGenero
+Aquí hay un problema oculto: cada persona tiene características propias
+que afectan su bienestar pero no las estás midiendo, como:
 
-```{r}
-data0 = data0 %>% 
-  select(-Pais,-DesigualdadGenero)
-```
+-   Su personalidad (algunas son más resilientes).
 
-Revisemos que todas las variables sean numéricas
+-   Su historial familiar (si crecieron en pobreza).
 
-```{r}
-str(data0)
-```
+-   Su genética (predisposición a la depresión).
 
-Ahora revisemos si hay algún valor perdido. Para ello podemos pedir un
-conteo de todos los perdidos, si sale 0 quiere decir que no hay valores
-perdidos. Si los hubiera, podemos usar el comando complete.cases.
+Estas diferencias entre personas se llaman heterogeneidad no observada
+(son importantes, pero no las tienes en tus datos). Si no las controlas,
+tus resultados estarán sesgados.
 
-```{r}
-sum(is.na(data0))
-```
+¿Cómo solucionarlo?
 
-Ya que nos cercioramos de eso, podemos continuar.
+1.  Modelo de Efectos Fijos (FE)
 
-Paso 1: Realizar una matriz de correlación
+Qué hace: Asume que cada persona tiene un "efecto único" (constante en
+el tiempo) que influye en su bienestar.
 
-```{r}
-library(corrplot)
-matriz = cor(data0) #Recuerda que si fueran ordinales en escala likert, debemos usar polycor y no cor
+Ejemplo: María siempre será más feliz que Pedro (sin importar el
+desempleo), por su personalidad optimista.
 
-corrplot(matriz,        
-         type = "lower",    #Para que solo aparezca la mitad de la tabla de doble entrada
-         diag = TRUE,      #Para que aparezca la matriz
-         tl.col = "black") #Para que los nombres de las variables salgan en negro, por default aparecen en rojo.
-```
+Cómo lo controla: Compara a cada persona solo consigo misma a lo largo
+del tiempo (ignora diferencias entre personas).
 
-Paso 2: ¿Se puede factorizar?
+Pregunta: "Cuando María se queda sin empleo, ¿cómo cambia su bienestar?"
+(no compara a María con Pedro).
 
--   KMO
+Ventaja: Elimina todo lo que no varía en el tiempo (personalidad,
+género, raza, etc.), aunque no lo midas.
 
-```{r}
-library(psych)
-psych::KMO(matriz) 
-```
+Limitación: No puedes estudiar variables que no cambian (ej.: "ser
+mujer" si nadie cambia de género en tu muestra).
 
-Debemos analizar el overall MSA, tenemos que obtener un valor superior a
-0.5 para afirmar que se puede aplicar la técnica a este grupo de
-variables.
+2.  Modelo de Efectos Aleatorios (RE)
 
--   Test de Bartlet
+Qué hace: Asume que las diferencias entre personas (ej.: personalidad)
+son aleatorias y no están relacionadas con las variables del modelo
+(ej.: desempleo).
 
-Al ser una prueba, el Test de Bartlett tiene una hipótesis nula que es
-"la matriz de identidad y la matriz de correlación de las variables son
-iguales". Si el pvalue es menor o igual a 0.05, podemos rechazar que
-sean iguales.
+Ejemplo: El optimismo de María no tiene que ver con si pierde o no su
+trabajo.
 
-```{r}
-cortest.bartlett(matriz,n=nrow(data0))$p.value>0.05  
-```
+Cómo lo controla: Usa toda la información disponible (diferencias entre
+personas + cambios en el tiempo).
 
-Este código solicita solo el pvalue de la prueba y pregunta si el valor
-supera el 0.05, si el resultado es TRUE quiere decir que el pvalue
-supera el 0.05. Es decir, para poder afirmar que ambas matrices son
-distintas debemos esperar que el resultado sea FALSE
+Ventaja: Es más eficiente (aprovecha mejor los datos) y permite incluir
+variables que no cambian (ej.: sexo, etnia).
 
-Paso 3: Determinar cuántos factores o variables latentes puede
-redimensionar la data
+Riesgo: Si el supuesto falla (ej.: las personas optimistas pierden menos
+empleo), los resultados estarán sesgados.
 
-Por el gráfico de sedimentación
+## ¿Efectos Fijos o Aleatorios? Un Resumen Clave
 
-```{r}
-fa.parallel(matriz, fm="pa", fa="pc", main = "Scree Plot")
-```
+🔹 Usa Efectos Fijos (FE) cuando: Las diferencias no observadas entre
+unidades (personas, ciudades, etc.) pueden estar relacionadas con tu
+variable independiente (X).
 
-¿Cómo se interpreta el gráfico?
+Ejemplo: Si estudias el impacto del salario (X) en la felicidad (Y) y
+sospechas que la personalidad (no medida) afecta tanto al salario como a
+la felicidad.
 
-Se cuenta los puntos (en este caso triángulos) que están por encima de
-la linea roja. En este caso se propone un factor o variable latente.
-
--   Criterio de la varianza
-
-```{r}
-eigenf = eigen(matriz)
-eigenf$values
-```
-
-El número de fatores que se propone depende de cuántos números son
-mayores a 1. En este caso son 3 números, por lo tanto se concluye que se
-podría agrupar en 3 factores.
+Te interesa analizar solo los cambios dentro de cada unidad a lo largo
+del tiempo (no las diferencias entre unidades).
 
-Se puede obtener la misma conclusión usando el comando PCA
+Ejemplo: Quieres saber cómo afecta a una ciudad específica aumentar el
+gasto en educación (X) en sus resultados escolares (Y).
 
-```{r}
-library(factoextra)
-library(FactoMineR)
-res.pca <- PCA(data0, graph = FALSE)
-eig.val <- get_eig(res.pca)
-eig.val
-```
+Tienes variables invariantes en el tiempo (ej.: género, raza) pero no
+son tu foco. (FE las elimina automáticamente).
 
-Paso 3: Análizar qué variables componen cada variable latente
-Consideremos el número de factores propuesto por la segunda técnica. Si
-hubieramos optado por realizar un solo factor, deberiamos cambiar lo que
-sigue luego de nfactors.
-
-```{r}
-pc <- principal(data0, nfactors = 3)
-print(pc$loadings,cutoff = 0.5) #Para ver las variables y cuanto aportan a cada factor
-```
-
--   Ver qué variables tiene cada componente
--   Ver la carga, que tanto aporta cada variable al componente.
-
-Paso 4: Agregar las variables latentes a la base de datos original
-Recuerda que los factores se agregan en puntuación z.
-
-```{r}
-matriz = as.data.frame(pc$scores) #Guardamos los factores en una base de datos
-data_final = cbind(data0,matriz)
-head(data_final)[5:11]
-```
-
-# Repaso
-
-```{r, warning=FALSE,message=FALSE}
-library(dplyr)
-library(ggplot2)
-library(lsr)
-```
-
-```{r}
-data = import("Data-provincias.xlsx")
-```
-
-## Prueba T
-
-¿Existe alguna diferencia en el promedio del voto (%) por Keiko Fujimori
-(FP) en segunda vuelta según el nivel de IDH (alto/bajo)?
-
-```{r}
-tabla1 = data %>% 
-  group_by(IDH_cat) %>% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
-
-tabla1
-```
-
-```{r}
-ggplot(tabla1, aes(x=IDH_cat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab("Nivel de IDH")+ylab("% de voto a Keiko Fujimori")
-```
-
-```{r}
-t.test(data$FP ~ data$IDH_cat)
-```
-
-## Anova
-
-```{r}
-tabla2 = data %>% 
-  group_by(Reg_nat) %>% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
-
-tabla2
-```
-
-```{r}
-ggplot(tabla2, aes(x=Reg_nat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab("Región natural")+ylab("% de voto a Keiko Fujimori")
-```
-
-```{r}
-anova=aov(data$FP~data$Reg_nat)
-summary(anova)
-```
-
-## Chi cuadrado
-
-¿Existe alguna diferencia en el voto (%) por Keiko Fujimori (FP) (en
-segunda vuelta según si es de la sierra o no (Sierra_no)?
-
-```{r}
-tabla3 = table(data$FP_cat,data$Años_educ)
-tabla3
-```
-
-```{r}
-prop= as.data.frame(prop.table(tabla3,2))
-prop
-```
-
-```{r}
-names(prop)=c("Voto","Años_educ","Porcentaje")
-```
-
-```{r}
-ggplot(prop, aes(x=Años_educ,y=Porcentaje*100, fill=Voto))+
-  geom_bar(stat="identity", position="stack")+
-  geom_text(aes(label=paste(round(Porcentaje*100,1),"%")),
-  position = position_stack(vjust = 0.5))+
-  ylab("Porcentaje(%)")+xlab("Años de educación")+
-  theme_minimal()
-```
-
-```{r}
-chisq.test(tabla3)$expected
-```
-
-```{r}
-chisq.test(tabla3)
-```
-
-## Correlación
-
-```{r}
-ggplot(data, aes(x=FP, y=ingresos))+
-  geom_point()+
-  geom_smooth(method="lm")+
-  xlab("Voto por Keiko Fujimori (%)")+
-  theme_minimal()
-```
-
-```{r}
-cor.test(data$FP,data$ingresos)
-```
+🔹 Usa Efectos Aleatorios (RE) cuando: Las diferencias no observadas son
+independientes de tus variables explicativas (X).
+
+Ejemplo: Comparar cómo el PIB (X) afecta la pobreza (Y) entre países,
+incluyendo características fijas como "continente".
+
+Necesitas incluir variables que no cambian en el tiempo (ej.: sexo,
+ubicación geográfica).
