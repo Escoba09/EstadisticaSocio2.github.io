@@ -277,33 +277,62 @@ ggplot(toPlot3, aes(x = age, y = promedio, group = tr, color = tr)) +
 #### Modelo de regresión - umbral de edad:
 
 ```{r}
-datos_regresion1 = data %>% 
-  filter(female == 0 & period == 1 & tr == 1)
+# Preparación de datos para RDD
+datos_regresion1 <- data %>% 
+  filter(female == 0 & period == 1 & tr == 1) %>% 
+  mutate(
+    # Crear variable de tratamiento (edad >= 50)
+    tratamiento = ifelse(age >= 50, 1, 0),
+    # Centrar la variable de edad alrededor del punto de corte (50)
+    edad_centrada = age - 50
+  ) %>% 
+  # Filtrar para incluir solo edades cercanas al punto de corte (ventana óptima)
+  filter(age %in% 45:55)  # Ajustar este rango según sea necesario
 
-modelo_hombres1 = lm(unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+# Modelo de regresión discontinua
+modelo_rdd1 <- lm(unemployment_duration ~ tratamiento + edad_centrada + tratamiento:edad_centrada,
+                data = datos_regresion1)
 
-summary(modelo_hombres1)
+# Resumen del modelo
+summary(modelo_rdd1)
 ```
 
-Incrementar los beneficios de desempleo hasta en 209 semanas prolongó la
-duración de desempleo en 14.6 semanas en promedio entre hombres de 50 a
-53 años comparados a hombres entre 46-49 años de edad.
+```{r}
+# Visualización de la discontinuidad
+ggplot(datos_regresion1, aes(x = age, y = unemployment_duration, color = factor(tratamiento))) +
+  geom_point(alpha = 0.5) +
+  geom_vline(xintercept = 50, linetype = "dashed") +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Regresión Discontinua en Edad = 50",
+       x = "Edad",
+       y = "Duración del Desempleo",
+       color = "Tratamiento (≥50 años)") +
+  theme_minimal()
+```
 
 #### Modelo de regresión - umbral de zona geográfica:
 
 ```{r}
-datos_regresion2 = data %>% 
-  mutate(db_0 = ifelse(db>=0,1,0)) %>% 
+datos_regresion2 <- data %>% 
+  mutate(db_0 = ifelse(db >= 0, 1, 0)) %>% 
   filter(female == 0 & period == 1 & age %in% c(50:53))
 
-modelo_hombres2 = lm(unemployment_duration ~ db_0, data = datos_regresion2)
-
-summary(modelo_hombres2)
+# Modelo RDD
+modelo_rdd2 <- lm(unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 0), 
+                 data = datos_regresion2)
+summary(modelo_rdd2)
 ```
 
-En las regiones donde se incrementó los beneficios de desempleo hasta en
-209 semanas, hubo un aumento promedio de 19.7 semanas de desempleo en
-hombres entre 50-53 años de edad.
+```{r}
+# Gráfico de discontinuidad
+ggplot(datos_regresion2, aes(x = db, y = unemployment_duration, color = factor(db_0))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  labs(title = "Regresión Discontinua en db = 0", 
+       x = "Variable de asignación (db)", 
+       y = "Duración del desempleo")
+```
 
 ### Mujeres
 
@@ -342,10 +371,6 @@ ggplot(datos_regresion3, aes(x = age, y = unemployment_duration, color = factor(
   theme_minimal()
 ```
 
-Incrementar los beneficios de desempleo hasta en 209 semanas prolongó la
-duración de desempleo en 68.1 semanas en promedio entre mujeres de 50 a
-53 años comparados a mujeres entre 46-49 años de edad.
-
 #### Modelo de rgeresión - umbral de zona geográfica:
 
 ```{r}
@@ -359,10 +384,6 @@ modelo_rdd4 <- lm(unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 0),
                  data = datos_regresion4)
 summary(modelo_rdd4)
 ```
-
-En las regiones donde se incrementó los beneficios de desempleo hasta en
-209 semanas, hubo un aumento promedio de 81.7 semanas de desempleo en
-mujeres entre 50-53 años de edad.
 
 ```{r}
 # Gráfico de discontinuidad

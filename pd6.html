@@ -666,130 +666,201 @@ ggplot(toPlot3, aes(x = age, y = promedio, group = tr, color = tr)) +
 <h3>Hombres</h3>
 <div id="modelo-de-regresión---umbral-de-edad" class="section level4">
 <h4>Modelo de regresión - umbral de edad:</h4>
-<pre class="r"><code>datos_regresion1 = data %&gt;% 
-  filter(female == 0 &amp; period == 1 &amp; tr == 1)
+<pre class="r"><code># Preparación de datos para RDD
+datos_regresion1 &lt;- data %&gt;% 
+  filter(female == 0 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  mutate(
+    # Crear variable de tratamiento (edad &gt;= 50)
+    tratamiento = ifelse(age &gt;= 50, 1, 0),
+    # Centrar la variable de edad alrededor del punto de corte (50)
+    edad_centrada = age - 50
+  ) %&gt;% 
+  # Filtrar para incluir solo edades cercanas al punto de corte (ventana óptima)
+  filter(age %in% 45:55)  # Ajustar este rango según sea necesario
 
-modelo_hombres1 = lm(unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+# Modelo de regresión discontinua
+modelo_rdd1 &lt;- lm(unemployment_duration ~ tratamiento + edad_centrada + tratamiento:edad_centrada,
+                data = datos_regresion1)
 
-summary(modelo_hombres1)</code></pre>
+# Resumen del modelo
+summary(modelo_rdd1)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = unemployment_duration ~ as.factor(age50), data = datos_regresion1)
+## lm(formula = unemployment_duration ~ tratamiento + edad_centrada + 
+##     tratamiento:edad_centrada, data = datos_regresion1)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -28.98 -20.72 -12.31  -3.12 506.34 
+## -35.43 -25.18 -15.16  -5.05 494.56 
 ## 
 ## Coefficients:
-##                   Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)        14.5192     0.8224   17.66   &lt;2e-16 ***
-## as.factor(age50)1  14.6047     1.1761   12.42   &lt;2e-16 ***
+##                           Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)                20.2803     7.8086   2.597  0.00955 **
+## tratamiento                 9.5800     9.1634   1.045  0.29609   
+## edad_centrada               1.6359     2.9499   0.555  0.57935   
+## tratamiento:edad_centrada   0.2693     4.1093   0.066  0.94777   
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 58 on 9732 degrees of freedom
-## Multiple R-squared:  0.0156, Adjusted R-squared:  0.0155 
-## F-statistic: 154.2 on 1 and 9732 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Incrementar los beneficios de desempleo hasta en 209 semanas prolongó
-la duración de desempleo en 14.6 semanas en promedio entre hombres de 50
-a 53 años comparados a hombres entre 46-49 años de edad.</p>
+## Residual standard error: 69 on 901 degrees of freedom
+## Multiple R-squared:  0.01394,    Adjusted R-squared:  0.01065 
+## F-statistic: 4.245 on 3 and 901 DF,  p-value: 0.005451</code></pre>
+<pre class="r"><code># Visualización de la discontinuidad
+ggplot(datos_regresion1, aes(x = age, y = unemployment_duration, color = factor(tratamiento))) +
+  geom_point(alpha = 0.5) +
+  geom_vline(xintercept = 50, linetype = &quot;dashed&quot;) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  labs(title = &quot;Regresión Discontinua en Edad = 50&quot;,
+       x = &quot;Edad&quot;,
+       y = &quot;Duración del Desempleo&quot;,
+       color = &quot;Tratamiento (≥50 años)&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 <div id="modelo-de-regresión---umbral-de-zona-geográfica"
 class="section level4">
 <h4>Modelo de regresión - umbral de zona geográfica:</h4>
-<pre class="r"><code>datos_regresion2 = data %&gt;% 
-  mutate(db_0 = ifelse(db&gt;=0,1,0)) %&gt;% 
+<pre class="r"><code>datos_regresion2 &lt;- data %&gt;% 
+  mutate(db_0 = ifelse(db &gt;= 0, 1, 0)) %&gt;% 
   filter(female == 0 &amp; period == 1 &amp; age %in% c(50:53))
 
-modelo_hombres2 = lm(unemployment_duration ~ db_0, data = datos_regresion2)
-
-summary(modelo_hombres2)</code></pre>
+# Modelo RDD
+modelo_rdd2 &lt;- lm(unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 0), 
+                 data = datos_regresion2)
+summary(modelo_rdd2)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = unemployment_duration ~ db_0, data = datos_regresion2)
+## lm(formula = unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 
+##     0), data = datos_regresion2)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
-## -32.10 -20.56  -9.81  -1.97 492.17 
+## -50.58 -18.71  -9.62  -2.17 488.08 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   12.517      2.099   5.962 3.24e-09 ***
-## db_0          19.726      3.410   5.785 9.18e-09 ***
+##                Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)    10.87215    5.45062   1.995   0.0463 *
+## db_0            7.01462    7.98617   0.878   0.3799  
+## I(db - 0)      -0.04209    0.12880  -0.327   0.7439  
+## db_0:I(db - 0)  0.54517    0.22272   2.448   0.0145 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 58.06 on 1230 degrees of freedom
-## Multiple R-squared:  0.02649,    Adjusted R-squared:  0.0257 
-## F-statistic: 33.47 on 1 and 1230 DF,  p-value: 9.176e-09</code></pre>
-<p>En las regiones donde se incrementó los beneficios de desempleo hasta
-en 209 semanas, hubo un aumento promedio de 19.7 semanas de desempleo en
-hombres entre 50-53 años de edad.</p>
+## Residual standard error: 57.93 on 1228 degrees of freedom
+## Multiple R-squared:  0.03261,    Adjusted R-squared:  0.03025 
+## F-statistic:  13.8 on 3 and 1228 DF,  p-value: 7.45e-09</code></pre>
+<pre class="r"><code># Gráfico de discontinuidad
+ggplot(datos_regresion2, aes(x = db, y = unemployment_duration, color = factor(db_0))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  geom_vline(xintercept = 0, linetype = &quot;dashed&quot;) +
+  labs(title = &quot;Regresión Discontinua en db = 0&quot;, 
+       x = &quot;Variable de asignación (db)&quot;, 
+       y = &quot;Duración del desempleo&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 </div>
 <div id="mujeres-1" class="section level3">
 <h3>Mujeres</h3>
 <div id="modelo-de-regresión---umbral-de-edad-1" class="section level4">
 <h4>Modelo de regresión - umbral de edad:</h4>
-<pre class="r"><code>datos_regresion3 = data %&gt;% 
-  filter(female == 1 &amp; period == 1 &amp; tr == 1)
+<pre class="r"><code># Preparación de datos para RDD
+datos_regresion3 &lt;- data %&gt;% 
+  filter(female == 1 &amp; period == 1 &amp; tr == 1) %&gt;% 
+  mutate(
+    # Crear variable de tratamiento (edad &gt;= 50)
+    tratamiento = ifelse(age &gt;= 50, 1, 0),
+    # Centrar la variable de edad alrededor del punto de corte (50)
+    edad_centrada = age - 50
+  ) %&gt;% 
+  # Filtrar para incluir solo edades cercanas al punto de corte (ventana óptima)
+  filter(age %in% 45:55)  # Ajustar este rango según sea necesario
 
-modelo_mujeres1 = lm(unemployment_duration ~as.factor(age50), data = datos_regresion3)
+# Modelo de regresión discontinua
+modelo_rdd3 &lt;- lm(unemployment_duration ~ tratamiento + edad_centrada + tratamiento:edad_centrada,
+                data = datos_regresion3)
 
-summary(modelo_mujeres1)</code></pre>
+# Resumen del modelo
+summary(modelo_rdd3)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = unemployment_duration ~ as.factor(age50), data = datos_regresion3)
+## lm(formula = unemployment_duration ~ tratamiento + edad_centrada + 
+##     tratamiento:edad_centrada, data = datos_regresion3)
 ## 
 ## Residuals:
-##    Min     1Q Median     3Q    Max 
-## -89.25 -60.54 -16.82  27.53 499.76 
+##     Min      1Q  Median      3Q     Max 
+## -140.71  -51.63   -5.85   63.73  473.72 
 ## 
 ## Coefficients:
-##                   Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)         21.233      1.733   12.26   &lt;2e-16 ***
-## as.factor(age50)1   68.158      2.214   30.79   &lt;2e-16 ***
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                22.4676    17.4592   1.287 0.198700    
+## tratamiento               118.5280    18.5639   6.385 3.74e-10 ***
+## edad_centrada              -0.6246     6.4753  -0.096 0.923195    
+## tratamiento:edad_centrada -28.6421     7.7554  -3.693 0.000244 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 81.14 on 5657 degrees of freedom
-## Multiple R-squared:  0.1435, Adjusted R-squared:  0.1434 
-## F-statistic: 947.8 on 1 and 5657 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Incrementar los beneficios de desempleo hasta en 209 semanas prolongó
-la duración de desempleo en 68.1 semanas en promedio entre mujeres de 50
-a 53 años comparados a mujeres entre 46-49 años de edad.</p>
+## Residual standard error: 91.23 on 533 degrees of freedom
+## Multiple R-squared:  0.2234, Adjusted R-squared:  0.219 
+## F-statistic: 51.11 on 3 and 533 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># Visualización de la discontinuidad
+ggplot(datos_regresion3, aes(x = age, y = unemployment_duration, color = factor(tratamiento))) +
+  geom_point(alpha = 0.5) +
+  geom_vline(xintercept = 50, linetype = &quot;dashed&quot;) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  labs(title = &quot;Regresión Discontinua en Edad = 50&quot;,
+       x = &quot;Edad&quot;,
+       y = &quot;Duración del Desempleo&quot;,
+       color = &quot;Tratamiento (≥50 años)&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="modelo-de-rgeresión---umbral-de-zona-geográfica"
 class="section level4">
 <h4>Modelo de rgeresión - umbral de zona geográfica:</h4>
-<pre class="r"><code>datos_regresion4 = data %&gt;% 
-  mutate(db_0 = ifelse(db&gt;=0,1,0)) %&gt;% 
+<pre class="r"><code># Preparar datos 
+datos_regresion4 &lt;- data %&gt;% 
+  mutate(db_0 = ifelse(db &gt;= 0, 1, 0)) %&gt;% 
   filter(female == 1 &amp; period == 1 &amp; age %in% c(50:53))
 
-modelo_mujeres4 = lm(unemployment_duration ~ db_0, data = datos_regresion4)
-
-summary(modelo_mujeres4)</code></pre>
+# Modelo RDD
+modelo_rdd4 &lt;- lm(unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 0), 
+                 data = datos_regresion4)
+summary(modelo_rdd4)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = unemployment_duration ~ db_0, data = datos_regresion4)
+## lm(formula = unemployment_duration ~ db_0 + I(db - 0) + db_0:I(db - 
+##     0), data = datos_regresion4)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -112.13  -30.42  -12.75   31.00  500.41 
+## -130.03  -30.93  -13.69   30.51  501.10 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   30.562      4.837   6.319 4.69e-10 ***
-## db_0          81.714      6.617  12.349  &lt; 2e-16 ***
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     32.4415    11.8027   2.749  0.00614 ** 
+## db_0            66.7400    15.2787   4.368 1.44e-05 ***
+## I(db - 0)        0.0521     0.2985   0.175  0.86150    
+## db_0:I(db - 0)   0.4568     0.4478   1.020  0.30799    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 87.33 on 698 degrees of freedom
-## Multiple R-squared:  0.1793, Adjusted R-squared:  0.1781 
-## F-statistic: 152.5 on 1 and 698 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>En las regiones donde se incrementó los beneficios de desempleo hasta
-en 209 semanas, hubo un aumento promedio de 81.7 semanas de desempleo en
-mujeres entre 50-53 años de edad.</p>
+## Residual standard error: 87.31 on 696 degrees of freedom
+## Multiple R-squared:  0.1821, Adjusted R-squared:  0.1786 
+## F-statistic: 51.65 on 3 and 696 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># Gráfico de discontinuidad
+ggplot(datos_regresion4, aes(x = db, y = unemployment_duration, color = factor(db_0))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  geom_vline(xintercept = 0, linetype = &quot;dashed&quot;) +
+  labs(title = &quot;Regresión Discontinua en db = 0&quot;, 
+       x = &quot;Variable de asignación (db)&quot;, 
+       y = &quot;Duración del desempleo&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
 </div>
 </div>
