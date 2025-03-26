@@ -91,7 +91,7 @@ experimentos aleatorizados no son factibles.
 ## **Tabla de comparaciones RDD y Diff-in-Diff**
 
 |                            |                                                            |                                                |
-|:----------------------:|:----------------------:|:----------------------:|
+|:--------------------------:|:----------------------------------------------------------:|:----------------------------------------------:|
 |     **Característica**     |                          **RDD**                           |                **Diff-in-Diff**                |
 | Asignación del tratamiento |          Basada en un umbral (variable continua).          |  Basada en grupos (tratamiento vs. control).   |
 |       Comparabilidad       |                Individuos cerca del umbral.                |        Grupos con tendencias paralelas.        |
