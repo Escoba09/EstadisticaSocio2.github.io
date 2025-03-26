@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 8</title>
 
-<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -363,331 +363,656 @@ div.tocify {
 
 
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
-<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="análisis-de-componentes-principales" class="section level1">
-<h1>Análisis de Componentes principales</h1>
-<pre class="r"><code>library(rio)
-library(dplyr)
-library(psych)
-library(FactoMineR)</code></pre>
-<p>La base de datos está a nivel país distintas variables que ayudan a
-crear el indicador de desigualdad de género (DesigualdadGenero). Además,
-todas las variables han sido escaladas del 0 al 10. Estas variables
-son</p>
-<p>MLAutonomia: Mide que tanto el sistema legal protege derechos
-reporductivos de las mujeres</p>
-<p>MLViolencia: Mide que tanto el sistema legal protege a las mujeres de
-la violencia</p>
-<p>VozPolítica: Presencia de mujeres en el parlamento</p>
-<p>LibertadMov: Porcentaje de mujeres que declaran no sentirse seguras
-en las calles</p>
-<p>DesconfianzaSJ: Porcentaje de mujeres que no confian en el sistema de
-justicia</p>
-<p>SecundariaC: Porcentaje de población con secundaria completa</p>
-<p>DesempleoMuj: Ratio de desempleo de muejeres frente a hombres</p>
-<p>CuentaF: Porcentaje de mujeres que cuentan con una cuenta en el
-sistema financiero</p>
-<p>Recuerda que solo pueden entrar al análisis variables númerica,
-también dejaremos por fuera el indicador de desigualdad ya que fue
-creado a partir de las otras variables. Es decir, utilizaremos desde
-MLautonomia hasta Cuenta F</p>
-<pre class="r"><code>data0 = import(&quot;desigualdad_v2.xlsx&quot;)</code></pre>
-<pre class="r"><code>names(data0)</code></pre>
-<pre><code>##  [1] &quot;Pais&quot;              &quot;DesigualdadGenero&quot; &quot;MLAutonomia&quot;      
-##  [4] &quot;MLViolencia&quot;       &quot;VozPolitica&quot;       &quot;LibertadMov&quot;      
-##  [7] &quot;DesconfianzaSJ&quot;    &quot;SecundariaC&quot;       &quot;DesempleoMuj&quot;     
-## [10] &quot;CuentaF&quot;</code></pre>
-<p>Le asignamos el id de cada país a la fila, es decir, asignamos los
-valores de la primera columna como el nombre identificador de la
-fila.</p>
-<pre class="r"><code>rownames(data0)&lt;-data0[,1]</code></pre>
-<p>Ahora dejaremos por fuera las variables Pais y DesigualdadGenero</p>
-<pre class="r"><code>data0 = data0 %&gt;% 
-  select(-Pais,-DesigualdadGenero)</code></pre>
-<p>Revisemos que todas las variables sean numéricas</p>
-<pre class="r"><code>str(data0)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    121 obs. of  8 variables:
-##  $ MLAutonomia   : num  7.5 0 7.5 5 0 0 0 0 7.5 0 ...
-##  $ MLViolencia   : num  10 5 5 10 10 10 0 10 10 10 ...
-##  $ VozPolitica   : num  4.52 4.55 4.21 6.35 2.95 ...
-##  $ LibertadMov   : num  5.26 6.6 4.71 5.15 4.76 ...
-##  $ DesconfianzaSJ: num  9.93 7.4 5.86 7.3 7.02 ...
-##  $ SecundariaC   : num  1.17 9.34 3.8 6.59 9.68 ...
-##  $ DesempleoMuj  : num  9.18 2.19 8.8 4.21 2.84 ...
-##  $ CuentaF       : num  0.558 3.705 2.807 4.992 3.991 ...</code></pre>
-<p>Ahora revisemos si hay algún valor perdido. Para ello podemos pedir
-un conteo de todos los perdidos, si sale 0 quiere decir que no hay
-valores perdidos. Si los hubiera, podemos usar el comando
-complete.cases.</p>
-<pre class="r"><code>sum(is.na(data0))</code></pre>
-<pre><code>## [1] 0</code></pre>
-<p>Ya que nos cercioramos de eso, podemos continuar.</p>
-<p>Paso 1: Realizar una matriz de correlación</p>
-<pre class="r"><code>library(corrplot)</code></pre>
-<pre><code>## corrplot 0.94 loaded</code></pre>
-<pre class="r"><code>matriz = cor(data0) #Recuerda que si fueran ordinales en escala likert, debemos usar polycor y no cor
+<p>Curso: SOC285 - Estadística para el análisis sociológico 2</p>
+<p>Semestre 2025 - 1</p>
+<div id="modelo-de-efectos-fijos-y-aleatorios" class="section level1">
+<h1>Modelo de efectos fijos y aleatorios</h1>
+<p>En el contexto de los modelos estadísticos para datos panel o
+longitudinales (donde se observa a los mismos individuos, grupos o
+unidades a lo largo del tiempo), los modelos de efectos fijos (FE) y
+efectos aleatorios (RE) son dos enfoques comunes para manejar la
+heterogeneidad no observada. Aquí te los explico con definiciones,
+ejemplos y diferencias:</p>
+<p><img src="panel.png" /></p>
+<div id="modelo-de-efectos-fijos-fe" class="section level2">
+<h2>Modelo de Efectos Fijos (FE)</h2>
+<p>Captura la heterogeneidad no observada entre unidades (individuos,
+empresas, países, etc.) asumiendo que cada una tiene un efecto propio
+constante en el tiempo (un “efecto fijo”). Estos efectos pueden estar
+correlacionados con las variables independientes del modelo. Se estima
+eliminando la variación entre unidades (usando transformaciones como
+within-estimator o diferencias). Ejemplo: Queremos estudiar cómo el
+ingreso (X) afecta la felicidad (Y) en una encuesta a 500 personas
+durante 5 años. Un modelo FE controla por características invariantes en
+el tiempo de cada persona (ej.: personalidad, habilidades innatas),
+asumiendo que estas influyen en Y pero no se observan directamente.</p>
+<p>Ecuación básica:</p>
+<p>Yit=βXit+αi+ϵit</p>
+<p>αi: Efecto fijo de la unidad</p>
+<p>ϵit Término de error</p>
+</div>
+<div id="modelo-de-efectos-aleatorios-re" class="section level2">
+<h2>Modelo de Efectos Aleatorios (RE)</h2>
+<p>Trata la heterogeneidad no observada como una variable aleatoria no
+correlacionada con las variables independientes. Asume que los efectos
+individuales son independientes de los predictores. Usa tanto la
+variación entre unidades como dentro de unidades para estimar los
+coeficientes. Ejemplo: En el mismo estudio de ingreso y felicidad, un
+modelo RE asume que las diferencias individuales (ej.: personalidad) son
+aleatorias y no están relacionadas con el ingreso.</p>
+<p>Ecuación básica:</p>
+<p>Yit=βXit+ui+ϵit</p>
+<p>ui: Efecto aleatorio de la unidad i</p>
+</div>
+<div id="ejemplo-de-cada-una" class="section level2">
+<h2>Ejemplo de cada una:</h2>
+<p>Imagina que eres sociólogo/a y quieres estudiar cómo el desempleo (X)
+afecta el bienestar emocional (Y) de las personas. Tienes datos de las
+mismas 100 personas entrevistadas durante 3 años.</p>
+<p>Aquí hay un problema oculto: cada persona tiene características
+propias que afectan su bienestar pero no las estás midiendo, como:</p>
+<ul>
+<li><p>Su personalidad (algunas son más resilientes).</p></li>
+<li><p>Su historial familiar (si crecieron en pobreza).</p></li>
+<li><p>Su genética (predisposición a la depresión).</p></li>
+</ul>
+<p>Estas diferencias entre personas se llaman heterogeneidad no
+observada (son importantes, pero no las tienes en tus datos). Si no las
+controlas, tus resultados estarán sesgados.</p>
+<p>¿Cómo solucionarlo?</p>
+<ol style="list-style-type: decimal">
+<li>Modelo de Efectos Fijos (FE)</li>
+</ol>
+<p>Qué hace: Asume que cada persona tiene un “efecto único” (constante
+en el tiempo) que influye en su bienestar.</p>
+<p>Ejemplo: María siempre será más feliz que Pedro (sin importar el
+desempleo), por su personalidad optimista.</p>
+<p>Cómo lo controla: Compara a cada persona solo consigo misma a lo
+largo del tiempo (ignora diferencias entre personas).</p>
+<p>Pregunta: “Cuando María se queda sin empleo, ¿cómo cambia su
+bienestar?” (no compara a María con Pedro).</p>
+<p>Ventaja: Elimina todo lo que no varía en el tiempo (personalidad,
+género, raza, etc.), aunque no lo midas.</p>
+<p>Limitación: No puedes estudiar variables que no cambian (ej.: “ser
+mujer” si nadie cambia de género en tu muestra).</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Modelo de Efectos Aleatorios (RE)</li>
+</ol>
+<p>Qué hace: Asume que las diferencias entre personas (ej.:
+personalidad) son aleatorias y no están relacionadas con las variables
+del modelo (ej.: desempleo).</p>
+<p>Ejemplo: El optimismo de María no tiene que ver con si pierde o no su
+trabajo.</p>
+<p>Cómo lo controla: Usa toda la información disponible (diferencias
+entre personas + cambios en el tiempo).</p>
+<p>Ventaja: Es más eficiente (aprovecha mejor los datos) y permite
+incluir variables que no cambian (ej.: sexo, etnia).</p>
+<p>Riesgo: Si el supuesto falla (ej.: las personas optimistas pierden
+menos empleo), los resultados estarán sesgados.</p>
+</div>
+<div id="efectos-fijos-o-aleatorios-un-resumen-clave"
+class="section level2">
+<h2>¿Efectos Fijos o Aleatorios? Un Resumen Clave</h2>
+<p>🔹 Usa Efectos Fijos (FE) cuando: Las diferencias no observadas entre
+unidades (personas, ciudades, etc.) pueden estar relacionadas con tu
+variable independiente (X).</p>
+<p>Ejemplo: Si estudias el impacto del salario (X) en la felicidad (Y) y
+sospechas que la personalidad (no medida) afecta tanto al salario como a
+la felicidad.</p>
+<p>Te interesa analizar solo los cambios dentro de cada unidad a lo
+largo del tiempo (no las diferencias entre unidades).</p>
+<p>Ejemplo: Quieres saber cómo afecta a una ciudad específica aumentar
+el gasto en educación (X) en sus resultados escolares (Y).</p>
+<p>Tienes variables invariantes en el tiempo (ej.: género, raza) pero no
+son tu foco. (FE las elimina automáticamente).</p>
+<p>🔹 Usa Efectos Aleatorios (RE) cuando: Las diferencias no observadas
+son independientes de tus variables explicativas (X).</p>
+<p>Ejemplo: Comparar cómo el PIB (X) afecta la pobreza (Y) entre países,
+incluyendo características fijas como “continente”.</p>
+<p>Necesitas incluir variables que no cambian en el tiempo (ej.: sexo,
+ubicación geográfica).</p>
+</div>
+<div id="ecuación-del-modelo-de-efectos-fijos" class="section level2">
+<h2>Ecuación del modelo de efectos fijos</h2>
+<ul>
+<li><p>Yit=αi+βXit+ui+eit</p></li>
+<li><p>Yit = Variable dependiente (para la unidad i en el tiempo
+t)</p></li>
+<li><p>αi = Intercepto para la unidad i</p></li>
+<li><p>β = coeficiente de la variable independiente</p></li>
+<li><p>Xit = Variable independiente (para la unidad i en el tiempo
+t)</p></li>
+<li><p>ui= error dentro de la unidad i</p></li>
+<li><p>eit = error total</p></li>
+</ul>
+<p>Cuando la variable independiente cambia en 1 unidad en el tiempo, la
+variable dependiente se incremente en β unidades. β representa el efecto
+común a lo largo de las observaciones controlado por la heterogeneidad
+individual.</p>
+</div>
+<div id="datos-environment-social-and-governance-esg"
+class="section level2">
+<h2>Datos: Environment Social and Governance (ESG)</h2>
+<p>En esta clase trabajaremos con la datos de Environment Social and
+Governance (ESG) del Banco mundial. Pueden encontrar más información en
+este link <a
+href="https://databank.worldbank.org/source/environment-social-and-governance-(esg)-data"
+class="uri">https://databank.worldbank.org/source/environment-social-and-governance-(esg)-data</a></p>
+<pre class="r"><code>library(rio)</code></pre>
+<pre><code>## Warning: package &#39;rio&#39; was built under R version 4.3.1</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(plm)</code></pre>
+<pre><code>## Warning: package &#39;plm&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plm&#39;
+## 
+## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     between, lag, lead</code></pre>
+<pre class="r"><code>dataBM = import(&quot;data_EF.xlsx&quot;)</code></pre>
+<pre class="r"><code>head(dataBM)</code></pre>
+<pre><code>##          Country.Name Country.Code Year porc_agricultural_land CO2_emissions
+## 1         Afghanistan          AFG 2010               58.12520     0.2522200
+## 2             Albania          ALB 2010               43.84307     1.5276237
+## 3             Algeria          DZA 2010               17.37133     3.1843737
+## 4             Andorra          AND 2010               42.06383     7.2707949
+## 5              Angola          AGO 2010               42.12080     0.9758525
+## 6 Antigua and Barbuda          ATG 2010               20.45455     5.7179533
+##   fertility_rate uso_combustibles_fosiles porc_gdp_growth net_migration
+## 1          6.099                       NA       14.362441       -141355
+## 2          1.656                 63.23900        3.706938        -29330
+## 3          2.843                 99.84783        3.600000        -33071
+## 4          1.270                       NA       -1.974958         -2864
+## 5          6.194                 42.99252        4.860000         90016
+## 6          1.785                       NA       -7.840595           295</code></pre>
+<pre class="r"><code>str(dataBM)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    950 obs. of  9 variables:
+##  $ Country.Name            : chr  &quot;Afghanistan&quot; &quot;Albania&quot; &quot;Algeria&quot; &quot;Andorra&quot; ...
+##  $ Country.Code            : chr  &quot;AFG&quot; &quot;ALB&quot; &quot;DZA&quot; &quot;AND&quot; ...
+##  $ Year                    : chr  &quot;2010&quot; &quot;2010&quot; &quot;2010&quot; &quot;2010&quot; ...
+##  $ porc_agricultural_land  : num  58.1 43.8 17.4 42.1 42.1 ...
+##  $ CO2_emissions           : num  0.252 1.528 3.184 7.271 0.976 ...
+##  $ fertility_rate          : num  6.1 1.66 2.84 1.27 6.19 ...
+##  $ uso_combustibles_fosiles: num  NA 63.2 99.8 NA 43 ...
+##  $ porc_gdp_growth         : num  14.36 3.71 3.6 -1.97 4.86 ...
+##  $ net_migration           : num  -141355 -29330 -33071 -2864 90016 ...</code></pre>
+<p>Lo primero que encontramos es que tenemos varios valores perdidos.
+Contemos el número de NAs por columna:</p>
+<pre class="r"><code>NAcount = colSums(is.na(dataBM))
+NAcount</code></pre>
+<pre><code>##             Country.Name             Country.Code                     Year 
+##                        0                        0                        0 
+##   porc_agricultural_land            CO2_emissions           fertility_rate 
+##                        7                       10                       36 
+## uso_combustibles_fosiles          porc_gdp_growth            net_migration 
+##                      295                       21                        0</code></pre>
+<p>En uso de combustribles fosiles es donde más NAs tenemos, 295 en
+total. ¿Cómo lidiamos con este problema? Para tener una data panel
+balanceada debemos contar con valores en todas nuestras observaciones y
+para cada ola.</p>
+<p>Eliminar filas que contienen NAs</p>
+<pre class="r"><code>data_limpia = na.omit(dataBM)</code></pre>
+<p>Algunos países tendrán información en todas las variables y otros
+solo en algunas. Nos quedamos con los países que tengan información para
+los 5 años</p>
+<pre class="r"><code>data_limpia = data_limpia %&gt;% 
+  group_by(Country.Name) %&gt;% 
+  filter(n()==5) %&gt;%
+  ungroup()</code></pre>
+<p>Volvemos a contar los NAs:</p>
+<pre class="r"><code>NAcount = colSums(is.na(data_limpia))
+NAcount</code></pre>
+<pre><code>##             Country.Name             Country.Code                     Year 
+##                        0                        0                        0 
+##   porc_agricultural_land            CO2_emissions           fertility_rate 
+##                        0                        0                        0 
+## uso_combustibles_fosiles          porc_gdp_growth            net_migration 
+##                        0                        0                        0</code></pre>
+<pre class="r"><code>table(data_limpia$Year)</code></pre>
+<pre><code>## 
+## 2010 2011 2012 2013 2014 
+##  119  119  119  119  119</code></pre>
+<p>La tendencia en promedio de la emisión de CO2 en los periodos de
+nuestra muestra:</p>
+<pre class="r"><code>toPlot = data_limpia %&gt;% 
+  group_by(Year) %&gt;% 
+  summarise(CO2_emissions = mean(CO2_emissions)) %&gt;% 
+  ungroup()
 
-corrplot(matriz,        
-         type = &quot;lower&quot;,    #Para que solo aparezca la mitad de la tabla de doble entrada
-         diag = TRUE,      #Para que aparezca la matriz
-         tl.col = &quot;black&quot;) #Para que los nombres de las variables salgan en negro, por default aparecen en rojo.</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>Paso 2: ¿Se puede factorizar?</p>
-<ul>
-<li>KMO</li>
-</ul>
-<pre class="r"><code>library(psych)
-psych::KMO(matriz) </code></pre>
-<pre><code>## Kaiser-Meyer-Olkin factor adequacy
-## Call: psych::KMO(r = matriz)
-## Overall MSA =  0.73
-## MSA for each item = 
-##    MLAutonomia    MLViolencia    VozPolitica    LibertadMov DesconfianzaSJ 
-##           0.83           0.66           0.75           0.73           0.60 
-##    SecundariaC   DesempleoMuj        CuentaF 
-##           0.70           0.85           0.72</code></pre>
-<p>Debemos analizar el overall MSA, tenemos que obtener un valor
-superior a 0.5 para afirmar que se puede aplicar la técnica a este grupo
-de variables.</p>
-<ul>
-<li>Test de Bartlet</li>
-</ul>
-<p>Al ser una prueba, el Test de Bartlett tiene una hipótesis nula que
-es “la matriz de identidad y la matriz de correlación de las variables
-son iguales”. Si el pvalue es menor o igual a 0.05, podemos rechazar que
-sean iguales.</p>
-<pre class="r"><code>cortest.bartlett(matriz,n=nrow(data0))$p.value&gt;0.05  </code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<p>Este código solicita solo el pvalue de la prueba y pregunta si el
-valor supera el 0.05, si el resultado es TRUE quiere decir que el pvalue
-supera el 0.05. Es decir, para poder afirmar que ambas matrices son
-distintas debemos esperar que el resultado sea FALSE</p>
-<p>Paso 3: Determinar cuántos factores o variables latentes puede
-redimensionar la data</p>
-<p>Por el gráfico de sedimentación</p>
-<pre class="r"><code>fa.parallel(matriz, fm=&quot;pa&quot;, fa=&quot;pc&quot;, main = &quot;Scree Plot&quot;)</code></pre>
-<pre><code>## Warning in fa.parallel(matriz, fm = &quot;pa&quot;, fa = &quot;pc&quot;, main = &quot;Scree Plot&quot;): It
-## seems as if you are using a correlation matrix, but have not specified the
-## number of cases. The number of subjects is arbitrarily set to be 100</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<pre><code>## Parallel analysis suggests that the number of factors =  NA  and the number of components =  1</code></pre>
-<p>¿Cómo se interpreta el gráfico?</p>
-<p>Se cuenta los puntos (en este caso triángulos) que están por encima
-de la linea roja. En este caso se propone un factor o variable
-latente.</p>
-<ul>
-<li>Criterio de la varianza</li>
-</ul>
-<pre class="r"><code>eigenf = eigen(matriz)
-eigenf$values</code></pre>
-<pre><code>## [1] 3.0714888 1.2071756 1.0772113 0.8265806 0.7015968 0.5154084 0.3600658
-## [8] 0.2404727</code></pre>
-<p>El número de fatores que se propone depende de cuántos números son
-mayores a 1. En este caso son 3 números, por lo tanto se concluye que se
-podría agrupar en 3 factores.</p>
-<p>Se puede obtener la misma conclusión usando el comando PCA</p>
-<pre class="r"><code>library(factoextra)</code></pre>
-<pre><code>## Warning: package &#39;factoextra&#39; was built under R version 4.4.2</code></pre>
-<pre><code>## Loading required package: ggplot2</code></pre>
-<pre><code>## 
-## Attaching package: &#39;ggplot2&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:psych&#39;:
-## 
-##     %+%, alpha</code></pre>
-<pre><code>## Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa</code></pre>
-<pre class="r"><code>library(FactoMineR)
-res.pca &lt;- PCA(data0, graph = FALSE)
-eig.val &lt;- get_eig(res.pca)
-eig.val</code></pre>
-<pre><code>##       eigenvalue variance.percent cumulative.variance.percent
-## Dim.1  3.0714888        38.393610                    38.39361
-## Dim.2  1.2071756        15.089695                    53.48331
-## Dim.3  1.0772113        13.465141                    66.94845
-## Dim.4  0.8265806        10.332257                    77.28070
-## Dim.5  0.7015968         8.769960                    86.05066
-## Dim.6  0.5154084         6.442605                    92.49327
-## Dim.7  0.3600658         4.500822                    96.99409
-## Dim.8  0.2404727         3.005909                   100.00000</code></pre>
-<p>Paso 3: Análizar qué variables componen cada variable latente
-Consideremos el número de factores propuesto por la segunda técnica. Si
-hubieramos optado por realizar un solo factor, deberiamos cambiar lo que
-sigue luego de nfactors.</p>
-<pre class="r"><code>pc &lt;- principal(data0, nfactors = 3)
-print(pc$loadings,cutoff = 0.5) #Para ver las variables y cuanto aportan a cada factor</code></pre>
-<pre><code>## 
-## Loadings:
-##                RC1    RC2    RC3   
-## MLAutonomia    -0.784              
-## MLViolencia                  -0.824
-## VozPolitica                   0.702
-## LibertadMov            0.810       
-## DesconfianzaSJ         0.905       
-## SecundariaC     0.782              
-## DesempleoMuj   -0.646              
-## CuentaF         0.763              
-## 
-##                  RC1   RC2   RC3
-## SS loadings    2.358 1.709 1.289
-## Proportion Var 0.295 0.214 0.161
-## Cumulative Var 0.295 0.508 0.669</code></pre>
-<ul>
-<li>Ver qué variables tiene cada componente</li>
-<li>Ver la carga, que tanto aporta cada variable al componente.</li>
-</ul>
-<p>Paso 4: Agregar las variables latentes a la base de datos original
-Recuerda que los factores se agregan en puntuación z.</p>
-<pre class="r"><code>matriz = as.data.frame(pc$scores) #Guardamos los factores en una base de datos
-data_final = cbind(data0,matriz)
-head(data_final)[5:11]</code></pre>
-<pre><code>##             DesconfianzaSJ SecundariaC DesempleoMuj  CuentaF        RC1
-## Afghanistan       9.929078    1.168329     9.180328 0.558324 -2.4822324
-## Albania           7.399527    9.339507     2.185792 3.704871  0.6929742
-## Algeria           5.862884    3.800122     8.797814 2.806875 -1.6492953
-## Argentina         7.304965    6.590678     4.207650 4.992373 -0.1121762
-## Armenia           7.021277    9.681457     2.841530 3.990644  0.9169501
-## Australia         8.463357    8.981274     2.950820 9.918641  1.2315511
-##                     RC2         RC3
-## Afghanistan  1.40781128 -0.26335039
-## Albania      0.35134784  0.15716388
-## Algeria     -0.05470757  0.47965377
-## Argentina    0.13398291  0.03700085
-## Armenia     -0.13275670 -1.22519527
-## Australia    1.13436740 -0.54925387</code></pre>
-</div>
-<div id="repaso" class="section level1">
-<h1>Repaso</h1>
-<pre class="r"><code>library(dplyr)
-library(ggplot2)
-library(lsr)</code></pre>
-<pre class="r"><code>data = import(&quot;Data-provincias.xlsx&quot;)</code></pre>
-<div id="prueba-t" class="section level2">
-<h2>Prueba T</h2>
-<p>¿Existe alguna diferencia en el promedio del voto (%) por Keiko
-Fujimori (FP) en segunda vuelta según el nivel de IDH (alto/bajo)?</p>
-<pre class="r"><code>tabla1 = data %&gt;% 
-  group_by(IDH_cat) %&gt;% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
-
-tabla1</code></pre>
-<pre><code>## # A tibble: 2 × 4
-##   IDH_cat Media LimSup LimInf
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 Alto     43.4   37.3   49.5
-## 2 Bajo     31.3   28.6   34.1</code></pre>
-<pre class="r"><code>ggplot(tabla1, aes(x=IDH_cat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab(&quot;Nivel de IDH&quot;)+ylab(&quot;% de voto a Keiko Fujimori&quot;)</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
-<pre class="r"><code>t.test(data$FP ~ data$IDH_cat)</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  data$FP by data$IDH_cat
-## t = 3.7185, df = 33.054, p-value = 0.000741
-## alternative hypothesis: true difference in means between group Alto and group Bajo is not equal to 0
-## 95 percent confidence interval:
-##   5.469224 18.682394
-## sample estimates:
-## mean in group Alto mean in group Bajo 
-##           43.42174           31.34593</code></pre>
-</div>
-<div id="anova" class="section level2">
-<h2>Anova</h2>
-<pre class="r"><code>tabla2 = data %&gt;% 
-  group_by(Reg_nat) %&gt;% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
-
-tabla2</code></pre>
-<pre><code>## # A tibble: 3 × 4
-##   Reg_nat Media LimSup LimInf
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 COSTA    32.6   28.3   37.0
-## 2 SELVA    52.7   45.7   59.7
-## 3 SIERRA   30.0   26.7   33.3</code></pre>
-<pre class="r"><code>ggplot(tabla2, aes(x=Reg_nat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab(&quot;Región natural&quot;)+ylab(&quot;% de voto a Keiko Fujimori&quot;)</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<pre class="r"><code>anova=aov(data$FP~data$Reg_nat)
-summary(anova)</code></pre>
-<pre><code>##               Df Sum Sq Mean Sq F value   Pr(&gt;F)    
-## data$Reg_nat   2   6763    3382    11.1 2.75e-05 ***
-## Residuals    192  58515     305                     
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-</div>
-<div id="chi-cuadrado" class="section level2">
-<h2>Chi cuadrado</h2>
-<p>¿Existe alguna diferencia en el voto (%) por Keiko Fujimori (FP) (en
-segunda vuelta según si es de la sierra o no (Sierra_no)?</p>
-<pre class="r"><code>tabla3 = table(data$FP_cat,data$Años_educ)
-tabla3</code></pre>
-<pre><code>##               
-##                De 6 a 8 Más de 7 Menos de 6
-##   De 20% a 50%       32       25         32
-##   Más de 50%         14       25          3
-##   Menos de 20%       26        8         30</code></pre>
-<pre class="r"><code>prop= as.data.frame(prop.table(tabla3,2))
-prop</code></pre>
-<pre><code>##           Var1       Var2       Freq
-## 1 De 20% a 50%   De 6 a 8 0.44444444
-## 2   Más de 50%   De 6 a 8 0.19444444
-## 3 Menos de 20%   De 6 a 8 0.36111111
-## 4 De 20% a 50%   Más de 7 0.43103448
-## 5   Más de 50%   Más de 7 0.43103448
-## 6 Menos de 20%   Más de 7 0.13793103
-## 7 De 20% a 50% Menos de 6 0.49230769
-## 8   Más de 50% Menos de 6 0.04615385
-## 9 Menos de 20% Menos de 6 0.46153846</code></pre>
-<pre class="r"><code>names(prop)=c(&quot;Voto&quot;,&quot;Años_educ&quot;,&quot;Porcentaje&quot;)</code></pre>
-<pre class="r"><code>ggplot(prop, aes(x=Años_educ,y=Porcentaje*100, fill=Voto))+
-  geom_bar(stat=&quot;identity&quot;, position=&quot;stack&quot;)+
-  geom_text(aes(label=paste(round(Porcentaje*100,1),&quot;%&quot;)),
-  position = position_stack(vjust = 0.5))+
-  ylab(&quot;Porcentaje(%)&quot;)+xlab(&quot;Años de educación&quot;)+
-  theme_minimal()</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
-<pre class="r"><code>chisq.test(tabla3)$expected</code></pre>
-<pre><code>##               
-##                De 6 a 8 Más de 7 Menos de 6
-##   De 20% a 50% 32.86154 26.47179   29.66667
-##   Más de 50%   15.50769 12.49231   14.00000
-##   Menos de 20% 23.63077 19.03590   21.33333</code></pre>
-<pre class="r"><code>chisq.test(tabla3)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s Chi-squared test
-## 
-## data:  tabla3
-## X-squared = 31.757, df = 4, p-value = 2.145e-06</code></pre>
-</div>
-<div id="correlación" class="section level2">
-<h2>Correlación</h2>
-<pre class="r"><code>ggplot(data, aes(x=FP, y=ingresos))+
+ggplot(toPlot,aes(x = as.numeric(Year), y = CO2_emissions, group = 1)) + 
+  geom_line(aes(group=1)) +
   geom_point()+
-  geom_smooth(method=&quot;lm&quot;)+
-  xlab(&quot;Voto por Keiko Fujimori (%)&quot;)+
-  theme_minimal()</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="pd8_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
-<pre class="r"><code>cor.test(data$FP,data$ingresos)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
+  labs(x = &quot;Año&quot;, y = &quot;Emisión de CO2&quot;)+
+  theme_bw()</code></pre>
+<p><img src="pd8_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+</div>
+<div id="modelo-de-efectos-fijos" class="section level1">
+<h1>Modelo de efectos fijos</h1>
+<div id="estimación-within" class="section level2">
+<h2>Estimación “within”</h2>
+<p>En esta estimación se está calculando la media dentro de cada país.
+Cada caso está siendo comparando consigo mismo en los diferentes
+años.</p>
+<pre class="r"><code>ml_ef = plm(CO2_emissions~ uso_combustibles_fosiles + porc_agricultural_land + porc_gdp_growth + fertility_rate,
+                    data = data_limpia,
+                    index = c(&quot;Country.Name&quot;, &quot;Year&quot;), 
+                    model = &quot;within&quot;)</code></pre>
+<pre class="r"><code>summary(ml_ef)</code></pre>
+<pre><code>## Oneway (individual) effect Within Model
 ## 
-## data:  data$FP and data$ingresos
-## t = 7.2777, df = 193, p-value = 8.34e-12
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.3460994 0.5675505
-## sample estimates:
-##       cor 
-## 0.4640447</code></pre>
+## Call:
+## plm(formula = CO2_emissions ~ uso_combustibles_fosiles + porc_agricultural_land + 
+##     porc_gdp_growth + fertility_rate, data = data_limpia, model = &quot;within&quot;, 
+##     index = c(&quot;Country.Name&quot;, &quot;Year&quot;))
+## 
+## Balanced Panel: n = 119, T = 5, N = 595
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -2.220535 -0.117275  0.013623  0.115138  1.763066 
+## 
+## Coefficients:
+##                           Estimate Std. Error t-value  Pr(&gt;|t|)    
+## uso_combustibles_fosiles 0.0683905  0.0069884  9.7863 &lt; 2.2e-16 ***
+## porc_agricultural_land   0.0250775  0.0096425  2.6007 0.0095947 ** 
+## porc_gdp_growth          0.0117212  0.0030214  3.8794 0.0001196 ***
+## fertility_rate           0.7500547  0.2115208  3.5460 0.0004301 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    76.56
+## Residual Sum of Squares: 60.596
+## R-Squared:      0.20852
+## Adj. R-Squared: 0.0039455
+## F-statistic: 31.0882 on 4 and 472 DF, p-value: &lt; 2.22e-16</code></pre>
+</div>
+<div id="interpretación-del-modelo" class="section level2">
+<h2>Interpretación del modelo:</h2>
+<ul>
+<li><p>En el modelo controlado por las características de cada país, se
+estima que por el incremento de 1 unidad en el uso de combustibles
+fosiles, la emisión de CO2 aumenta en 0.06.</p></li>
+<li><p>En el modelo controlado por las características de cada país, se
+estima que por el incremento de 1 unidad en el porcentaje de tierra
+agrícola, la emisión de CO2 aumenta en 0.02.</p></li>
+<li><p>En el modelo controlado por las características de cada país, se
+estima que por el incremento de 1 unidad en el porcentaje de crecimiento
+del PBI, la emisión de CO2 aumenta en 0.01.</p></li>
+<li><p>En el modelo controlado por las características de cada país, se
+estima que por el incremento de 1 unidad en la tasa de fertilidad, la
+emisión de CO2 aumenta en 0.75.</p></li>
+</ul>
+<p>Como podemos ver en los resultados, no contamos con el valor del
+intercepto porque cada país tiene su propio intercepto.</p>
+<p>Podemos replicar este mismo análisis usando la función de lm y
+agregando la variable de país como factor:</p>
+<pre class="r"><code>ml_ef_ols = lm(CO2_emissions~ uso_combustibles_fosiles + porc_agricultural_land + porc_gdp_growth + fertility_rate + factor(Country.Name),
+                    data = data_limpia)
+
+summary(ml_ef_ols)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = CO2_emissions ~ uso_combustibles_fosiles + porc_agricultural_land + 
+##     porc_gdp_growth + fertility_rate + factor(Country.Name), 
+##     data = data_limpia)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.22053 -0.11728  0.01362  0.11514  1.76307 
+## 
+## Coefficients:
+##                                             Estimate Std. Error t value
+## (Intercept)                                -4.902251   0.738274  -6.640
+## uso_combustibles_fosiles                    0.068390   0.006988   9.786
+## porc_agricultural_land                      0.025078   0.009643   2.601
+## porc_gdp_growth                             0.011721   0.003021   3.879
+## fertility_rate                              0.750055   0.211521   3.546
+## factor(Country.Name)Algeria                -1.084307   0.519571  -2.087
+## factor(Country.Name)Angola                 -2.899887   0.945475  -3.067
+## factor(Country.Name)Argentina               0.150012   0.340952   0.440
+## factor(Country.Name)Armenia                -1.054513   0.291099  -3.623
+## factor(Country.Name)Australia              12.610669   0.340820  37.001
+## factor(Country.Name)Austria                 6.200802   0.256486  24.176
+## factor(Country.Name)Azerbaijan             -1.643566   0.386369  -4.254
+## factor(Country.Name)Bangladesh             -3.190526   0.381323  -8.367
+## factor(Country.Name)Belarus                 2.655571   0.314984   8.431
+## factor(Country.Name)Belgium                 6.301358   0.242513  25.984
+## factor(Country.Name)Benin                  -2.143855   0.817837  -2.621
+## factor(Country.Name)Bolivia                -2.377505   0.424769  -5.597
+## factor(Country.Name)Bosnia and Herzegovina  2.623022   0.313415   8.369
+## factor(Country.Name)Botswana               -1.055560   0.365419  -2.889
+## factor(Country.Name)Brazil                  1.242548   0.274468   4.527
+## factor(Country.Name)Bulgaria                3.689232   0.245569  15.023
+## factor(Country.Name)Cambodia                0.417832   0.386728   1.080
+## factor(Country.Name)Cameroon               -1.394505   0.776534  -1.796
+## factor(Country.Name)Canada                 14.264983   0.431983  33.022
+## factor(Country.Name)Chile                   2.381678   0.325648   7.314
+## factor(Country.Name)China                   3.039941   0.327544   9.281
+## factor(Country.Name)Colombia               -1.240617   0.264400  -4.692
+## factor(Country.Name)Congo, Dem. Rep.       -0.651164   1.132035  -0.575
+## factor(Country.Name)Congo, Rep.            -1.127396   0.698003  -1.615
+## factor(Country.Name)Costa Rica              0.827331   0.255995   3.232
+## factor(Country.Name)Cote d&#39;Ivoire          -1.863716   0.782975  -2.380
+## factor(Country.Name)Croatia                 2.392120   0.301214   7.942
+## factor(Country.Name)Cuba                   -1.429491   0.342100  -4.179
+## factor(Country.Name)Cyprus                  3.380758   0.443092   7.630
+## factor(Country.Name)Czechia                 7.330541   0.261357  28.048
+## factor(Country.Name)Denmark                 4.315536   0.328331  13.144
+## factor(Country.Name)Dominican Republic     -2.024478   0.350680  -5.773
+## factor(Country.Name)Ecuador                -1.186057   0.375490  -3.159
+## factor(Country.Name)Egypt, Arab Rep.       -2.078238   0.630178  -3.298
+## factor(Country.Name)El Salvador            -0.467840   0.306869  -1.525
+## factor(Country.Name)Estonia                15.673868   0.429289  36.511
+## factor(Country.Name)Ethiopia                0.027153   0.793127   0.034
+## factor(Country.Name)Finland                10.043035   0.431378  23.281
+## factor(Country.Name)France                  3.822470   0.262946  14.537
+## factor(Country.Name)Gabon                   3.069895   0.683137   4.494
+## factor(Country.Name)Georgia                -0.471529   0.260433  -1.811
+## factor(Country.Name)Germany                 6.506393   0.273991  23.747
+## factor(Country.Name)Ghana                  -2.720099   0.581818  -4.675
+## factor(Country.Name)Greece                  3.610835   0.330182  10.936
+## factor(Country.Name)Guatemala               0.134951   0.435287   0.310
+## factor(Country.Name)Haiti                  -0.291331   0.530124  -0.550
+## factor(Country.Name)Honduras               -0.489046   0.353058  -1.385
+## factor(Country.Name)Hungary                 1.961866   0.289399   6.779
+## factor(Country.Name)Iceland                 8.253626   0.483583  17.068
+## factor(Country.Name)India                  -1.997594   0.341727  -5.846
+## factor(Country.Name)Indonesia              -0.419970   0.311770  -1.347
+## factor(Country.Name)Iran, Islamic Rep.      3.297522   0.386209   8.538
+## factor(Country.Name)Iraq                   -1.971395   0.726459  -2.714
+## factor(Country.Name)Ireland                 3.832929   0.376238  10.188
+## factor(Country.Name)Israel                  4.244442   0.489216   8.676
+## factor(Country.Name)Italy                   3.270106   0.278324  11.749
+## factor(Country.Name)Jamaica                -0.318934   0.273041  -1.168
+## factor(Country.Name)Japan                   6.863566   0.429420  15.983
+## factor(Country.Name)Jordan                 -1.687718   0.617923  -2.731
+## factor(Country.Name)Kazakhstan              8.237036   0.556712  14.796
+## factor(Country.Name)Kenya                  -0.387615   0.610693  -0.635
+## factor(Country.Name)Korea, Rep.             9.602050   0.375573  25.566
+## factor(Country.Name)Kyrgyz Republic        -2.309321   0.416107  -5.550
+## factor(Country.Name)Latvia                  2.701161   0.267572  10.095
+## factor(Country.Name)Lebanon                -0.731921   0.414767  -1.765
+## factor(Country.Name)Libya                   4.908791   0.535463   9.167
+## factor(Country.Name)Lithuania               1.526573   0.242333   6.299
+## factor(Country.Name)Luxembourg             16.338065   0.299907  54.477
+## factor(Country.Name)Malaysia                3.238289   0.403995   8.016
+## factor(Country.Name)Malta                   2.211056   0.368607   5.998
+## factor(Country.Name)Mauritius              -0.046855   0.278461  -0.168
+## factor(Country.Name)Mexico                 -0.249718   0.354494  -0.704
+## factor(Country.Name)Moldova                -1.631245   0.428962  -3.803
+## factor(Country.Name)Mongolia                0.470915   0.503859   0.935
+## factor(Country.Name)Montenegro              2.395528   0.263988   9.074
+## factor(Country.Name)Morocco                -3.169784   0.438778  -7.224
+## factor(Country.Name)Mozambique             -1.015206   0.870515  -1.166
+## factor(Country.Name)Myanmar                 0.876654   0.410931   2.133
+## factor(Country.Name)Namibia                -2.007458   0.482381  -4.162
+## factor(Country.Name)Nepal                   1.589491   0.438513   3.625
+## factor(Country.Name)Netherlands             5.419640   0.339498  15.964
+## factor(Country.Name)New Zealand             5.221711   0.240753  21.689
+## factor(Country.Name)Nicaragua              -0.369501   0.307809  -1.200
+## factor(Country.Name)Niger                  -3.232698   1.234748  -2.618
+## factor(Country.Name)Nigeria                -2.102578   0.974127  -2.158
+## factor(Country.Name)Norway                  7.263779   0.455332  15.953
+## factor(Country.Name)Pakistan               -2.816695   0.573288  -4.913
+## factor(Country.Name)Panama                 -0.754897   0.363502  -2.077
+## factor(Country.Name)Paraguay                0.405038   0.350966   1.154
+## factor(Country.Name)Peru                   -0.999351   0.382285  -2.614
+## factor(Country.Name)Philippines            -1.791665   0.382390  -4.685
+## factor(Country.Name)Poland                  4.377080   0.321598  13.610
+## factor(Country.Name)Portugal                2.439588   0.260505   9.365
+## factor(Country.Name)Romania                 0.954412   0.301028   3.171
+## factor(Country.Name)Russian Federation      8.581982   0.423079  20.285
+## factor(Country.Name)Saudi Arabia            9.788787   0.573771  17.060
+## factor(Country.Name)Senegal                -2.834424   0.735511  -3.854
+## factor(Country.Name)Serbia                  3.233231   0.298029  10.849
+## factor(Country.Name)Singapore               5.663592   0.528548  10.715
+## factor(Country.Name)Slovak Republic         4.349531   0.241384  18.019
+## factor(Country.Name)Slovenia                5.801817   0.260729  22.252
+## factor(Country.Name)Spain                   3.060246   0.276058  11.086
+## factor(Country.Name)Sri Lanka              -0.371425   0.263574  -1.409
+## factor(Country.Name)Sudan                  -1.594100   0.736301  -2.165
+## factor(Country.Name)Suriname                1.511970   0.524158   2.885
+## factor(Country.Name)Sweden                  5.576752   0.464756  11.999
+## factor(Country.Name)Switzerland             4.602885   0.243860  18.875
+## factor(Country.Name)Tajikistan             -0.868006   0.460912  -1.883
+## factor(Country.Name)Tanzania               -0.846456   0.812223  -1.042
+## factor(Country.Name)Thailand                0.708557   0.266595   2.658
+## factor(Country.Name)Togo                   -1.500758   0.775446  -1.935
+## factor(Country.Name)Trinidad and Tobago    11.795837   0.474016  24.885
+## factor(Country.Name)Tunisia                -1.915731   0.384954  -4.977
+## factor(Country.Name)Turkiye                 0.082646   0.334661   0.247
+## factor(Country.Name)Ukraine                 2.489333   0.378519   6.577
+## factor(Country.Name)United Kingdom          2.987652   0.398737   7.493
+## factor(Country.Name)United States          13.041354   0.285373  45.699
+## factor(Country.Name)Uruguay                -0.178904   0.443869  -0.403
+##                                            Pr(&gt;|t|)    
+## (Intercept)                                8.64e-11 ***
+## uso_combustibles_fosiles                    &lt; 2e-16 ***
+## porc_agricultural_land                     0.009595 ** 
+## porc_gdp_growth                            0.000120 ***
+## fertility_rate                             0.000430 ***
+## factor(Country.Name)Algeria                0.037431 *  
+## factor(Country.Name)Angola                 0.002285 ** 
+## factor(Country.Name)Argentina              0.660154    
+## factor(Country.Name)Armenia                0.000323 ***
+## factor(Country.Name)Australia               &lt; 2e-16 ***
+## factor(Country.Name)Austria                 &lt; 2e-16 ***
+## factor(Country.Name)Azerbaijan             2.53e-05 ***
+## factor(Country.Name)Bangladesh             6.74e-16 ***
+## factor(Country.Name)Belarus                4.20e-16 ***
+## factor(Country.Name)Belgium                 &lt; 2e-16 ***
+## factor(Country.Name)Benin                  0.009040 ** 
+## factor(Country.Name)Bolivia                3.70e-08 ***
+## factor(Country.Name)Bosnia and Herzegovina 6.63e-16 ***
+## factor(Country.Name)Botswana               0.004047 ** 
+## factor(Country.Name)Brazil                 7.58e-06 ***
+## factor(Country.Name)Bulgaria                &lt; 2e-16 ***
+## factor(Country.Name)Cambodia               0.280503    
+## factor(Country.Name)Cameroon               0.073165 .  
+## factor(Country.Name)Canada                  &lt; 2e-16 ***
+## factor(Country.Name)Chile                  1.12e-12 ***
+## factor(Country.Name)China                   &lt; 2e-16 ***
+## factor(Country.Name)Colombia               3.55e-06 ***
+## factor(Country.Name)Congo, Dem. Rep.       0.565420    
+## factor(Country.Name)Congo, Rep.            0.106942    
+## factor(Country.Name)Costa Rica             0.001316 ** 
+## factor(Country.Name)Cote d&#39;Ivoire          0.017695 *  
+## factor(Country.Name)Croatia                1.47e-14 ***
+## factor(Country.Name)Cuba                   3.50e-05 ***
+## factor(Country.Name)Cyprus                 1.31e-13 ***
+## factor(Country.Name)Czechia                 &lt; 2e-16 ***
+## factor(Country.Name)Denmark                 &lt; 2e-16 ***
+## factor(Country.Name)Dominican Republic     1.41e-08 ***
+## factor(Country.Name)Ecuador                0.001686 ** 
+## factor(Country.Name)Egypt, Arab Rep.       0.001048 ** 
+## factor(Country.Name)El Salvador            0.128039    
+## factor(Country.Name)Estonia                 &lt; 2e-16 ***
+## factor(Country.Name)Ethiopia               0.972704    
+## factor(Country.Name)Finland                 &lt; 2e-16 ***
+## factor(Country.Name)France                  &lt; 2e-16 ***
+## factor(Country.Name)Gabon                  8.81e-06 ***
+## factor(Country.Name)Georgia                0.070845 .  
+## factor(Country.Name)Germany                 &lt; 2e-16 ***
+## factor(Country.Name)Ghana                  3.84e-06 ***
+## factor(Country.Name)Greece                  &lt; 2e-16 ***
+## factor(Country.Name)Guatemala              0.756676    
+## factor(Country.Name)Haiti                  0.582886    
+## factor(Country.Name)Honduras               0.166654    
+## factor(Country.Name)Hungary                3.62e-11 ***
+## factor(Country.Name)Iceland                 &lt; 2e-16 ***
+## factor(Country.Name)India                  9.43e-09 ***
+## factor(Country.Name)Indonesia              0.178610    
+## factor(Country.Name)Iran, Islamic Rep.      &lt; 2e-16 ***
+## factor(Country.Name)Iraq                   0.006897 ** 
+## factor(Country.Name)Ireland                 &lt; 2e-16 ***
+## factor(Country.Name)Israel                  &lt; 2e-16 ***
+## factor(Country.Name)Italy                   &lt; 2e-16 ***
+## factor(Country.Name)Jamaica                0.243365    
+## factor(Country.Name)Japan                   &lt; 2e-16 ***
+## factor(Country.Name)Jordan                 0.006545 ** 
+## factor(Country.Name)Kazakhstan              &lt; 2e-16 ***
+## factor(Country.Name)Kenya                  0.525923    
+## factor(Country.Name)Korea, Rep.             &lt; 2e-16 ***
+## factor(Country.Name)Kyrgyz Republic        4.78e-08 ***
+## factor(Country.Name)Latvia                  &lt; 2e-16 ***
+## factor(Country.Name)Lebanon                0.078268 .  
+## factor(Country.Name)Libya                   &lt; 2e-16 ***
+## factor(Country.Name)Lithuania              6.85e-10 ***
+## factor(Country.Name)Luxembourg              &lt; 2e-16 ***
+## factor(Country.Name)Malaysia               8.68e-15 ***
+## factor(Country.Name)Malta                  3.97e-09 ***
+## factor(Country.Name)Mauritius              0.866449    
+## factor(Country.Name)Mexico                 0.481509    
+## factor(Country.Name)Moldova                0.000162 ***
+## factor(Country.Name)Mongolia               0.350463    
+## factor(Country.Name)Montenegro              &lt; 2e-16 ***
+## factor(Country.Name)Morocco                2.04e-12 ***
+## factor(Country.Name)Mozambique             0.244117    
+## factor(Country.Name)Myanmar                0.033412 *  
+## factor(Country.Name)Namibia                3.76e-05 ***
+## factor(Country.Name)Nepal                  0.000321 ***
+## factor(Country.Name)Netherlands             &lt; 2e-16 ***
+## factor(Country.Name)New Zealand             &lt; 2e-16 ***
+## factor(Country.Name)Nicaragua              0.230578    
+## factor(Country.Name)Niger                  0.009126 ** 
+## factor(Country.Name)Nigeria                0.031399 *  
+## factor(Country.Name)Norway                  &lt; 2e-16 ***
+## factor(Country.Name)Pakistan               1.24e-06 ***
+## factor(Country.Name)Panama                 0.038366 *  
+## factor(Country.Name)Paraguay               0.249058    
+## factor(Country.Name)Peru                   0.009231 ** 
+## factor(Country.Name)Philippines            3.66e-06 ***
+## factor(Country.Name)Poland                  &lt; 2e-16 ***
+## factor(Country.Name)Portugal                &lt; 2e-16 ***
+## factor(Country.Name)Romania                0.001621 ** 
+## factor(Country.Name)Russian Federation      &lt; 2e-16 ***
+## factor(Country.Name)Saudi Arabia            &lt; 2e-16 ***
+## factor(Country.Name)Senegal                0.000132 ***
+## factor(Country.Name)Serbia                  &lt; 2e-16 ***
+## factor(Country.Name)Singapore               &lt; 2e-16 ***
+## factor(Country.Name)Slovak Republic         &lt; 2e-16 ***
+## factor(Country.Name)Slovenia                &lt; 2e-16 ***
+## factor(Country.Name)Spain                   &lt; 2e-16 ***
+## factor(Country.Name)Sri Lanka              0.159439    
+## factor(Country.Name)Sudan                  0.030887 *  
+## factor(Country.Name)Suriname               0.004099 ** 
+## factor(Country.Name)Sweden                  &lt; 2e-16 ***
+## factor(Country.Name)Switzerland             &lt; 2e-16 ***
+## factor(Country.Name)Tajikistan             0.060283 .  
+## factor(Country.Name)Tanzania               0.297877    
+## factor(Country.Name)Thailand               0.008132 ** 
+## factor(Country.Name)Togo                   0.053545 .  
+## factor(Country.Name)Trinidad and Tobago     &lt; 2e-16 ***
+## factor(Country.Name)Tunisia                9.09e-07 ***
+## factor(Country.Name)Turkiye                0.805052    
+## factor(Country.Name)Ukraine                1.28e-10 ***
+## factor(Country.Name)United Kingdom         3.35e-13 ***
+## factor(Country.Name)United States           &lt; 2e-16 ***
+## factor(Country.Name)Uruguay                0.687089    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3583 on 472 degrees of freedom
+## Multiple R-squared:  0.9944, Adjusted R-squared:  0.993 
+## F-statistic: 690.5 on 122 and 472 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="errores-estándar" class="section level2">
+<h2>Errores estándar</h2>
+<p>Se asume que los errores estándar de cada observación en diferentes
+momentos del tiempo son independientes. Es decir, el error estándar de
+Perú en el año 2010 es independiente al error estándar de Perú en el año
+2011. Este supuesto es muy restrictivo, ya que en un panel se espera que
+exista autorrelación en los residuos.</p>
+<p>Por ello, debemos considerar que los errores pueden estar
+correlacionados dentro de un grupo definido por la unidad de observación
+en el que basamos nuestro modelo de efectos fijos.</p>
+<p>Para corregir este problema, vamos a calcular los errores estándar
+robustos de nuestro modelo:</p>
+<pre class="r"><code>summary(ml_ef,vcov = vcovHC(ml_ef))</code></pre>
+<pre><code>## Oneway (individual) effect Within Model
+## 
+## Note: Coefficient variance-covariance matrix supplied: vcovHC(ml_ef)
+## 
+## Call:
+## plm(formula = CO2_emissions ~ uso_combustibles_fosiles + porc_agricultural_land + 
+##     porc_gdp_growth + fertility_rate, data = data_limpia, model = &quot;within&quot;, 
+##     index = c(&quot;Country.Name&quot;, &quot;Year&quot;))
+## 
+## Balanced Panel: n = 119, T = 5, N = 595
+## 
+## Residuals:
+##      Min.   1st Qu.    Median   3rd Qu.      Max. 
+## -2.220535 -0.117275  0.013623  0.115138  1.763066 
+## 
+## Coefficients:
+##                           Estimate Std. Error t-value  Pr(&gt;|t|)    
+## uso_combustibles_fosiles 0.0683905  0.0135429  5.0499 6.326e-07 ***
+## porc_agricultural_land   0.0250775  0.0105480  2.3775  0.017830 *  
+## porc_gdp_growth          0.0117212  0.0024668  4.7515 2.684e-06 ***
+## fertility_rate           0.7500547  0.2668918  2.8103  0.005155 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Total Sum of Squares:    76.56
+## Residual Sum of Squares: 60.596
+## R-Squared:      0.20852
+## Adj. R-Squared: 0.0039455
+## F-statistic: 11.5568 on 4 and 118 DF, p-value: 5.9634e-08</code></pre>
+</div>
+<div
+id="usar-el-modelo-de-efectos-fijos-o-el-modelo-de-efectos-aleatorios"
+class="section level2">
+<h2>¿Usar el modelo de efectos fijos o el modelo de efectos
+aleatorios?</h2>
+<p>En este caso podríamos estar hablando de políticas públicas para la
+reducción de emisión de CO2 por ejemplo, lo que puede estar impactando
+en el resultado de la variable dependiente.</p>
+<p>La prueba de Hausman nos permite comparar el modelo de efectos fijos
+con el modelo de efectos aleatorios:</p>
+<ul>
+<li><p>H0: Ambos modelos son estadísticamente semejantes</p></li>
+<li><p>H1: Los modelos son estadísticamente diferentes entre
+sí.</p></li>
+</ul>
+<p>Si se rechaza la H0, se decide quedarse con el modelo de efectos
+fijos. Si no se rechaza la H0, el modelo de efectos aleatorios sería el
+más eficiente.</p>
+<div id="definimos-los-modelos" class="section level3">
+<h3>Definimos los modelos</h3>
+<pre class="r"><code>modelo_efectos_fijos = plm(CO2_emissions~ uso_combustibles_fosiles + porc_agricultural_land + porc_gdp_growth + fertility_rate,
+                    data = data_limpia,
+                    index = c(&quot;Country.Name&quot;, &quot;Year&quot;), 
+                    model = &quot;within&quot;)
+
+modelo_efectos_aleatorios = plm(CO2_emissions~ uso_combustibles_fosiles + porc_agricultural_land + porc_gdp_growth + fertility_rate,
+                    data = data_limpia,
+                    index = c(&quot;Country.Name&quot;, &quot;Year&quot;), 
+                    model = &quot;random&quot;)</code></pre>
+</div>
+<div id="aplicamos-la-función-de-hausman" class="section level3">
+<h3>Aplicamos la función de Hausman:</h3>
+<pre class="r"><code>phtest(modelo_efectos_fijos, modelo_efectos_aleatorios)</code></pre>
+<pre><code>## 
+##  Hausman Test
+## 
+## data:  CO2_emissions ~ uso_combustibles_fosiles + porc_agricultural_land +  ...
+## chisq = 37.451, df = 4, p-value = 1.454e-07
+## alternative hypothesis: one model is inconsistent</code></pre>
+<p>Resultado: Se rechaza la hipótesis 0, por lo que nos quedamos con el
+modelo de efectos fijos como la mejor representación para explicar la
+variable dependiente.</p>
+</div>
 </div>
 </div>
 
