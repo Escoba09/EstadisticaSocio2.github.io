@@ -42,8 +42,7 @@ library(rio)
 data = import("mlda.rda")
 ```
 
-The Effect of Alcohol Consumption on Mortality: Regression Discontinuity
-Evidence from the Minimum Drinking Age
+# The Effect of Alcohol Consumption on Mortality: Regression Discontinuity Evidence from the Minimum Drinking Age
 
 Los autores buscan calcular el efecto del consumo de alcohol en la
 mortalidad utilizando la edad mínima para consumir alcohol en un diseño
@@ -60,7 +59,7 @@ data %>%
        x = "Edad (binned)")
 ```
 
-Estimando las mismas pendientes (con OLS)
+## Estimando las mismas pendientes (con OLS)
 
 En primer lugar, tenemos que calcular una variable dummy
 (umbral/threshold) que indique si una persona está por debajo o por
@@ -81,7 +80,7 @@ lm_misma_pendiente <- data %>%
 summary(lm_misma_pendiente) 
 ```
 
-Estimando las mismas pendientes (con rddtools)
+## Estimando las mismas pendientes (con rddtools)
 
 ```{r}
 rdd_data(y = data$all, 
@@ -111,7 +110,7 @@ data %>%
        x = "Edad (binned)")
 ```
 
-Estimando pendientes distintas (con OLS)
+## Estimando pendientes distintas (con OLS)
 
 ```{r}
 lm_diferente_pendiente <- data %>%
@@ -121,7 +120,7 @@ lm_diferente_pendiente <- data %>%
 summary(lm_diferente_pendiente)
 ```
 
-Estimando pendientes distintas (con rddtools)
+## Estimando pendientes distintas (con rddtools)
 
 ```{r}
 rdd_data(y = data$all, 
@@ -150,7 +149,7 @@ data %>%
        x = "Edad (binned)")
 ```
 
-Regresión discontinua polinómica de segundo orden (con ols)
+## Regresión discontinua polinómica de segundo orden (con OLS)
 
 ```{r}
 lm_cuadratica <- data %>% 
@@ -161,7 +160,7 @@ mutate(threshold = ifelse(agecell >= 21, 1, 0)) %$%
 summary(lm_cuadratica)
 ```
 
-Regresión discontinua polinómica de segundo orden (con rddtools)
+## Regresión discontinua polinómica de segundo orden (con rddtools)
 
 ```{r}
 rdd_data(y = data$all, 
@@ -188,15 +187,14 @@ data %>%
        x = "Edad (binned)")
 ```
 
-
 y=β 0 ​ +β 1 ​ D+β 2 ​ x+β 3 ​ x 2 +β 4 ​ x right ​ +β 5 ​ x right 2 ​ +ϵ
 
 D: Tratamiento (1 si x ≥ 21).
 
 x: Variable de asignación (centrada en 21: x = agecell - 21).
 
-x^2: Término cuadrático del lado izquierdo
+x\^2: Término cuadrático del lado izquierdo
 
 x_right: interacción entre x y el tratamiento.
 
-x^2_right: término cuadrático interactivo.
+x\^2_right: término cuadrático interactivo.
