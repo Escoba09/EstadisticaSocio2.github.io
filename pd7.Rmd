@@ -30,10 +30,10 @@ al grupo de tratamiento sigue un diseño de discontinuidad de regresión
 umbral, separe las observaciones en un grupo de tratamiento y otro de
 control.
 
+
 ```{r}
 library(dplyr)
 library(ggplot2)
-library(rddtools)
 library(magrittr)
 ```
 
@@ -80,16 +80,6 @@ lm_misma_pendiente <- data %>%
 summary(lm_misma_pendiente) 
 ```
 
-## Estimando las mismas pendientes (con rddtools)
-
-```{r}
-rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %>% 
-  rdd_reg_lm(slope = "same") %>% 
-  summary()
-```
-
 El coeficiente de la variable ficticia umbral es el efecto medio del
 tratamiento. En promedio, la tasa de mortalidad por 100.000 de las
 personas que alcanzan la edad mínima para consumir alcohol es 7,66
@@ -120,16 +110,6 @@ lm_diferente_pendiente <- data %>%
 summary(lm_diferente_pendiente)
 ```
 
-## Estimando pendientes distintas (con rddtools)
-
-```{r}
-rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %>% 
-  rdd_reg_lm(slope = "separate") %>% 
-  summary()
-```
-
 Este enfoque no altera la interpretación del efecto del tratamiento. En
 promedio, la tasa de mortalidad por 100.000 de las personas que alcanzan
 la edad mínima para consumir alcohol es 7,66 puntos superior.
@@ -158,16 +138,6 @@ mutate(threshold = ifelse(agecell >= 21, 1, 0)) %$%
        threshold:I((agecell - 21)^2))
 
 summary(lm_cuadratica)
-```
-
-## Regresión discontinua polinómica de segundo orden (con rddtools)
-
-```{r}
-rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %>% 
-  rdd_reg_lm(slope = "separate", order = 2) %>% 
-  summary()
 ```
 
 ```{r}

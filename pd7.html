@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 7</title>
 
-<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -383,49 +383,16 @@ control.</p>
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(ggplot2)
-library(rddtools)</code></pre>
-<pre><code>## Warning: package &#39;rddtools&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Loading required package: AER</code></pre>
-<pre><code>## Warning: package &#39;AER&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Loading required package: car</code></pre>
-<pre><code>## Loading required package: carData</code></pre>
-<pre><code>## 
-## Attaching package: &#39;car&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     recode</code></pre>
-<pre><code>## Loading required package: lmtest</code></pre>
-<pre><code>## Loading required package: zoo</code></pre>
-<pre><code>## 
-## Attaching package: &#39;zoo&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre><code>## Loading required package: sandwich</code></pre>
-<pre><code>## Loading required package: survival</code></pre>
-<pre><code>## Loading required package: np</code></pre>
-<pre><code>## Warning: package &#39;np&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Nonparametric Kernel Methods for Mixed Datatypes (version 0.60-18)
-## [vignette(&quot;np_faq&quot;,package=&quot;np&quot;) provides answers to frequently asked questions]
-## [vignette(&quot;np&quot;,package=&quot;np&quot;) an overview]
-## [vignette(&quot;entropy_np&quot;,package=&quot;np&quot;) an overview of entropy-based methods]</code></pre>
-<pre><code>## 
-## Please consider citing R and rddtools,
-## citation()
-## citation(&quot;rddtools&quot;)</code></pre>
-<pre class="r"><code>library(magrittr)</code></pre>
-<pre class="r"><code>library(rio)
-data = import(&quot;mlda.rda&quot;)</code></pre>
-<pre><code>## Warning: The `trust` argument of `import()` should be explicit for serialization formats
-## as of rio 1.0.3.
-## ℹ Missing `trust` will be set to FALSE by default for RData in 2.0.0.
-## ℹ The deprecated feature was likely used in the rio package.
-##   Please report the issue at &lt;https://github.com/gesistsa/rio/issues&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
-<p>The Effect of Alcohol Consumption on Mortality: Regression
-Discontinuity Evidence from the Minimum Drinking Age</p>
+library(magrittr)</code></pre>
+<pre class="r"><code>library(rio)</code></pre>
+<pre><code>## Warning: package &#39;rio&#39; was built under R version 4.3.1</code></pre>
+<pre class="r"><code>data = import(&quot;mlda.rda&quot;)</code></pre>
+</div>
+<div
+id="the-effect-of-alcohol-consumption-on-mortality-regression-discontinuity-evidence-from-the-minimum-drinking-age"
+class="section level1">
+<h1>The Effect of Alcohol Consumption on Mortality: Regression
+Discontinuity Evidence from the Minimum Drinking Age</h1>
 <p>Los autores buscan calcular el efecto del consumo de alcohol en la
 mortalidad utilizando la edad mínima para consumir alcohol en un diseño
 de regresión discontinua.</p>
@@ -442,10 +409,11 @@ de regresión discontinua.</p>
 ## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
 <p><img src="pd7_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Estimando las mismas pendientes (con OLS)</p>
+<div id="estimando-las-mismas-pendientes-con-ols"
+class="section level2">
+<h2>Estimando las mismas pendientes (con OLS)</h2>
 <p>En primer lugar, tenemos que calcular una variable dummy
 (umbral/threshold) que indique si una persona está por debajo o por
 encima del umbral. La variable dummy es igual a cero para las
@@ -481,32 +449,6 @@ summary(lm_misma_pendiente) </code></pre>
 ##   (2 observations deleted due to missingness)
 ## Multiple R-squared:  0.5946, Adjusted R-squared:  0.5765 
 ## F-statistic: 32.99 on 2 and 45 DF,  p-value: 1.508e-09</code></pre>
-<p>Estimando las mismas pendientes (con rddtools)</p>
-<pre class="r"><code>rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %&gt;% 
-  rdd_reg_lm(slope = &quot;same&quot;) %&gt;% 
-  summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ ., data = dat_step1, weights = weights)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -5.0559 -1.8483  0.1149  1.4909  5.8043 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  91.8414     0.8050 114.083  &lt; 2e-16 ***
-## D             7.6627     1.4403   5.320 3.15e-06 ***
-## x            -0.9747     0.6325  -1.541     0.13    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 2.493 on 45 degrees of freedom
-##   (2 observations deleted due to missingness)
-## Multiple R-squared:  0.5946, Adjusted R-squared:  0.5765 
-## F-statistic: 32.99 on 2 and 45 DF,  p-value: 1.508e-09</code></pre>
 <p>El coeficiente de la variable ficticia umbral es el efecto medio del
 tratamiento. En promedio, la tasa de mortalidad por 100.000 de las
 personas que alcanzan la edad mínima para consumir alcohol es 7,66
@@ -529,12 +471,12 @@ puntos superior.</p>
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.</code></pre>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 2 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
-<p><img src="pd7_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Estimando pendientes distintas (con OLS)</p>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="pd7_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="estimando-pendientes-distintas-con-ols" class="section level2">
+<h2>Estimando pendientes distintas (con OLS)</h2>
 <pre class="r"><code>lm_diferente_pendiente &lt;- data %&gt;%
   mutate(threshold = ifelse(agecell &gt;= 21, 1, 0)) %$%
   lm(all ~ threshold + I(agecell - 21) + threshold:I(agecell - 21))
@@ -562,33 +504,6 @@ summary(lm_diferente_pendiente)</code></pre>
 ##   (2 observations deleted due to missingness)
 ## Multiple R-squared:  0.6677, Adjusted R-squared:  0.645 
 ## F-statistic: 29.47 on 3 and 44 DF,  p-value: 1.325e-10</code></pre>
-<p>Estimando pendientes distintas (con rddtools)</p>
-<pre class="r"><code>rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %&gt;% 
-  rdd_reg_lm(slope = &quot;separate&quot;) %&gt;% 
-  summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ ., data = dat_step1, weights = weights)
-## 
-## Residuals:
-##    Min     1Q Median     3Q    Max 
-## -4.368 -1.787  0.117  1.108  5.341 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  93.6184     0.9325 100.399  &lt; 2e-16 ***
-## D             7.6627     1.3187   5.811  6.4e-07 ***
-## x             0.8270     0.8189   1.010  0.31809    
-## x_right      -3.6034     1.1581  -3.111  0.00327 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 2.283 on 44 degrees of freedom
-##   (2 observations deleted due to missingness)
-## Multiple R-squared:  0.6677, Adjusted R-squared:  0.645 
-## F-statistic: 29.47 on 3 and 44 DF,  p-value: 1.325e-10</code></pre>
 <p>Este enfoque no altera la interpretación del efecto del tratamiento.
 En promedio, la tasa de mortalidad por 100.000 de las personas que
 alcanzan la edad mínima para consumir alcohol es 7,66 puntos
@@ -606,12 +521,13 @@ superior.</p>
   labs(y = &quot;Tasa de mortalidad (por 100.000)&quot;,
        x = &quot;Edad (binned)&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 2 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
-<p><img src="pd7_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>Regresión discontinua polinómica de segundo orden (con ols)</p>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="pd7_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="regresión-discontinua-polinómica-de-segundo-orden-con-ols"
+class="section level2">
+<h2>Regresión discontinua polinómica de segundo orden (con OLS)</h2>
 <pre class="r"><code>lm_cuadratica &lt;- data %&gt;% 
 mutate(threshold = ifelse(agecell &gt;= 21, 1, 0)) %$% 
   lm(all ~ threshold + I(agecell - 21) + I((agecell -21)^2) + threshold:I(agecell - 21) +
@@ -643,35 +559,6 @@ summary(lm_cuadratica)</code></pre>
 ##   (2 observations deleted due to missingness)
 ## Multiple R-squared:  0.6821, Adjusted R-squared:  0.6442 
 ## F-statistic: 18.02 on 5 and 42 DF,  p-value: 1.624e-09</code></pre>
-<p>Regresión discontinua polinómica de segundo orden (con rddtools)</p>
-<pre class="r"><code>rdd_data(y = data$all, 
-         x = data$agecell, 
-         cutpoint = 21) %&gt;% 
-  rdd_reg_lm(slope = &quot;separate&quot;, order = 2) %&gt;% 
-  summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ ., data = dat_step1, weights = weights)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -4.3343 -1.3946  0.1849  1.2848  5.0817 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  93.0729     1.4038  66.301  &lt; 2e-16 ***
-## D             9.5478     1.9853   4.809 1.97e-05 ***
-## x            -0.8306     3.2901  -0.252    0.802    
-## `x^2`        -0.8403     1.6153  -0.520    0.606    
-## x_right      -6.0170     4.6529  -1.293    0.203    
-## `x^2_right`   2.9042     2.2843   1.271    0.211    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 2.285 on 42 degrees of freedom
-##   (2 observations deleted due to missingness)
-## Multiple R-squared:  0.6821, Adjusted R-squared:  0.6442 
-## F-statistic: 18.02 on 5 and 42 DF,  p-value: 1.624e-09</code></pre>
 <pre class="r"><code>data %&gt;%
   select(agecell, all) %&gt;%
   mutate(threshold = as.factor(ifelse(agecell &gt;= 21, 1, 0))) %&gt;%
@@ -686,17 +573,16 @@ summary(lm_cuadratica)</code></pre>
     size = 1, linetype = &quot;dashed&quot;) +
   labs(y = &quot;Tasa de mortalidad (por 100.000)&quot;,
        x = &quot;Edad (binned)&quot;)</code></pre>
-<pre><code>## Warning: Removed 2 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
-<p><img src="pd7_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="pd7_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>y=β 0 ​ +β 1 ​ D+β 2 ​ x+β 3 ​ x 2 +β 4 ​ x right ​ +β 5 ​ x right 2 ​ +ϵ</p>
 <p>D: Tratamiento (1 si x ≥ 21).</p>
 <p>x: Variable de asignación (centrada en 21: x = agecell - 21).</p>
 <p>x^2: Término cuadrático del lado izquierdo</p>
 <p>x_right: interacción entre x y el tratamiento.</p>
 <p>x^2_right: término cuadrático interactivo.</p>
+</div>
 </div>
 
 
