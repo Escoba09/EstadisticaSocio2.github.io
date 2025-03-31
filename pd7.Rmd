@@ -23,7 +23,12 @@ Semestre 2025 - 1
 
 # **Regression Discontinuity Design (2)**
 
-Sin un proceso aleatorio que separe el grupo de tratamiento del de control, el efecto del tratamiento puede identificarse si la asignación al grupo de tratamiento sigue un diseño de discontinuidad de regresión (RDD). Esto requiere una variable (running) que, en un determinado umbral, separe las observaciones en un grupo de tratamiento y otro de control.
+Sin un proceso aleatorio que separe el grupo de tratamiento del de
+control, el efecto del tratamiento puede identificarse si la asignación
+al grupo de tratamiento sigue un diseño de discontinuidad de regresión
+(RDD). Esto requiere una variable (running) que, en un determinado
+umbral, separe las observaciones en un grupo de tratamiento y otro de
+control.
 
 ```{r}
 library(dplyr)
@@ -37,9 +42,12 @@ library(rio)
 data = import("mlda.rda")
 ```
 
-The Effect of Alcohol Consumption on Mortality: Regression Discontinuity Evidence from the Minimum Drinking Age
+The Effect of Alcohol Consumption on Mortality: Regression Discontinuity
+Evidence from the Minimum Drinking Age
 
-Los autores buscan calcular el efecto del consumo de alcohol en la mortalidad utilizando la edad mínima para consumir alcohol en un diseño de regresión discontinua.
+Los autores buscan calcular el efecto del consumo de alcohol en la
+mortalidad utilizando la edad mínima para consumir alcohol en un diseño
+de regresión discontinua.
 
 ```{r}
 data %>% 
@@ -52,15 +60,143 @@ data %>%
        x = "Edad (binned)")
 ```
 
-Estimando las pendientes 
+Estimando las mismas pendientes (con OLS)
 
-En primer lugar, tenemos que calcular una variable dummy (umbral/threshold) que indique si una persona está por debajo o por encima del umbral. La variable dummy es igual a cero para las observaciones por debajo e igual a uno para las observaciones por encima del umbral de 21 años. A continuación, se especifa un modelo lineal con la función lm() para hacer una regresión de todas las muertes por 100.000 (all) en la variable dummy del umbral y la edad de los encuestados, que se centra en torno al valor umbral de age (21 años). Esto se hace con la función I() restando el umbral de cada tramo de edad.
+En primer lugar, tenemos que calcular una variable dummy
+(umbral/threshold) que indique si una persona está por debajo o por
+encima del umbral. La variable dummy es igual a cero para las
+observaciones por debajo e igual a uno para las observaciones por encima
+del umbral de 21 años. A continuación, se especifa un modelo lineal con
+la función lm() para hacer una regresión de todas las muertes por
+100.000 (all) en la variable dummy del umbral y la edad de los
+encuestados, que se centra en torno al valor umbral de age (21 años).
+Esto se hace con la función I() restando el umbral de cada tramo de
+edad.
 
 ```{r}
 lm_misma_pendiente <- data %>% 
   mutate(threshold = ifelse(agecell >= 21, 1, 0)) %$% 
   lm(all ~ threshold + I(agecell - 21))
 
-summary(lm_same_slope) 
+summary(lm_misma_pendiente) 
 ```
 
+Estimando las mismas pendientes (con rddtools)
+
+```{r}
+rdd_data(y = data$all, 
+         x = data$agecell, 
+         cutpoint = 21) %>% 
+  rdd_reg_lm(slope = "same") %>% 
+  summary()
+```
+
+El coeficiente de la variable ficticia umbral es el efecto medio del
+tratamiento. En promedio, la tasa de mortalidad por 100.000 de las
+personas que alcanzan la edad mínima para consumir alcohol es 7,66
+puntos superior.
+
+```{r}
+data %>%
+  select(agecell, all) %>%
+  mutate(threshold = as.factor(ifelse(agecell >= 21, 1, 0))) %>%
+  ggplot(aes(x = agecell, y = all)) +
+  geom_point(aes(color = threshold)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 21, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "Tasa de mortalidad (por 100.000)",
+       x = "Edad (binned)")
+```
+
+Estimando pendientes distintas (con OLS)
+
+```{r}
+lm_diferente_pendiente <- data %>%
+  mutate(threshold = ifelse(agecell >= 21, 1, 0)) %$%
+  lm(all ~ threshold + I(agecell - 21) + threshold:I(agecell - 21))
+
+summary(lm_diferente_pendiente)
+```
+
+Estimando pendientes distintas (con rddtools)
+
+```{r}
+rdd_data(y = data$all, 
+         x = data$agecell, 
+         cutpoint = 21) %>% 
+  rdd_reg_lm(slope = "separate") %>% 
+  summary()
+```
+
+Este enfoque no altera la interpretación del efecto del tratamiento. En
+promedio, la tasa de mortalidad por 100.000 de las personas que alcanzan
+la edad mínima para consumir alcohol es 7,66 puntos superior.
+
+```{r}
+data %>%
+  select(agecell, all) %>%
+  mutate(threshold = as.factor(ifelse(agecell >= 21, 1, 0))) %>%
+  ggplot(aes(x = agecell, y = all, color = threshold)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 21, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "Tasa de mortalidad (por 100.000)",
+       x = "Edad (binned)")
+```
+
+Regresión discontinua polinómica de segundo orden (con ols)
+
+```{r}
+lm_cuadratica <- data %>% 
+mutate(threshold = ifelse(agecell >= 21, 1, 0)) %$% 
+  lm(all ~ threshold + I(agecell - 21) + I((agecell -21)^2) + threshold:I(agecell - 21) +
+       threshold:I((agecell - 21)^2))
+
+summary(lm_cuadratica)
+```
+
+Regresión discontinua polinómica de segundo orden (con rddtools)
+
+```{r}
+rdd_data(y = data$all, 
+         x = data$agecell, 
+         cutpoint = 21) %>% 
+  rdd_reg_lm(slope = "separate", order = 2) %>% 
+  summary()
+```
+
+```{r}
+data %>%
+  select(agecell, all) %>%
+  mutate(threshold = as.factor(ifelse(agecell >= 21, 1, 0))) %>%
+  ggplot(aes(x = agecell, y = all, color = threshold)) +
+  geom_point() +
+  geom_smooth(method = "lm",
+              formula = y ~ x + I(x ^ 2),
+              se = FALSE) +
+  scale_color_brewer(palette = "Accent") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 21, color = "red",
+    size = 1, linetype = "dashed") +
+  labs(y = "Tasa de mortalidad (por 100.000)",
+       x = "Edad (binned)")
+```
+
+
+y=β 0 ​ +β 1 ​ D+β 2 ​ x+β 3 ​ x 2 +β 4 ​ x right ​ +β 5 ​ x right 2 ​ +ϵ
+
+D: Tratamiento (1 si x ≥ 21).
+
+x: Variable de asignación (centrada en 21: x = agecell - 21).
+
+x^2: Término cuadrático del lado izquierdo
+
+x_right: interacción entre x y el tratamiento.
+
+x^2_right: término cuadrático interactivo.
