@@ -1,0 +1,111 @@
+---
+title: "PC3"
+author: "Sebastián Esquives"
+date: "2025-03-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rio)
+data = import("data_pc3.csv")
+```
+
+```{r}
+## 1. Grupo de TRATAMIENTO (recibió tutoría: entrance_exam ≤ 70)
+c_1a <- data %>%
+  filter(entrance_exam %in% c(60:70),  # Rango cercano al umbral por debajo
+  tutoring == TRUE) %>%                # Aseguramos que recibió tutoría
+  summarise(
+    total = n(),
+    promedio_entrada = mean(entrance_exam),
+    promedio_salida = mean(exit_exam),
+    mejoria_promedio = mean(exit_exam - entrance_exam)
+  ) %>% 
+  mutate(
+    grupo = "Tratamiento (60-70 puntos)",
+    tipo = "Tutoría"
+  )
+
+## 2. Grupo de CONTROL (NO recibió tutoría: entrance_exam > 70)
+c_1b <- data %>%
+  filter(entrance_exam %in% c(71:80),  # Rango cercano al umbral por arriba
+  tutoring == FALSE) %>%               # Aseguramos que NO recibió tutoría
+  summarise(
+    total = n(),
+    promedio_entrada = mean(entrance_exam),
+    promedio_salida = mean(exit_exam),
+    mejoria_promedio = mean(exit_exam - entrance_exam)
+  ) %>% 
+  mutate(
+    grupo = "Control (71-80 puntos)",
+    tipo = "Sin tutoría"
+  )
+
+## Combinar resultados
+tabla_descriptiva <- bind_rows(c_1a, c_1b) %>%
+  select(grupo, tipo, total, promedio_entrada, promedio_salida, mejoria_promedio)
+
+# Mostrar tabla
+print(tabla_descriptiva)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Preparar los datos (sin crear nuevas variables)
+toPlot1 <- data %>%
+  filter(entrance_exam >= 60 & entrance_exam <= 80) %>%  # Rango alrededor del umbral
+  mutate(color_tutoria = ifelse(entrance_exam <= 70, "Recibió tutoría", "No tutoría")) %>%
+  group_by(entrance_exam, color_tutoria) %>%
+  summarise(promedio_salida = mean(exit_exam))
+
+# Crear el gráfico
+ggplot(toPlot1, aes(x = entrance_exam, y = promedio_salida, color = color_tutoria)) +
+  geom_line() +
+  geom_point() +
+  geom_vline(xintercept = 70, colour = "red", linetype = "dashed", linewidth = 1) + 
+  labs(x = "Puntaje examen de entrada", 
+       y = "Puntaje promedio examen de salida",
+       title = "Efecto de la tutoría en el rendimiento académico") + 
+  guides(color = FALSE) +
+  theme_bw() +
+  scale_color_manual(values = c("Recibió tutoría" = "#E41A1C", "No tutoría" = "#377EB8")) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+data %>% 
+  filter(entrance_exam >= 60 & entrance_exam <= 80) %>%
+  ggplot(aes(x = entrance_exam, y = exit_exam)) + 
+  geom_point() +
+  geom_vline(xintercept = 70, color = "red", size = 1, linetype = "dashed") + 
+  annotate("text", x = 60, y = 100, label = "",
+           size=4) +
+  labs(y = "Examen de salida",
+       x = "Examen de entrada")
+```
+
+```{r}
+# Preparación de datos para RDD
+datos_rdd <- data %>% 
+  filter(entrance_exam >= 60 & entrance_exam <= 80) %>%  # Ventana alrededor del umbral (70)
+  mutate(
+    # Crear variable de tratamiento (entrance_exam <= 70)
+    tratamiento = ifelse(entrance_exam <= 70, 1, 0),
+    # Centrar la variable de entrada alrededor del punto de corte (70)
+    entrada_centrada = entrance_exam - 70
+  )
+
+# Modelo de regresión discontinua
+modelo_rdd <- lm(exit_exam ~ tutoring + entrada_centrada + tratamiento:entrada_centrada,
+                 data = datos_rdd)
+
+# Resumen del modelo
+summary(modelo_rdd)
+```
+
