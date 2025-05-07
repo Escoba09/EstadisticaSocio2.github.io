@@ -146,18 +146,30 @@ Yit​=β0​+β1​⋅Treatedi​+β2​⋅Postt​+β3​⋅(Treatedi​×Post
 
 Variables explicadas:
 
-•	Yit → Variable de resultado para la unidad ii en el tiempo tt.
-•	Treatedi → Variable binaria (1 si la unidad ii pertenece al grupo de tratamiento, 0 si es control).
-•	Postt → Variable binaria (1 si el periodo tt es posterior a la intervención, 0 si es antes).
-•	Treatedi×Postt → Término de interacción (captura el efecto causal del tratamiento).
-•	εit → Término de error.
+• Yit → Variable de resultado para la unidad ii en el tiempo tt.
+
+• Treatedi → Variable binaria (1 si la unidad ii pertenece al grupo de
+tratamiento, 0 si es control).
+
+• Postt → Variable binaria (1 si el periodo tt es posterior a la
+intervención, 0 si es antes).
+
+• Treatedi×Postt → Término de interacción (captura el efecto causal del
+tratamiento).
+
+• εit → Término de error.
 
 Interpretación de coeficientes:
-•	β0 → Media de Y para el grupo de control en el periodo previo.
-•	β1 → Diferencia inicial entre grupos (tratamiento vs. control) antes de la intervención.
-•	β2 → Cambio temporal común (efecto de tendencia en el grupo de control).
-•	β3 → Efecto Dif-in-Dif (efecto causal del tratamiento).
 
+• β0 → Media de Y para el grupo de control en el periodo previo.
+
+• β1 → Diferencia inicial entre grupos (tratamiento vs. control) antes
+de la intervención.
+
+• β2 → Cambio temporal común (efecto de tendencia en el grupo de
+control).
+
+• β3 → Efecto Dif-in-Dif (efecto causal del tratamiento).
 
 # **Minimum Wages and Employment: A Case Study of the Fast-Food Industry in New Jersey and Pennsylvania**
 
