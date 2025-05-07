@@ -468,6 +468,20 @@ Otras escuelas no reciben el programa (grupo de control). Con
 Dif-in-Dif, comparamos el cambio en el rendimiento antes y después del
 programa en ambas escuelas. Si el grupo de tratamiento mejora más que el
 de control, podemos atribuir esa diferencia al programa de becas.</p>
+<p>Ecuación de la regresión DiD</p>
+<p>Yit​=β0​+β1​⋅Treatedi​+β2​⋅Postt​+β3​⋅(Treatedi​×Postt​)+εit</p>
+<p>Variables explicadas:</p>
+<p>• Yit → Variable de resultado para la unidad ii en el tiempo tt. •
+Treatedi → Variable binaria (1 si la unidad ii pertenece al grupo de
+tratamiento, 0 si es control). • Postt → Variable binaria (1 si el
+periodo tt es posterior a la intervención, 0 si es antes). •
+Treatedi×Postt → Término de interacción (captura el efecto causal del
+tratamiento). • εit → Término de error.</p>
+<p>Interpretación de coeficientes: • β0 → Media de Y para el grupo de
+control en el periodo previo. • β1 → Diferencia inicial entre grupos
+(tratamiento vs. control) antes de la intervención. • β2 → Cambio
+temporal común (efecto de tendencia en el grupo de control). • β3 →
+Efecto Dif-in-Dif (efecto causal del tratamiento).</p>
 </div>
 </div>
 <div
