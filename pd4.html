@@ -591,36 +591,51 @@ data=import(&quot;DD1.RData&quot;)</code></pre>
 <div id="rango-salarial-antes-y-después-de-la-política"
 class="section level2">
 <h2>Rango salarial antes y después de la política</h2>
-<pre class="r"><code># Histograma para febrero de 1992
+<pre class="r"><code># Histograma para febrero de 1992 
 hist.feb &lt;- data %&gt;%
   filter(observation == &quot;February 1992&quot;) %&gt;%
-  ggplot(aes(wage_st, fill = state)) +
-  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
-                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
-                 alpha = 0.5, position = &quot;dodge&quot;, bins = 23) +
-  labs(title = &quot;Febrero 1992&quot;, x = &quot;Rango Salarial&quot;, y = &quot;Porcentaje de tiendas&quot;, fill = &quot;&quot;) +
+  ggplot(aes(x = wage_st, fill = state)) +
+  geom_histogram(
+    aes(y = after_stat(100 * count / tapply(count, group, sum)[group])),
+    alpha = 0.5,
+    position = &quot;dodge&quot;,
+    bins = 23
+  ) +
+  labs(
+    title = &quot;Febrero 1992&quot;,
+    x = &quot;Rango Salarial&quot;,
+    y = &quot;Porcentaje de tiendas&quot;,
+    fill = &quot;&quot;
+  ) +
   scale_fill_grey() +
-  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+  scale_y_continuous(limits = c(0, 100))
 
-# Histograma para noviembre de 1992
+# Histograma para noviembre de 1992 
 hist.nov &lt;- data %&gt;%
   filter(observation == &quot;November 1992&quot;) %&gt;%
-  ggplot(aes(wage_st, fill = state)) +
-  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
-                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
-                 alpha = 0.5, position = &quot;dodge&quot;, bins = 23) +
-  labs(title = &quot;Noviembre 1992&quot;, x = &quot;Rango Salarial&quot;, y = &quot;Porcentaje de tiendas&quot;, fill = &quot;&quot;) +
+  ggplot(aes(x = wage_st, fill = state)) +
+  geom_histogram(
+    aes(y = after_stat(100 * count / tapply(count, group, sum)[group])),
+    alpha = 0.5,
+    position = &quot;dodge&quot;,
+    bins = 23
+  ) +
+  labs(
+    title = &quot;Noviembre 1992&quot;,
+    x = &quot;Rango Salarial&quot;,
+    y = &quot;Porcentaje de tiendas&quot;,
+    fill = &quot;&quot;
+  ) +
   scale_fill_grey() +
-  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+  scale_y_continuous(limits = c(0, 100))
 
 # Combinar los gráficos
-ggarrange(hist.feb, hist.nov, ncol = 2, 
-          common.legend = TRUE, legend = &quot;bottom&quot;)</code></pre>
-<pre><code>## Warning: The dot-dot notation (`..count..`) was deprecated in ggplot2 3.4.0.
-## ℹ Please use `after_stat(count)` instead.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
+ggpubr::ggarrange(
+  hist.feb, 
+  hist.nov, 
+  ncol = 2,
+  common.legend = TRUE,
+  legend = &quot;bottom&quot;)</code></pre>
 <pre><code>## Warning: Removed 20 rows containing non-finite outside the scale range (`stat_bin()`).
 ## Removed 20 rows containing non-finite outside the scale range (`stat_bin()`).</code></pre>
 <pre><code>## Warning: Removed 21 rows containing non-finite outside the scale range

@@ -211,31 +211,51 @@ data %>%
 ## Rango salarial antes y después de la política
 
 ```{r}
-# Histograma para febrero de 1992
+# Histograma para febrero de 1992 
 hist.feb <- data %>%
   filter(observation == "February 1992") %>%
-  ggplot(aes(wage_st, fill = state)) +
-  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
-                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
-                 alpha = 0.5, position = "dodge", bins = 23) +
-  labs(title = "Febrero 1992", x = "Rango Salarial", y = "Porcentaje de tiendas", fill = "") +
+  ggplot(aes(x = wage_st, fill = state)) +
+  geom_histogram(
+    aes(y = after_stat(100 * count / tapply(count, group, sum)[group])),
+    alpha = 0.5,
+    position = "dodge",
+    bins = 23
+  ) +
+  labs(
+    title = "Febrero 1992",
+    x = "Rango Salarial",
+    y = "Porcentaje de tiendas",
+    fill = ""
+  ) +
   scale_fill_grey() +
-  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+  scale_y_continuous(limits = c(0, 100))
 
-# Histograma para noviembre de 1992
+# Histograma para noviembre de 1992 
 hist.nov <- data %>%
   filter(observation == "November 1992") %>%
-  ggplot(aes(wage_st, fill = state)) +
-  geom_histogram(aes(y = c(..count..[..group..==1]/sum(..count..[..group..==1]),
-                           ..count..[..group..==2]/sum(..count..[..group..==2]))*100),
-                 alpha = 0.5, position = "dodge", bins = 23) +
-  labs(title = "Noviembre 1992", x = "Rango Salarial", y = "Porcentaje de tiendas", fill = "") +
+  ggplot(aes(x = wage_st, fill = state)) +
+  geom_histogram(
+    aes(y = after_stat(100 * count / tapply(count, group, sum)[group])),
+    alpha = 0.5,
+    position = "dodge",
+    bins = 23
+  ) +
+  labs(
+    title = "Noviembre 1992",
+    x = "Rango Salarial",
+    y = "Porcentaje de tiendas",
+    fill = ""
+  ) +
   scale_fill_grey() +
-  scale_y_continuous(limits = c(0, 100))  # Asegura que el eje y vaya de 0 a 100
+  scale_y_continuous(limits = c(0, 100))
 
 # Combinar los gráficos
-ggarrange(hist.feb, hist.nov, ncol = 2, 
-          common.legend = TRUE, legend = "bottom")
+ggpubr::ggarrange(
+  hist.feb, 
+  hist.nov, 
+  ncol = 2,
+  common.legend = TRUE,
+  legend = "bottom")
 
 ```
 
